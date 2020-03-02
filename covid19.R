@@ -30,15 +30,17 @@ if (!interactive()) png("covid19.png", width=5, height=5, unit="in", res=150, po
 par(mfrow=c(2,1), pch=20)
 
 oce::oce.plot.ts(confirmed$time, confirmed$world, type="p", drawTimeRange=FALSE,
-                 xlab="Time", ylab="World-wide Cases", mar=c(2,3,1,1))
-mtext("Covid-19 cases in year 2020")
+                 xlab="Time", ylab="Number of Cases", mar=c(2,3,1,1.5))
+mtext("World-Wide Covid-19 Incidence", adj=0, cex=0.9)
+mtext(paste("Graph updated", format(Sys.time(), "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
 points(deaths$time, deaths$world, col="red", type="b")
 points(recovered$time, recovered$world, col="green3")
-legend("topleft", lwd=1, pch=20, col=c("black", "red", "green3"), legend=c("Cases", "Deaths", "Recoveries"))
+legend("topleft", lwd=1, pch=20, col=c("black", "red", "green3"),
+       legend=c("Confirmed", "Deaths", "Recoveries"))
 
 ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
 oce::oce.plot.ts(confirmed$time, log10(confirmed$world), type="p", axes=FALSE,
-                 xlab="Time", ylab="World-wide Cases", mar=c(2, 3, 1, 1))
+                 xlab="Time", ylab="Number of Cases", mar=c(2, 3, 1, 1.5))
 oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)
 box()
 powerLow <- floor(1 + par("usr")[3])

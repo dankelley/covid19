@@ -1,14 +1,14 @@
 requireNamespace("oce")
 requireNamespace("curl")
 
-maybeDownload <- function(url, file, hours=6)
+maybeDownload <- function(url, file, hours=1)
 {
     if (!file.exists(file) || file.info(file)$mtime < Sys.time() - hours * 3600) {
         curl::curl_download(url, file)
     }
 }
 
-acquireCovid19 <- function(url, hours=6)
+acquireCovid19 <- function(url, hours=1)
 {
     file <- gsub(".*/", "", url)
     maybeDownload(url, file, hour=hours)

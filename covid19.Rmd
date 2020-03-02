@@ -1,0 +1,19 @@
+---
+title: "Covid19 Incidence History"
+author: "Dan Kelley"
+---
+
+This website shows the reported incidence of the Covid-19 Novel coronavirus.
+The data are acquired at midnight (Halifax/America time) from
+https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
+and plotted with an [R
+script](https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R).
+
+The black symbols show the number of confirmed cases, summing across locations
+to obtain a world-wide estimate.  Similarly, the green symbols indicate
+recovered cases, and the red ones indicate deaths.  The top graph shows raw
+counts, while the bottom one uses logarithmic scaling, where e.g. $10^4$ means
+10 thousand cases.
+
+img src="covid19.png" alt="ERROR: covid19.png is not available"
+

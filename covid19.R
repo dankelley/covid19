@@ -64,8 +64,8 @@ for (region in regions) {
     mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
     points(deaths$time, trimZeros(deaths$data), col="red", type="b")
     points(recovered$time, trimZeros(recovered$data), col="green3")
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "red", "green3"),
-           legend=c("Confirmed", "Deaths", "Recoveries"))
+    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "green3", "red"),
+           legend=c("Confirmed", "Recoveries", "Deaths"))
 
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
@@ -93,8 +93,8 @@ for (region in regions) {
 
     points(deaths$time, log10(deaths$data), col="red", pch=20)
     points(recovered$time, log10(recovered$data), col="green3")
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "red", "green3"),
-           legend=c("Confirmed", "Deaths", "Recoveries"))
+    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "green3", "red"),
+           legend=c("Confirmed", "Recoveries", "Deaths"))
 
     if (!interactive()) dev.off()
 }

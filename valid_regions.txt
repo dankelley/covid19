@@ -1,391 +1,87 @@
----
-title: "Covid19 Incidence History"
-author: "Dan Kelley"
----
-
-This website shows the reported incidence of the Covid-19 Novel coronavirus.
-The data are acquired at midnight (Halifax/America time) from
-https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
-and plotted with an [R
-script](https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R).
-
-The black symbols show the number of confirmed cases, summing across locations
-to obtain a world-wide estimate.  Similarly, the green symbols indicate
-recovered cases, and the red ones indicate deaths.  The top graph shows raw
-counts, while the bottom one uses logarithmic scaling, where e.g. $10^4$ means
-10 thousand cases. In both cases, the range of the vertical axis is set by the
-confirmed-case curve.
-
-Note that the graphs are updated every few hours, but that the data only are
-only updated once a day (at least, as of March 2nd, 2020, when this website was
-set up).
-
-Also, note that this is not an official website of Dalhousie University, and
-that I am not a medical doctor or health researcher. I am just interested in
-this issue, and set up this website for that reason.
-
-The graphs below show results first for the world, and then for countries as
-listed in column 2 of the .csv files found at
-https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
-online. This data file has subregions of some countries, and that anyone
-reasonably capable in the R language could easily alter my [R
-script](https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R)
-to access those.  Also, note that one of the graphs is for "Others", which
-presumably is being used for countries other than those listed by name.
-
-I make claim on the accuracy of the data I've downloade to make these plots,
-nor of the correctness of my code and the plots it makes. Please report any
-coding errors to me at Dan.Kelley@Dal.Ca and I'll see if I can make
-corrections.
-
-This site is on a personal computer, and may be taken down at any time, if load
-becomes an issue.
-
-**World**
-
 img src="covid19_World.png" alt="Error: no such png is available"
-
-**Afghanistan**
-
 img src="covid19_Afghanistan.png" alt="Error: no such png is available"
-
-**Algeria**
-
 img src="covid19_Algeria.png" alt="Error: no such png is available"
-
-**Andorra**
-
 img src="covid19_Andorra.png" alt="Error: no such png is available"
-
-**Argentina**
-
 img src="covid19_Argentina.png" alt="Error: no such png is available"
-
-**Aremia**
-
 img src="covid19_Armenia.png" alt="Error: no such png is available"
-
-**Australia**
-
 img src="covid19_Australia.png" alt="Error: no such png is available"
-
-**Autria*
-
 img src="covid19_Austria.png" alt="Error: no such png is available"
-
-**Azerbaijan**
-
 img src="covid19_Azerbaijan.png" alt="Error: no such png is available"
-
-**Bahrain*
-
 img src="covid19_Bahrain.png" alt="Error: no such png is available"
-
-**Belarus**
-
 img src="covid19_Belarus.png" alt="Error: no such png is available"
-
-**Belgium**
-
 img src="covid19_Belgium.png" alt="Error: no such png is available"
-
-**Brazil**
-
 img src="covid19_Brazil.png" alt="Error: no such png is available"
-
-**Cambodia**
-
 img src="covid19_Cambodia.png" alt="Error: no such png is available"
-
-**Canada**
-
 img src="covid19_Canada.png" alt="Error: no such png is available"
-
-**Chile**
-
 img src="covid19_Chile.png" alt="Error: no such png is available"
-
-**Croatia**
-
 img src="covid19_Croatia.png" alt="Error: no such png is available"
-
-**Czech Republic**
-
 img src="covid19_Czech Republic.png" alt="Error: no such png is available"
-
-**Denmark**
-
 img src="covid19_Denmark.png" alt="Error: no such png is available"
-
-**Dominican Republic**
-
 img src="covid19_Dominican Republic.png" alt="Error: no such png is available"
-
-**Ecuador**
-
 img src="covid19_Ecuador.png" alt="Error: no such png is available"
-
-**Egypt**
-
 img src="covid19_Egypt.png" alt="Error: no such png is available"
-
-**Estonia**
-
 img src="covid19_Estonia.png" alt="Error: no such png is available"
-
-**Faroe Islands**
-
 img src="covid19_Faroe Islands.png" alt="Error: no such png is available"
-
-**Finland**
-
 img src="covid19_Finland.png" alt="Error: no such png is available"
-
-**France**
-
 img src="covid19_France.png" alt="Error: no such png is available"
-
-**Georgia**
-
 img src="covid19_Georgia.png" alt="Error: no such png is available"
-
-**Germany**
-
 img src="covid19_Germany.png" alt="Error: no such png is available"
-
-**Gibraltar**
-
 img src="covid19_Gibraltar.png" alt="Error: no such png is available"
-
-**Greece**
-
 img src="covid19_Greece.png" alt="Error: no such png is available"
-
-**Hong Kong**
-
 img src="covid19_Hong Kong.png" alt="Error: no such png is available"
-
-**Hungary**
-
 img src="covid19_Hungary.png" alt="Error: no such png is available"
-
-**Iceland**
-
 img src="covid19_Iceland.png" alt="Error: no such png is available"
-
-**India**
-
 img src="covid19_India.png" alt="Error: no such png is available"
-
-**Indonesia**
-
 img src="covid19_Indonesia.png" alt="Error: no such png is available"
-
-**Iran**
-
 img src="covid19_Iran.png" alt="Error: no such png is available"
-
-**Iraq**
-
 img src="covid19_Iraq.png" alt="Error: no such png is available"
-
-**Ireland**
-
 img src="covid19_Ireland.png" alt="Error: no such png is available"
-
-**Israel**
-
 img src="covid19_Israel.png" alt="Error: no such png is available"
-
-**Italy**
-
 img src="covid19_Italy.png" alt="Error: no such png is available"
-
-**Japan**
-
 img src="covid19_Japan.png" alt="Error: no such png is available"
-
-**Jordan**
-
 img src="covid19_Jordan.png" alt="Error: no such png is available"
-
-**Kuwait**
-
 img src="covid19_Kuwait.png" alt="Error: no such png is available"
-
-**Latvia**
-
 img src="covid19_Latvia.png" alt="Error: no such png is available"
-
-**Lebanon**
-
 img src="covid19_Lebanon.png" alt="Error: no such png is available"
-
-**Liechtenstein**
-
 img src="covid19_Liechtenstein.png" alt="Error: no such png is available"
-
-**Lithuania**
-
 img src="covid19_Lithuania.png" alt="Error: no such png is available"
-
-**Luxembourg**
-
 img src="covid19_Luxembourg.png" alt="Error: no such png is available"
-
-**Macau**
-
 img src="covid19_Macau.png" alt="Error: no such png is available"
-
-**Mainland China**
-
 img src="covid19_Mainland China.png" alt="Error: no such png is available"
-
-**Malaysia**
-
 img src="covid19_Malaysia.png" alt="Error: no such png is available"
-
-**Mexico**
-
 img src="covid19_Mexico.png" alt="Error: no such png is available"
-
-**Monaco**
-
 img src="covid19_Monaco.png" alt="Error: no such png is available"
-
-**Morocco**
-
 img src="covid19_Morocco.png" alt="Error: no such png is available"
-
-**Nepal**
-
 img src="covid19_Nepal.png" alt="Error: no such png is available"
-
-**Netherlands**
-
 img src="covid19_Netherlands.png" alt="Error: no such png is available"
-
-**New Zealand**
-
 img src="covid19_New Zealand.png" alt="Error: no such png is available"
-
-**Nigeria**
-
 img src="covid19_Nigeria.png" alt="Error: no such png is available"
-
-**North Macedonia**
-
 img src="covid19_North Macedonia.png" alt="Error: no such png is available"
-
-**Norway**
-
 img src="covid19_Norway.png" alt="Error: no such png is available"
-
-**Oman**
-
 img src="covid19_Oman.png" alt="Error: no such png is available"
-
-**Others**
-
 img src="covid19_Others.png" alt="Error: no such png is available"
-
-**Pakistan**
-
 img src="covid19_Pakistan.png" alt="Error: no such png is available"
-
-**Philippines**
-
 img src="covid19_Philippines.png" alt="Error: no such png is available"
-
-**Poland**
-
 img src="covid19_Poland.png" alt="Error: no such png is available"
-
-**Portugal**
-
 img src="covid19_Portugal.png" alt="Error: no such png is available"
-
-**Qatar**
-
 img src="covid19_Qatar.png" alt="Error: no such png is available"
-
-**Romania**
-
 img src="covid19_Romania.png" alt="Error: no such png is available"
-
-**Russia**
-
 img src="covid19_Russia.png" alt="Error: no such png is available"
-
-**Saint Barthelemy**
-
 img src="covid19_Saint Barthelemy.png" alt="Error: no such png is available"
-
-**San Marino**
-
 img src="covid19_San Marino.png" alt="Error: no such png is available"
-
-**Saudi Arabia**
-
 img src="covid19_Saudi Arabia.png" alt="Error: no such png is available"
-
-**Senegal**
-
 img src="covid19_Senegal.png" alt="Error: no such png is available"
-
-**Singapore**
-
 img src="covid19_Singapore.png" alt="Error: no such png is available"
-
-**South Korea**
-
 img src="covid19_South Korea.png" alt="Error: no such png is available"
-
-**Spain**
-
 img src="covid19_Spain.png" alt="Error: no such png is available"
-
-**Sri Lanka**
-
 img src="covid19_Sri Lanka.png" alt="Error: no such png is available"
-
-**Sweden**
-
 img src="covid19_Sweden.png" alt="Error: no such png is available"
-
-**Switzerland**
-
 img src="covid19_Switzerland.png" alt="Error: no such png is available"
-
-**Taiwan**
-
 img src="covid19_Taiwan.png" alt="Error: no such png is available"
-
-**Thailand**
-
 img src="covid19_Thailand.png" alt="Error: no such png is available"
-
-**Tunisia**
-
 img src="covid19_Tunisia.png" alt="Error: no such png is available"
-
-**UK**
-
 img src="covid19_UK.png" alt="Error: no such png is available"
-
-**Ukraine**
-
 img src="covid19_Ukraine.png" alt="Error: no such png is available"
-
-**United Arab Emirates**
-
 img src="covid19_United Arab Emirates.png" alt="Error: no such png is available"
-
-**US**
-
 img src="covid19_US.png" alt="Error: no such png is available"
-
-**Vietnam**
-
 img src="covid19_Vietnam.png" alt="Error: no such png is available"
-

@@ -385,7 +385,7 @@ summary {
 <p>The black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the green symbols indicate recovered cases, and the red ones indicate deaths. The top graph shows raw counts, while the bottom one uses logarithmic scaling, where e.g. <span class="math inline">\(10^4\)</span> means 10 thousand cases. In both cases, the range of the vertical axis is set by the confirmed-case curve.</p>
 <p>Note that the graphs are updated every few hours, but that the data only are only updated once a day (at least, as of March 2nd, 2020, when this website was set up).</p>
 <p>Also, note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just interested in this issue, and set up this website for that reason.</p>
-<p>The graphs below show results first for the world, and then for countries as listed in column 2 of the .csv files found at <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series" class="uri">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a> online. This data file has subregions of some countries, and that anyone reasonably capable in the R language could easily alter my <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R">R script</a> to access those. Also, note that one of the graphs is for “Others”, which presumably is being used for countries other than those listed by name.</p>
+<p>The graphs below show results first for the world, and then for countries as listed in column 2 of the .csv files found at <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series" class="uri">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a> online. This data file has subregions of some countries, and that anyone reasonably capable in the R language could easily alter my <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R">R script</a> to access those.</p>
 <p>I make claim on the accuracy of the data I’ve downloade to make these plots, nor of the correctness of my code and the plots it makes. Please report any coding errors to me at <a href="mailto:Dan.Kelley@Dal.Ca" class="email">Dan.Kelley@Dal.Ca</a> and I’ll see if I can make corrections.</p>
 <p>This site is on a personal computer, and may be taken down at any time, if load becomes an issue.</p>
 
@@ -406,21 +406,18 @@ Shortcut links:
 <a href="#Cambodia">Cambodia</a> /
 <a href="#Canada">Canada</a> /
 <a href="#Chile">Chile</a> /
+<a href="#China">China</a> /
 <a href="#Croatia">Croatia</a> /
-<a href="#Czech">Republic Czech Republic</a> /
 <a href="#Denmark">Denmark</a> /
 <a href="#Dominican_Republic">Dominican Republic</a> /
 <a href="#Ecuador">Ecuador</a> /
 <a href="#Egypt">Egypt</a> /
 <a href="#Estonia">Estonia</a> /
-<a href="#Faroe_Islands">Faroe Islands</a> /
 <a href="#Finland">Finland</a> /
 <a href="#France">France</a> /
 <a href="#Georgia">Georgia</a> /
 <a href="#Germany">Germany</a> /
-<a href="#Gibraltar">Gibraltar</a> /
 <a href="#Greece">Greece</a> /
-<a href="#Hong_Kong">Hong Kong</a> /
 <a href="#Hungary">Hungary</a> /
 <a href="#Iceland">Iceland</a> /
 <a href="#India">India</a> /
@@ -432,14 +429,13 @@ Shortcut links:
 <a href="#Italy">Italy</a> /
 <a href="#Japan">Japan</a> /
 <a href="#Jordan">Jordan</a> /
+<a href="#Korea_South">Korea, South</a> /
 <a href="#Kuwait">Kuwait</a> /
 <a href="#Latvia">Latvia</a> /
 <a href="#Lebanon">Lebanon</a> /
 <a href="#Liechtenstein">Liechtenstein</a> /
 <a href="#Lithuania">Lithuania</a> /
 <a href="#Luxembourg">Luxembourg</a> /
-<a href="#Macau">Macau</a> /
-<a href="#Mainland_China">Mainland China</a> /
 <a href="#Malaysia">Malaysia</a> /
 <a href="#Mexico">Mexico</a> /
 <a href="#Monaco">Monaco</a> /
@@ -451,7 +447,6 @@ Shortcut links:
 <a href="#North_Macedonia">North Macedonia</a> /
 <a href="#Norway">Norway</a> /
 <a href="#Oman">Oman</a> /
-<a href="#Others">Others</a> /
 <a href="#Pakistan">Pakistan</a> /
 <a href="#Philippines">Philippines</a> /
 <a href="#Poland">Poland</a> /
@@ -459,12 +454,10 @@ Shortcut links:
 <a href="#Qatar">Qatar</a> /
 <a href="#Romania">Romania</a> /
 <a href="#Russia">Russia</a> /
-<a href="#Saint_Barthelemy">Saint Barthelemy</a> /
 <a href="#San_Marino">San Marino</a> /
 <a href="#Saudi_Arabia">Saudi Arabia</a> /
 <a href="#Senegal">Senegal</a> /
 <a href="#Singapore">Singapore</a> /
-<a href="#South Korea">South Korea</a> /
 <a href="#Spain">Spain</a> /
 <a href="#Sri_Lanka">Sri Lanka</a> /
 <a href="#Sweden">Sweden</a> /
@@ -472,8 +465,8 @@ Shortcut links:
 <a href="#Taiwan">Taiwan</a> /
 <a href="#Thailand">Thailand</a> /
 <a href="#Tunisia">Tunisia</a> /
-<a href="#UK">UK</a> /
 <a href="#Ukraine">Ukraine</a> /
+<a href="#United_Kingdom">United Kingdom</a> /
 <a href="#United_Arab_Emirates">United Arab Emirates</a> /
 <a href="#US">US</a> /
 <a href="#Vietnam">Vietnam</a>
@@ -528,11 +521,11 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Chile">Chile</h3>
 <img src="covid19_Chile.png" alt="Error: no such png is available">
 
+<hr style="border-width: 5px;"> <h3 id="China">China</h3>
+<img src="covid19_China.png" alt="Error: no such png is available">
+
 <hr style="border-width: 5px;"> <h3 id="Croatia">Croatia</h3>
 <img src="covid19_Croatia.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="Czech Republic">Czech Republic</h3>
-<img src="covid19_Czech Republic.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Denmark">Denmark</h3>
 <img src="covid19_Denmark.png" alt="Error: no such png is available">
@@ -549,9 +542,6 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Estonia">Estonia</h3>
 <img src="covid19_Estonia.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Faroe_Islands">Faroe Islands</h3>
-<img src="covid19_Faroe Islands.png" alt="Error: no such png is available">
-
 <hr style="border-width: 5px;"> <h3 id="Finland">Finland</h3>
 <img src="covid19_Finland.png" alt="Error: no such png is available">
 
@@ -564,14 +554,8 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Germany">Germany</h3>
 <img src="covid19_Germany.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Gibraltar">Gibraltar</h3>
-<img src="covid19_Gibraltar.png" alt="Error: no such png is available">
-
 <hr style="border-width: 5px;"> <h3 id="Greece">Greece</h3>
 <img src="covid19_Greece.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="Hong_Kong">Hong Kong</h3>
-<img src="covid19_Hong Kong.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Hungary">Hungary</h3>
 <img src="covid19_Hungary.png" alt="Error: no such png is available">
@@ -606,6 +590,9 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Jordan">Jordan</h3>
 <img src="covid19_Jordan.png" alt="Error: no such png is available">
 
+<hr style="border-width: 5px;"> <h3 id="Korea_South">Korea, South</h3>
+<img src="covid19_Korea, South.png" alt="Error: no such png is available">
+
 <hr style="border-width: 5px;"> <h3 id="Kuwait">Kuwait</h3>
 <img src="covid19_Kuwait.png" alt="Error: no such png is available">
 
@@ -623,12 +610,6 @@ Shortcut links:
 
 <hr style="border-width: 5px;"> <h3 id="Luxembourg">Luxembourg</h3>
 <img src="covid19_Luxembourg.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="Macau">Macau</h3>
-<img src="covid19_Macau.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="Mainland_China">Mainland China</h3>
-<img src="covid19_Mainland China.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Malaysia">Malaysia</h3>
 <img src="covid19_Malaysia.png" alt="Error: no such png is available">
@@ -663,9 +644,6 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Oman">Oman</h3>
 <img src="covid19_Oman.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Others">Others</h3>
-<img src="covid19_Others.png" alt="Error: no such png is available">
-
 <hr style="border-width: 5px;"> <h3 id="Pakistan">Pakistan</h3>
 <img src="covid19_Pakistan.png" alt="Error: no such png is available">
 
@@ -687,9 +665,6 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Russia">Russia</h3>
 <img src="covid19_Russia.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Saint_Barthelemy">Saint Barthelemy</h3>
-<img src="covid19_Saint Barthelemy.png" alt="Error: no such png is available">
-
 <hr style="border-width: 5px;"> <h3 id="San_Marino">San Marino</h3>
 <img src="covid19_San Marino.png" alt="Error: no such png is available">
 
@@ -701,9 +676,6 @@ Shortcut links:
 
 <hr style="border-width: 5px;"> <h3 id="Singapore">Singapore</h3>
 <img src="covid19_Singapore.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="South Korea">South Korea</h3>
-<img src="covid19_South Korea.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Spain">Spain</h3>
 <img src="covid19_Spain.png" alt="Error: no such png is available">
@@ -718,7 +690,7 @@ Shortcut links:
 <img src="covid19_Switzerland.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Taiwan">Taiwan</h3>
-<img src="covid19_Taiwan.png" alt="Error: no such png is available">
+<img src="covid19_Taiwan*.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Thailand">Thailand</h3>
 <img src="covid19_Thailand.png" alt="Error: no such png is available">
@@ -726,8 +698,8 @@ Shortcut links:
 <hr style="border-width: 5px;"> <h3 id="Tunisia">Tunisia</h3>
 <img src="covid19_Tunisia.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="UK">UK</h3>
-<img src="covid19_UK.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="UnitedKingdom">United Kingdom</h3>
+<img src="covid19_United Kingdom.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Ukraine">Ukraine</h3>
 <img src="covid19_Ukraine.png" alt="Error: no such png is available">

@@ -3,8 +3,7 @@ requireNamespace("curl")
 
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "World"
-
+regions <- if (length(args)) args else "Canada"
 
 maybeDownload <- function(url, file, hours=1)
 {

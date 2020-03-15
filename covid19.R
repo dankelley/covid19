@@ -10,8 +10,6 @@ maybeDownload <- function(url, file, hours=1)
     if (!file.exists(file) || file.info(file)$mtime < Sys.time() - hours * 3600) {
         message("downloading url ", url)
         curl::curl_download(url, file)
-    } else {
-        message("using cached file ", file)
     }
 }
 
@@ -28,7 +26,6 @@ acquireCovid19 <- function(url, hours=1, region="World")
     if (region == "World") {
         data <- as.vector(mapply(sum, d[, seq(5, dim(d)[2])]))
     } else if (region %in% regionAllowed) {
-        message("subsetting to region=", region)
         d <- subset(d, Country.Region == region)
         data <- as.vector(mapply(sum, d[, seq(5, dim(d)[2])]))
     } else {
@@ -69,7 +66,10 @@ for (region in regions) {
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
     y[!is.finite(y)] <- NA
-    oce::oce.plot.ts(confirmed$time, y,
+    ylim <- range(y, na.rm=TRUE)
+    if (ylim[1] < 0.9)
+        ylim[1] <- 0
+    oce::oce.plot.ts(confirmed$time, y, ylim=ylim,
                      type="p", axes=FALSE,
                      xlab="Time", ylab="Case Count (log scale)", mar=c(2, 3, 1, 1.5))
     oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)

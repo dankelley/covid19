@@ -109,7 +109,7 @@ for (region in regions) {
         m <- lm(y ~ x)
         abline(m)
         growthRate <- coef(m)[2] * 86400 # in days
-        doubleTime <- log(2) / growthRate
+        doubleTime <- log10(2) / growthRate
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
     points(deaths$time, log10(deaths$data), col="red", pch=20)

@@ -74,7 +74,7 @@ for (region in regions) {
     ylim <- c(0, max(y, na.rm=TRUE))
     oce::oce.plot.ts(confirmed$time, y, ylim=ylim,
                      type="p", axes=FALSE, col="gray",
-                     xlab="Time", ylab="Case Count (log scale)", mar=c(2, 3, 1, 1.5))
+                     xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5))
     oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)
     box()
     powerLow <- floor(1 + par("usr")[3])

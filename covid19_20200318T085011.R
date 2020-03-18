@@ -1,7 +1,6 @@
 requireNamespace("oce")
 requireNamespace("curl")
 
-now <- Sys.Date()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
@@ -71,7 +70,7 @@ for (region in regions) {
     if (ylim[1] < 0.9)
         ylim[1] <- 0
     oce::oce.plot.ts(confirmed$time, y, ylim=ylim,
-                     type="p", axes=FALSE, col="gray",
+                     type="p", axes=FALSE,
                      xlab="Time", ylab="Case Count (log scale)", mar=c(2, 3, 1, 1.5))
     oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)
     box()
@@ -95,28 +94,10 @@ for (region in regions) {
     rug(side=2, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
     rug(side=4, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
 
-    look <- abs(as.numeric(now) - as.numeric(confirmed$time)) < 14 * 86500
-    sum(look)/length(look)
-    range(confirmed$time[look])
-    points(confirmed$time[look], log10(confirmed$data[look]))
-    x <- as.numeric(confirmed$time[look])
-    y <- log10(confirmed$data[look])
-    ok <- is.finite(x) & is.finite(y)
-    x <- x[ok]
-    y <- y[ok]
-    canFit <- length(x) > 3
-    if (canFit) {
-        m <- lm(y ~ x)
-        abline(m)
-        growthRate <- coef(m)[2] * 86400 # in days
-        doubleTime <- log(2) / growthRate
-        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
-    }
     points(deaths$time, log10(deaths$data), col="red", pch=20)
     points(recovered$time, log10(recovered$data), col="green3")
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
-           col=c("gray", "black", "green3", "red"),
-           legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
+    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "green3", "red"),
+           legend=c("Confirmed", "Recoveries", "Deaths"))
 
     if (!interactive()) dev.off()
 }

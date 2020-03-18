@@ -1,7 +1,7 @@
 requireNamespace("oce")
 requireNamespace("curl")
 
-now <- Sys.Date()
+now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
@@ -44,8 +44,10 @@ trimZeros <- function(x) {
 base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series"
 
 for (region in regions) {
-    message("handling region: ", region)
+    message("handling ", region)
     confirmed <- acquireCovid19(paste0(base, "/time_series_19-covid-Confirmed.csv"), region=region)
+    recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) < 14 * 86400
+    ##print(recent)
     deaths <- acquireCovid19(paste0(base, "/time_series_19-covid-Deaths.csv"), region=region)
     recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
 
@@ -54,15 +56,17 @@ for (region in regions) {
 
     par(mfrow=c(2,1), pch=20)
 
-    oce::oce.plot.ts(confirmed$time, confirmed$data, type="p", drawTimeRange=FALSE,
+    oce::oce.plot.ts(confirmed$time, confirmed$data, type="p", drawTimeRange=FALSE, col="gray",
                      xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
+    points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
     mtext(paste("Covid-19 (", region, ")", sep=""), adj=0, cex=0.9)
     now <- lubridate::with_tz(Sys.time(), "UTC")
     mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
     points(deaths$time, trimZeros(deaths$data), col="red", type="b")
     points(recovered$time, trimZeros(recovered$data), col="green3")
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, col=c("black", "green3", "red"),
-           legend=c("Confirmed", "Recoveries", "Deaths"))
+    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
+           col=c("gray", "black", "green3", "red"),
+           legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
 
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
@@ -95,12 +99,9 @@ for (region in regions) {
     rug(side=2, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
     rug(side=4, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
 
-    look <- abs(as.numeric(now) - as.numeric(confirmed$time)) < 14 * 86500
-    sum(look)/length(look)
-    range(confirmed$time[look])
-    points(confirmed$time[look], log10(confirmed$data[look]))
-    x <- as.numeric(confirmed$time[look])
-    y <- log10(confirmed$data[look])
+    points(confirmed$time[recent], log10(confirmed$data[recent]), pch=20)
+    x <- as.numeric(confirmed$time[recent])
+    y <- log10(confirmed$data[recent])
     ok <- is.finite(x) & is.finite(y)
     x <- x[ok]
     y <- y[ok]

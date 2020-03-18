@@ -113,9 +113,10 @@ for (region in regions) {
     }
     points(deaths$time, log10(deaths$data), col="red", pch=20)
     points(recovered$time, log10(recovered$data), col="green3")
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
-           col=c("gray", "black", "green3", "red"),
-           legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
+    ## Skip legend in bottom panel
+    ##> legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
+    ##>        col=c("gray", "black", "green3", "red"),
+    ##>        legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
 
     if (!interactive()) dev.off()
 }

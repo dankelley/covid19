@@ -71,9 +71,7 @@ for (region in regions) {
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
     y[!is.finite(y)] <- NA
-    ylim <- range(y, na.rm=TRUE)
-    if (ylim[1] < 0.9)
-        ylim[1] <- 0
+    ylim <- c(0, max(y, na.rm=TRUE))
     oce::oce.plot.ts(confirmed$time, y, ylim=ylim,
                      type="p", axes=FALSE, col="gray",
                      xlab="Time", ylab="Case Count (log scale)", mar=c(2, 3, 1, 1.5))

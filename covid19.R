@@ -45,11 +45,12 @@ base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_c
 
 for (region in regions) {
     message("handling ", region)
-    confirmed <- acquireCovid19(paste0(base, "/time_series_19-covid-Confirmed.csv"), region=region)
+    confirmed <- acquireCovid19(paste0(base, "/time_series_covid19_confirmed_global.csv"), region=region)
+    lastTime <- tail(confirmed$time, 1)
     recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) < 14 * 86400
     ##print(recent)
-    deaths <- acquireCovid19(paste0(base, "/time_series_19-covid-Deaths.csv"), region=region)
-    recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
+    deaths <- acquireCovid19(paste0(base, "/time_series_covid19_deaths_global.csv"), region=region)
+    ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
                             width=5, height=5, unit="in", res=120, pointsize=10)
@@ -61,12 +62,16 @@ for (region in regions) {
     points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
     mtext(paste("Covid-19 (", region, ")", sep=""), adj=0, cex=0.9)
     now <- lubridate::with_tz(Sys.time(), "UTC")
-    mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
+    ##mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
+    mtext(paste("Last update", format(now, "%Y %b %d")), adj=1, cex=0.9)
     points(deaths$time, trimZeros(deaths$data), col="red", type="b")
-    points(recovered$time, trimZeros(recovered$data), col="green3")
+    ## points(recovered$time, trimZeros(recovered$data), col="green3")
+    ## legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
+    ##        col=c("gray", "black", "green3", "red"),
+    ##        legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
     legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
-           col=c("gray", "black", "green3", "red"),
-           legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
+           col=c("gray", "black", "red"),
+           legend=c("Confirmed", "Confirmed", "Deaths"))
 
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
@@ -112,7 +117,7 @@ for (region in regions) {
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
     points(deaths$time, log10(deaths$data), col="red", pch=20)
-    points(recovered$time, log10(recovered$data), col="green3")
+    ## points(recovered$time, log10(recovered$data), col="green3")
     ## Skip legend in bottom panel
     ##> legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
     ##>        col=c("gray", "black", "green3", "red"),

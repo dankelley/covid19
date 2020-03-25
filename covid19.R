@@ -60,10 +60,10 @@ for (region in regions) {
     oce::oce.plot.ts(confirmed$time, confirmed$data, type="p", drawTimeRange=FALSE, col="gray",
                      xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
     points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
-    mtext(paste("Covid-19 (", region, ")", sep=""), adj=0, cex=0.9)
+    mtext(region, adj=0, cex=0.9)
     now <- lubridate::with_tz(Sys.time(), "UTC")
     ##mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
-    mtext(paste("Last update", format(now, "%Y %b %d")), adj=1, cex=0.9)
+    mtext(paste(format(now, "%Y %b %d")), adj=1, cex=0.9)
     points(deaths$time, trimZeros(deaths$data), col="red", type="b")
     ## points(recovered$time, trimZeros(recovered$data), col="green3")
     ## legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
@@ -72,7 +72,10 @@ for (region in regions) {
     legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
            col=c("gray", "black", "red"),
            legend=c("Confirmed", "Confirmed", "Deaths"))
-
+    mtext(sprintf("Confirmed: %d; deaths: %d",
+                  tail(confirmed$data, 1),
+                  tail(deaths$data, 1)), side=3,
+          cex=par("cex"))
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
     y[!is.finite(y)] <- NA

@@ -53,7 +53,7 @@ for (region in regions) {
     ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=5, height=4.5, unit="in", res=120, pointsize=13)
+                            width=5, height=4.5, unit="in", res=120, pointsize=12)
 
     par(mfrow=c(3,1), pch=20)
 
@@ -88,18 +88,24 @@ for (region in regions) {
     powerHigh <- floor(par("usr")[4])
     tcl <- par("tcl")
     smallTics <- NULL
+    ats <- NULL
+    labels <- NULL
     for (power in powerLow:powerHigh) {
         rug(side=2, x=power, tcl=tcl, lwd=par("lwd"))
         smallTics <- c(smallTics, -1 + power + log10(2:9))
         smallTics <- c(smallTics,      power + log10(2:9))
         rug(side=4, x=power, tcl=tcl, lwd=par("lwd"))
-        if (power < 3L) {
-            mtext(10^power, side=2, at=power, line=0.5, cex=par("cex"))
+        if (power < 2L) {
+            ## mtext(10^power, side=2, at=power, line=0.5, cex=par("cex"))
+            labels <- c(labels, as.expression(10^power))
         } else {
-            mtext(substitute(10^A, list(A=power)), side=2, at=power, line=0.5, cex=par("cex"))
+            ## mtext(substitute(10^A, list(A=power)), side=2, at=power, line=0.5, cex=par("cex"))
+            labels <- c(labels, substitute(10^A, list(A=power)))
         }
+        ats <- c(ats, power)
         abline(h=power, lty="dotted", col="lightgray")
     }
+    axis(side=2, labels=labels, at=ats)
     smallTics <- unique(smallTics[par("usr")[3] < smallTics & smallTics < par("usr")[4]])
     rug(side=2, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
     rug(side=4, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))

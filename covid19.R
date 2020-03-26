@@ -79,7 +79,7 @@ for (region in regions) {
     ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
     y <- log10(confirmed$data)
     y[!is.finite(y)] <- NA
-    ylim <- c(0, max(y, na.rm=TRUE))
+    ylim <- c(0, 1.04*max(y, na.rm=TRUE))
     oce::oce.plot.ts(confirmed$time, y, ylim=ylim, type="o", axes=FALSE, col="gray",
                      xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5))
     oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)

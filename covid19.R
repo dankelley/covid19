@@ -93,7 +93,7 @@ for (region in regions) {
         smallTics <- c(smallTics, -1 + power + log10(2:9))
         smallTics <- c(smallTics,      power + log10(2:9))
         rug(side=4, x=power, tcl=tcl, lwd=par("lwd"))
-        if (power < 4L) {
+        if (power < 3L) {
             mtext(10^power, side=2, at=power, line=0.5, cex=par("cex"))
         } else {
             mtext(substitute(10^A, list(A=power)), side=2, at=power, line=0.5, cex=par("cex"))

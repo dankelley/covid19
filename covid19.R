@@ -53,7 +53,7 @@ for (region in regions) {
     ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=5, height=4.5, unit="in", res=120, pointsize=12)
+                            width=5, height=5, unit="in", res=120, pointsize=12)
 
     par(mfrow=c(3,1), pch=20)
 

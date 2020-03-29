@@ -47,7 +47,7 @@ for (province in regions) {
     sub <- subset(d, tolower(prname)==tolower(province))
     ok <- sub$numconf + sub$numprob > 0
     sub <- sub[ok, ]
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) < 14 * 86400
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) < 7 * 86400
     if (any(sub$numconf + sub$numprob > 0)) {
         oce.plot.ts(sub$time, sub$numconf + sub$numprob,
                     mar=c(2, 3, 1, 1),

@@ -54,8 +54,9 @@ for (province in regions) {
         message("NB. removed final point, because it duplicated its predecessor")
     }
     if (any(sub$numconf + sub$numprob > 0)) {
-        ylim <- c(1, 2*max(sub$numconf + sub$numprob, na.rm=TRUE))
-        oce.plot.ts(sub$time, sub$numconf + sub$numprob,
+        ylim <- c(1, 2*max(sub$num, na.rm=TRUE))
+        positive <- sub$num > 0
+        oce.plot.ts(sub$time[positive], sub$num[positive],
                     mar=c(2, 3, 1, 1),
                     ylab="Cases", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),

@@ -78,41 +78,14 @@ for (region in regions) {
                   tail(confirmed$data, 1),
                   tail(deaths$data, 1)), side=3,
           cex=par("cex"))
-    ## Kludge  a log y axis, because log="y" yields ugly labels and ticks.
-    y <- log10(confirmed$data)
-    y[!is.finite(y)] <- NA
-    ylim <- c(0, 1.04*max(y, na.rm=TRUE))
-    oce::oce.plot.ts(confirmed$time, y, ylim=ylim, type="o", axes=FALSE,
+    ## Log axis
+    ylim <- c(1, 2*max(confirmed$data, na.rm=TRUE))
+    positive <- confirmed$data > 0
+    oce::oce.plot.ts(confirmed$time[positive], confirmed$data[positive], ylim=ylim, type="o",
+                     log="y", logStyle="decade",
                      pch=20, col=ifelse(recent, "black", "gray"),
-                     xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5))
-    oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)
-    box()
-    powerLow <- floor(1 + par("usr")[3])
-    powerHigh <- floor(par("usr")[4])
-    tcl <- par("tcl")
-    smallTics <- NULL
-    ats <- NULL
-    labels <- NULL
-    for (power in powerLow:powerHigh) {
-        rug(side=2, x=power, tcl=tcl, lwd=par("lwd"))
-        smallTics <- c(smallTics, -1 + power + log10(2:9))
-        smallTics <- c(smallTics,      power + log10(2:9))
-        rug(side=4, x=power, tcl=tcl, lwd=par("lwd"))
-        if (power < 2L) {
-            ## mtext(10^power, side=2, at=power, line=0.5, cex=par("cex"))
-            labels <- c(labels, as.expression(10^power))
-        } else {
-            ## mtext(substitute(10^A, list(A=power)), side=2, at=power, line=0.5, cex=par("cex"))
-            labels <- c(labels, substitute(10^A, list(A=power)))
-        }
-        ats <- c(ats, power)
-        abline(h=power, lty="dotted", col="lightgray")
-    }
-    axis(side=2, labels=labels, at=ats)
-    smallTics <- unique(smallTics[par("usr")[3] < smallTics & smallTics < par("usr")[4]])
-    rug(side=2, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
-    rug(side=4, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
-
+                     xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5),
+                     drawTimeRange=FALSE)
     ##points(confirmed$time[recent], log10(confirmed$data[recent]), pch=20)
     x <- as.numeric(confirmed$time[recent])
     y <- log10(confirmed$data[recent])

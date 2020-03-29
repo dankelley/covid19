@@ -33,7 +33,7 @@ for (province in regions) {
                 ylab="Cases", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
-    points(sub$time, sub$numdeaths, col=2, pch=20)
+    points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
     mtext(province, cex=par("cex"))
 }
 if (!interactive())
@@ -48,21 +48,23 @@ for (province in regions) {
     ok <- sub$numconf + sub$numprob > 0
     sub <- sub[ok, ]
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) < 7 * 86400
-    if (any(sub$numconf + sub$numprob > 0)) {
-        oce.plot.ts(sub$time, sub$numconf + sub$numprob,
+    y <- sub$numconf + sub$numprob
+    if (any(y > 0)) {
+        ylim <- c(1, 2*max(y, na.rm=TRUE))
+        oce.plot.ts(sub$time, y,
                     mar=c(2, 3, 1, 1),
                     ylab="Cases", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
-                    log="y", logStyle="decade",
+                    ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
         if (any(sub$numdeaths) > 0)
-            points(sub$time, sub$numdeaths, pch=20, col=2, cex=ifelse(recent, 1, 0.7))
+            points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
         y <- (sub$numconf + sub$numprob)[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
-        canFit <- length(x) > 3
+        canFit <- length(x) > 3 && tolower(province) != "repatriated travellers"
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)

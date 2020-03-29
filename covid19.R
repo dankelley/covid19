@@ -1,6 +1,7 @@
 requireNamespace("oce")
 requireNamespace("curl")
 
+recentNumberOfDays <- 10
 now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
@@ -47,7 +48,7 @@ for (region in regions) {
     message("handling ", region)
     confirmed <- acquireCovid19(paste0(base, "/time_series_covid19_confirmed_global.csv"), region=region)
     lastTime <- tail(confirmed$time, 1)
-    recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) <= 7 * 86400
+    recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) <= recentNumberOfDays * 86400
     ##print(recent)
     deaths <- acquireCovid19(paste0(base, "/time_series_covid19_deaths_global.csv"), region=region)
     ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)

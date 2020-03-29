@@ -1,11 +1,13 @@
 library(oce)
 url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
+recentNumberOfDays <- 10
 now <- Sys.time()
 ## Cache for speed during code development
 if (!exists("d")) {
     message("downloading from ", url)
     d <- read.csv(url)
     d$time <- as.POSIXct(d$date, format="%d-%m-%Y")
+    d$num <- d$numconf + d$numprob
 } else {
     message("using downloaded data")
 }
@@ -13,7 +15,6 @@ regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswic
              "Newfoundland and Labrador", "Nova Scotia", "Ontario",
              "Prince Edward Island", "Quebec", "Saskatchewan",
              "Repatriated travellers")
-
 
 if (!interactive())
     png("canada_linear.png", width=7, height=4, unit="in", res=150, pointsize=11)
@@ -27,8 +28,8 @@ message("linear plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= 7 * 86400
-    oce.plot.ts(sub$time, sub$numconf + sub$numprob,
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    oce.plot.ts(sub$time, sub$num,
                 mar=c(2, 3, 1, 1),
                 ylab="Cases", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
@@ -45,13 +46,16 @@ message("log plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
-    ok <- sub$numconf + sub$numprob > 0
-    sub <- sub[ok, ]
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) < 7 * 86400
-    y <- sub$numconf + sub$numprob
-    if (any(y > 0)) {
-        ylim <- c(1, 2*max(y, na.rm=TRUE))
-        oce.plot.ts(sub$time, y,
+    sub <- sub[sub$num > 0, ]
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    lastDuplicated <- 0 == diff(tail(sub$numconf+sub$numprob, 2))
+    if (lastDuplicated) {
+        sub <- head(sub, -1)
+        message("NB. removed final point, because it duplicated its predecessor")
+    }
+    if (any(sub$numconf + sub$numprob > 0)) {
+        ylim <- c(1, 2*max(sub$numconf + sub$numprob, na.rm=TRUE))
+        oce.plot.ts(sub$time, sub$numconf + sub$numprob,
                     mar=c(2, 3, 1, 1),
                     ylab="Cases", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),

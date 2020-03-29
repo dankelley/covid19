@@ -380,18 +380,18 @@ summary {
 
 </div>
 
+<p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use.</p>
 
-<p>This website shows the reported incidence of the Covid-19 Novel coronavirus. The data are acquired at midnight (Halifax/America time) from <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series" class="uri">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a> and plotted with an <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R">R script</a> for the world, and <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/canada.R">another R script</a> for the provinces of Canada. (Both R scripts use the oce package, in the updated form that is provided at github.com/dankelley/oce online; you will need to build that package to reproduce these results.) In the logarithmic form, the case counts from the most recent week are highlighted, and these are fitted with a log-linear model that is shown as a line, the slope of which is used to compute the indicated doubling time.</p>
-<p>The black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the red symbols indicate deaths. The top graph shows raw counts, while the bottom one uses logarithmic scaling, where e.g. <span class="math inline">\(10^2\)</span> means one-hundred cases. In both cases, the range of the vertical axis is set by the confirmed-case curve.</p>
-<p>Note that the graphs are updated every few hours, but that the data only are only updated once a day (at least, as of March 2nd, 2020, when this website was set up).</p>
-<p>Also, note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just interested in this issue, and set up this website for that reason.</p>
-<p>The graphs below show results first for the world, and then for countries as listed in column 2 of the .csv files found at <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series" class="uri">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a> online. This data file has subregions of some countries, and anyone who is reasonably capable in the R language could do further investigations at that leve, by altering my <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/covid19.R">R script</a> and the <a href="https://raw.githubusercontent.com/dankelley/cofid19/master/Makefile">Makefile</a>
-that drives it.</p>
-<p>It should be noted that until 2020 March 24, the graphs showed green dots for recovered patients. However, that data stream was removed at the original source on 2020 March 23.</p>
+<p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The world-wide data are acquired automatically from <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series" class="uri">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a> and the Canada-wide are acquired at the same time, from <a href="https://health-infobase.canada.ca/src/data/summary_current.csv">https://health-infobase.canada.ca/src/data/summary_current.csv</a>.  The data are plotted with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a>, respectively, driven by a
+<a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob.  I am under the impression that the datasets are updated only once per day, but since the hour of the update is unknown to me, I have set up the system to re-download every two hours.  Both R scripts use the oce package, in the updated form that is provided at github.com/dankelley/oce online; you will need to build that package to reproduce these results. In the logarithmic form, the case counts from the most 10 days are highlighted, and these are fitted with a log-linear model that is shown as a line, the slope of which is used to compute the indicated doubling time.</p>
+
+<p>The gray and black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the pink and red symbols indicate deaths. The top graph shows raw counts, while the bottom one uses logarithmic scaling, where e.g. <span class="math inline">\(10^2\)</span> means one-hundred cases.  It should be noted that until 2020 March 24, the graphs showed green dots for recovered patients. However, that data stream was removed at the original source on 2020 March 23.</p>
+
 <p>I make no claim on the accuracy of the data I have downloaded to make these plots, nor of the correctness of my code or the plots shown here. Please report any coding errors to me at <a href="mailto:Dan.Kelley@Dal.Ca" class="email">Dan.Kelley@Dal.Ca</a> and I’ll see if I can make corrections. Also, please be on the lookout for old time-stamps on graphs, which will arise en-masse if the build system fails, or individually if country names change in the source data files.  (The latter is surprisingly common; from March 11 to March 13, about half a dozen country names changed in the data files.)</p>
-<p>This site is on a personal computer, and may be taken down at any time, if load becomes an issue.</p>
 
-Shortcut links:
+<p>This site is on a personal computer, and may be taken down at any time, if load becomes an issue or if the machine goes down and cannot be restarted, during the government mandated stay-at-home period.</p>
+
+<p>Shortcut links:
 <a href="#World">World</a> /
 <a href="#Afghanistan">Afghanistan</a> /
 <a href="#Algeria">Algeria</a> /
@@ -475,6 +475,7 @@ Shortcut links:
 <a href="#United_Arab_Emirates">United Arab Emirates</a> /
 <a href="#US">US</a> /
 <a href="#Vietnam">Vietnam</a>
+</p>
 
 
 
@@ -525,9 +526,9 @@ Shortcut links:
 
 <hr style="border-width: 5px;"> <h3 id="Canada_by_region">Canada by Region</h3>
 <p>Caution: the dataset used for the following two plots is <i>not</i> the same
-as that used for the previous nation-wide plot.  Another problem is that
-the most recent point may repeat the previous point, which will yield
-a biased increase in estimated doubling time.</p>
+as that used for the previous nation-wide plot.  Note that the final
+point is ignored if it equals the previous point, to get around what
+seems to be an error in the dataset.</p>
 <img src="canada_linear.png" alt="Error: no such png is available">
 
 <hr style="border-width: 3px;">

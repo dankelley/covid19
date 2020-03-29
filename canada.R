@@ -27,7 +27,7 @@ message("linear plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) < 7 * 86400
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= 7 * 86400
     oce.plot.ts(sub$time, sub$numconf + sub$numprob,
                 mar=c(2, 3, 1, 1),
                 ylab="Cases", xlim=tlim,

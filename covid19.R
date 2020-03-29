@@ -47,7 +47,7 @@ for (region in regions) {
     message("handling ", region)
     confirmed <- acquireCovid19(paste0(base, "/time_series_covid19_confirmed_global.csv"), region=region)
     lastTime <- tail(confirmed$time, 1)
-    recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) < 7 * 86400
+    recent <- abs(as.numeric(now) - as.numeric(confirmed$time)) <= 7 * 86400
     ##print(recent)
     deaths <- acquireCovid19(paste0(base, "/time_series_covid19_deaths_global.csv"), region=region)
     ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
@@ -57,21 +57,22 @@ for (region in regions) {
 
     par(mfrow=c(3,1), pch=20)
 
-    oce::oce.plot.ts(confirmed$time, confirmed$data, type="o", drawTimeRange=FALSE, col="gray",
+    oce::oce.plot.ts(confirmed$time, confirmed$data, type="o", drawTimeRange=FALSE,
+                     pch=20, col=ifelse(recent, "black", "gray"),
                      xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
-    points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
+    ## points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
     mtext(region, adj=0, cex=par("cex"))
     now <- lubridate::with_tz(Sys.time(), "UTC")
     ##mtext(paste("Graph updated", format(now, "%Y %b %d (%H:%M %Z)")), adj=1, cex=0.9)
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
-    points(deaths$time, trimZeros(deaths$data), col="red", type="o")
+    points(deaths$time, trimZeros(deaths$data), col=ifelse(recent, "red", "pink"), type="o")
     ## points(recovered$time, trimZeros(recovered$data), col="green3")
     ## legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
     ##        col=c("gray", "black", "green3", "red"),
     ##        legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
     legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
-           col=c("gray", "black", "red"),
-           legend=c("Confirmed", "Confirmed", "Deaths"))
+           col=c("black", "red"),
+           legend=c("Confirmed", "Deaths"))
     mtext(sprintf("Confirmed: %d; deaths: %d",
                   tail(confirmed$data, 1),
                   tail(deaths$data, 1)), side=3,
@@ -80,7 +81,8 @@ for (region in regions) {
     y <- log10(confirmed$data)
     y[!is.finite(y)] <- NA
     ylim <- c(0, 1.04*max(y, na.rm=TRUE))
-    oce::oce.plot.ts(confirmed$time, y, ylim=ylim, type="o", axes=FALSE, col="gray",
+    oce::oce.plot.ts(confirmed$time, y, ylim=ylim, type="o", axes=FALSE,
+                     pch=20, col=ifelse(recent, "black", "gray"),
                      xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5))
     oce::oce.axis.POSIXct(side=1, drawTimeRange=FALSE)
     box()
@@ -110,7 +112,7 @@ for (region in regions) {
     rug(side=2, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
     rug(side=4, x=smallTics, tcl=0.5*tcl, lwd=par("lwd"))
 
-    points(confirmed$time[recent], log10(confirmed$data[recent]), pch=20)
+    ##points(confirmed$time[recent], log10(confirmed$data[recent]), pch=20)
     x <- as.numeric(confirmed$time[recent])
     y <- log10(confirmed$data[recent])
     ok <- is.finite(x) & is.finite(y)
@@ -124,7 +126,7 @@ for (region in regions) {
         doubleTime <- log10(2) / growthRate
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
-    points(deaths$time, log10(deaths$data), col="red", pch=20, type="o")
+    points(deaths$time, log10(deaths$data), pch=20, col=ifelse(recent, "red", "pink"), type="o")
     ## points(recovered$time, log10(recovered$data), col="green3")
     ## Skip legend in bottom panel
     ##> legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
@@ -134,7 +136,7 @@ for (region in regions) {
     oce::oce.plot.ts(confirmed$time[-1], diff(confirmed$data), type="o", drawTimeRange=FALSE, col="gray",
                      xlab="Time", ylab="Daily Increase", mar=c(2,3,1,1.5))
     points(confirmed$time[recent][-1], diff(confirmed$data[recent]), pch=20)
-    points(deaths$time[-1], diff(deaths$data), col="red", pch=20, type="o")
+    points(deaths$time[-1], diff(deaths$data), col=ifelse(recent, "red", "pink"), pch=20, type="o")
 
     if (!interactive()) dev.off()
 }

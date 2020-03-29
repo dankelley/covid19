@@ -100,7 +100,7 @@ for (region in regions) {
         doubleTime <- log10(2) / growthRate
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
-    points(deaths$time, log10(deaths$data), pch=20, col=ifelse(recent, "red", "pink"), type="o")
+    points(deaths$time, deaths$data, pch=20, col=ifelse(recent, "red", "pink"), type="o")
     ## points(recovered$time, log10(recovered$data), col="green3")
     ## Skip legend in bottom panel
     ##> legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",

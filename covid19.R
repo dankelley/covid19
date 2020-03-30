@@ -101,17 +101,13 @@ for (region in regions) {
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
     points(deaths$time, deaths$data, pch=20, col=ifelse(recent, "red", "pink"), type="o")
-    ## points(recovered$time, log10(recovered$data), col="green3")
-    ## Skip legend in bottom panel
-    ##> legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
-    ##>        col=c("gray", "black", "green3", "red"),
-    ##>        legend=c("Confirmed", "Confirmed", "Recoveries", "Deaths"))
 
-    oce::oce.plot.ts(confirmed$time[-1], diff(confirmed$data), type="o", drawTimeRange=FALSE, col="gray",
-                     xlab="Time", ylab="Daily Increase", mar=c(2,3,1,1.5))
+    ## Daily change
+    ylim <- c(0, max(diff(confirmed$data)))
+    oce::oce.plot.ts(confirmed$time[-1], trimZeros(diff(confirmed$data)), type="p", drawTimeRange=FALSE, col="gray",
+                     xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
     points(confirmed$time[recent][-1], diff(confirmed$data[recent]), pch=20)
-    points(deaths$time[-1], diff(deaths$data), col=ifelse(recent, "red", "pink"), pch=20, type="o")
-
+    points(deaths$time[-1], trimZeros(diff(deaths$data)), col=ifelse(recent, "red", "pink"), pch=20)
     if (!interactive()) dev.off()
 }
 

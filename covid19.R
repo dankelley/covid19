@@ -58,8 +58,12 @@ for (region in regions) {
 
     par(mfrow=c(3,1), pch=20)
 
-    oce::oce.plot.ts(confirmed$time, confirmed$data, type="o", drawTimeRange=FALSE,
+    tlim <- range(confirmed$time)
+    oce::oce.plot.ts(confirmed$time, confirmed$data,
+                     xlim=tlim,
+                     type="o", drawTimeRange=FALSE,
                      pch=20, col=ifelse(recent, "black", "gray"),
+                     cex=par("cex") * ifelse(confirmed$data==0, 0.25, 1),
                      xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
     ## points(confirmed$time[recent], confirmed$data[recent], pch=20, col="black")
     mtext(region, adj=0, cex=par("cex"))
@@ -81,7 +85,8 @@ for (region in regions) {
     ## Log axis
     ylim <- c(1, 2*max(confirmed$data, na.rm=TRUE))
     positive <- confirmed$data > 0
-    oce::oce.plot.ts(confirmed$time[positive], confirmed$data[positive], ylim=ylim, type="o",
+    oce::oce.plot.ts(confirmed$time[positive], confirmed$data[positive],
+                     xlim=tlim, ylim=ylim, type="o",
                      log="y", logStyle="decade",
                      pch=20, col=ifelse(recent, "black", "gray"),
                      xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5),
@@ -103,11 +108,18 @@ for (region in regions) {
     points(deaths$time, deaths$data, pch=20, col=ifelse(recent, "red", "pink"), type="o")
 
     ## Daily change
-    ylim <- c(0, max(diff(confirmed$data)))
-    oce::oce.plot.ts(confirmed$time[-1], trimZeros(diff(confirmed$data)), type="p", drawTimeRange=FALSE, col="gray",
+    y <- diff(confirmed$data)
+    ylim <- c(0, max(y))
+    oce::oce.plot.ts(confirmed$time[-1], y,
+                     xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",
+                     pch=20, cex=par("cex") * ifelse(y==0, 0, 1),
                      xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
-    points(confirmed$time[recent][-1], diff(confirmed$data[recent]), pch=20)
-    points(deaths$time[-1], trimZeros(diff(deaths$data)), col=ifelse(recent, "red", "pink"), pch=20)
+    y <- diff(confirmed$data[recent])
+    points(confirmed$time[recent][-1], diff(confirmed$data[recent]),
+           pch=20, cex=par("cex") * ifelse(y==0, 0, 1))
+    y <- diff(deaths$data)
+    points(deaths$time[-1], y, col=ifelse(recent, "red", "pink"),
+           pch=20, cex=par("cex") * ifelse(y==0, 0, 1))
     if (!interactive()) dev.off()
 }
 

@@ -17,7 +17,7 @@ regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswic
              "Repatriated travellers")
 
 if (!interactive())
-    png("canada_linear.png", width=7, height=4, unit="in", res=150, pointsize=11)
+    png("canada_linear.png", width=7, height=6, unit="in", res=150, pointsize=11)
 par(mfrow=c(3, 4))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
 tlim <- range(d$time)
@@ -40,9 +40,12 @@ for (province in regions) {
 if (!interactive())
     dev.off()
 if (!interactive())
-    png("canada_log.png", width=7, height=4, unit="in", res=150, pointsize=11)
+    png("canada_log.png", width=7, height=6, unit="in", res=150, pointsize=11)
 par(mfrow=c(3, 4))
 message("log plots")
+## Uniform scale for all log plots, to make
+## it easier to see slope differences.
+ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
@@ -54,7 +57,6 @@ for (province in regions) {
         message("NB. removed final point, because it duplicated its predecessor")
     }
     if (any(sub$numconf + sub$numprob > 0)) {
-        ylim <- c(1, 2*max(sub$num, na.rm=TRUE))
         positive <- sub$num > 0
         oce.plot.ts(sub$time[positive], sub$num[positive],
                     mar=c(2, 3, 1, 1),

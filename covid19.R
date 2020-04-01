@@ -1,4 +1,4 @@
-requireNamespace("oce")
+requireNamespace("oce")                # for decade-format log axis, use github "develop" version
 requireNamespace("curl")
 
 recentNumberOfDays <- 10

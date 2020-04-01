@@ -28,6 +28,11 @@ message("linear plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
+    lastDuplicated <- 0 == diff(tail(sub$numconf+sub$numprob, 2))
+    if (lastDuplicated) {
+        sub <- head(sub, -1)
+        message("NB. removed final point, because it duplicated its predecessor")
+    }
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,
                 mar=c(2, 3, 1, 1),

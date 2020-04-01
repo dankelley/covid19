@@ -91,7 +91,7 @@ for (region in regions) {
                      xlim=tlim, ylim=ylim, type="o",
                      log="y", logStyle="decade",
                      pch=20,
-                     col=ifelse(recent, "black", "gray"),
+                     col=ifelse(recent[positive], "black", "gray"),
                      xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5),
                      drawTimeRange=FALSE)
     ##points(confirmed$time[recent], log10(confirmed$data[recent]), pch=20)

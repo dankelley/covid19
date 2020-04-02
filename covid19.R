@@ -56,7 +56,7 @@ for (region in regions) {
     if (!interactive()) png(paste0("covid19_", region, ".png"),
                             width=5, height=5, unit="in", res=120, pointsize=11)
 
-    par(mfrow=c(3,1), pch=20)
+    par(mfrow=c(3,1), pch=20, lwd=0.9)
 
     tlim <- range(confirmed$time)
     oce::oce.plot.ts(confirmed$time, confirmed$data,
@@ -114,9 +114,12 @@ for (region in regions) {
     y <- diff(confirmed$data)
     ylim <- c(0, max(y))
     oce::oce.plot.ts(confirmed$time[-1], y,
-                     xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",
+                     xlim=tlim, type="o", drawTimeRange=FALSE, col="gray",
                      pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1),
                      xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
+    ## spline with df proportional to data length (the 7 is arbitrary)
+    lines(smooth.spline(confirmed$time[-1], y, df=length(y)/7),
+                        col="lightgray")
     y <- diff(confirmed$data[recent])
     points(confirmed$time[recent][-1], diff(confirmed$data[recent]),
            pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1))

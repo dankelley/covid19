@@ -18,7 +18,7 @@ regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswic
 
 if (!interactive())
     png("canada_linear.png", width=7, height=5, unit="in", res=150, pointsize=11)
-par(mfrow=c(3, 4))
+par(mfrow=c(4, 3))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
 tlim <- range(d$time)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
@@ -46,7 +46,7 @@ if (!interactive())
     dev.off()
 if (!interactive())
     png("canada_log.png", width=7, height=5, unit="in", res=150, pointsize=11)
-par(mfrow=c(3, 4))
+par(mfrow=c(4, 3))
 message("log plots")
 ## Uniform scale for all log plots, to make
 ## it easier to see slope differences.

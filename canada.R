@@ -81,7 +81,6 @@ for (province in regions) {
         y <- log10(y[ok])
         canFit <- length(x) > 3 && tolower(province) != "repatriated travellers"
         if (canFit) {
-            message("FITTING")
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
             lines(xx, 10^predict(m, list(x=xx)))
@@ -95,5 +94,26 @@ for (province in regions) {
     }
     mtext(province, cex=par("cex"), adj=0)
 }
+if (!interactive())
+    dev.off()
+
+if (!interactive())
+    png("canada_change.png", width=7, height=5, unit="in", res=150, pointsize=11)
+par(mfrow=c(4, 3))
+for (province in regions) {
+    message(province)
+    sub <- subset(d, tolower(prname)==tolower(province))
+    y <- diff(sub$num)
+    oce.plot.ts(sub$time[-1], y, drawTimeRange=FALSE, ylab="Daily Change", type="p",
+                mar=c(2, 3, 1, 1),
+                xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))
+    ## spline with df proportional to data length (the 7 is arbitrary)
+    ok <- is.finite(y)
+    lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="darkgray")
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    points(sub$time[-1][recent], y[recent], pch=20, cex=par("cex"))
+    mtext(paste(province, "cases"), cex=par("cex"))
+}
+
 if (!interactive())
     dev.off()

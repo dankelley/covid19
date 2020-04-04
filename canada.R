@@ -1,5 +1,8 @@
 library(oce)
-url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
+## The name of the Canadian data file changed sometime near the start of 
+## April, from the commented-out line to the line after it.
+#url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
+url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
 recentNumberOfDays <- 10
 now <- Sys.time()
 ## Cache for speed during code development
@@ -28,7 +31,7 @@ message("linear plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
-    lastDuplicated <- 0 == diff(tail(sub$numconf+sub$numprob, 2))
+    lastDuplicated <- 0 == diff(tail(sub$num, 2))
     if (lastDuplicated) {
         sub <- head(sub, -1)
         message("NB. removed final point, because it duplicated its predecessor")
@@ -70,7 +73,7 @@ for (province in regions) {
                     cex=ifelse(recent, 1, 0.7),
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
-        if (any(sub$numdeaths) > 0)
+        if (any(sub$numdeaths[is.finite(sub$numdeaths)]) > 0)
             points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
         y <- (sub$numconf + sub$numprob)[recent]
         ok <- y > 0
@@ -78,6 +81,7 @@ for (province in regions) {
         y <- log10(y[ok])
         canFit <- length(x) > 3 && tolower(province) != "repatriated travellers"
         if (canFit) {
+            message("FITTING")
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
             lines(xx, 10^predict(m, list(x=xx)))

@@ -94,6 +94,7 @@ for (province in regions) {
         text(0.5, 0.5, "No counts")
     }
     mtext(province, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()
@@ -113,7 +114,8 @@ for (province in regions) {
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="darkgray")
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=par("cex"))
-    mtext(paste(province, "cases"), cex=par("cex"))
+    mtext(paste(province, "cases"), adj=0, cex=par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
 }
 
 if (!interactive())

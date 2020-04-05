@@ -39,12 +39,12 @@ for (province in regions) {
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,
                 mar=c(2, 3, 1, 1),
-                ylab="Cases", xlim=tlim,
+                ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
     mtext(province, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()
@@ -69,7 +69,7 @@ for (province in regions) {
         positive <- sub$num > 0
         oce.plot.ts(sub$time[positive], sub$num[positive],
                     mar=c(2, 3, 1, 1),
-                    ylab="Cases", xlim=tlim,
+                    ylab="Cases & Deaths", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
                     ylim=ylim, log="y", logStyle="decade",
@@ -94,7 +94,7 @@ for (province in regions) {
         text(0.5, 0.5, "No counts")
     }
     mtext(province, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()
@@ -106,7 +106,7 @@ for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
     y <- diff(sub$num)
-    oce.plot.ts(sub$time[-1], y, drawTimeRange=FALSE, ylab="Daily Change", type="p",
+    oce.plot.ts(sub$time[-1], y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
                 mar=c(2, 3, 1, 1),
                 xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))
     ## spline with df proportional to data length (the 7 is arbitrary)
@@ -114,8 +114,8 @@ for (province in regions) {
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="darkgray")
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=par("cex"))
-    mtext(paste(province, "cases"), adj=0, cex=par("cex"))
-    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
+    mtext(province, adj=0, cex=par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 
 if (!interactive())

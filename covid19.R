@@ -69,6 +69,7 @@ for (region in regions) {
     mtext(region, adj=0, cex=par("cex"))
     now <- lubridate::with_tz(Sys.time(), "UTC")
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
+    ##mtext(paste(format(tail(confirmed$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
     points(deaths$time, deaths$data,
            pch=20,
            col=ifelse(recent, "red", "pink"),

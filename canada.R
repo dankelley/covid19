@@ -43,7 +43,8 @@ for (province in regions) {
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
-    mtext(province, cex=par("cex"))
+    mtext(province, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%Y %b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()

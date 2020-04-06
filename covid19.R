@@ -1,11 +1,13 @@
 requireNamespace("oce")                # for decade-format log axis, use github "develop" version
 requireNamespace("curl")
+load("population.rda") # population
 
 recentNumberOfDays <- 10
 now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "Canada"
+#regions <- if (length(args)) args else "Canada"
+regions <- if (length(args)) args else "Taiwan*"
 
 maybeDownload <- function(url, file, hours=1)
 {
@@ -81,9 +83,13 @@ for (region in regions) {
     legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"))
-    mtext(sprintf("Confirmed: %d; deaths: %d",
+    pop <- subset(population, region==place)$number
+    mtext(sprintf("Confirmed: %d (%.2g%%); deaths: %d (%.2g%%)",
                   tail(confirmed$data, 1),
-                  tail(deaths$data, 1)), side=3,
+                  100*tail(confirmed$data,1)/pop,
+                  tail(deaths$data, 1),
+                  100*tail(deaths$data, 1)/pop),
+                  side=3,
           cex=par("cex"))
     ## Log axis
     ylim <- c(1, 2*max(confirmed$data, na.rm=TRUE))

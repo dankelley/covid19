@@ -1,8 +1,17 @@
 library(oce)
-## The name of the Canadian data file changed sometime near the start of 
+## The name of the Canadian data file changed sometime near the start of
 ## April, from the commented-out line to the line after it.
 #url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
 url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
+fixLastDuplicated <- function(x)
+{
+    if (0 == diff(tail(x$num, 2))) {
+        x <- head(x, -1)
+        message("NB. removed final point, because it duplicated its predecessor")
+    }
+    x
+}
+
 recentNumberOfDays <- 10
 now <- Sys.time()
 ## Cache for speed during code development
@@ -31,11 +40,7 @@ message("linear plots")
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
-    lastDuplicated <- 0 == diff(tail(sub$num, 2))
-    if (lastDuplicated) {
-        sub <- head(sub, -1)
-        message("NB. removed final point, because it duplicated its predecessor")
-    }
+    sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,
                 mar=c(2, 3, 1, 1),
@@ -58,6 +63,7 @@ ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
+    sub <- fixLastDuplicated(sub)
     sub <- sub[sub$num > 0, ]
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     lastDuplicated <- 0 == diff(tail(sub$numconf+sub$numprob, 2))
@@ -105,6 +111,7 @@ par(mfrow=c(4, 3))
 for (province in regions) {
     message(province)
     sub <- subset(d, tolower(prname)==tolower(province))
+    sub <- fixLastDuplicated(sub)
     y <- diff(sub$num)
     oce.plot.ts(sub$time[-1], y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
                 mar=c(2, 3, 1, 1),

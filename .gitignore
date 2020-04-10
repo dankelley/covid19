@@ -3,3 +3,4 @@
 *.csv
 .DS_Store
 *.swp
+*.out

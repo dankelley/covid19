@@ -91,7 +91,7 @@ for (region in regions) {
     deaths <- sub$deaths
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
     if (any(num > 0)) {
-        positive <- num > 0
+        positive <- is.finite(num) & num > 0
         oce.plot.ts(time[positive], num[positive],
                     mar=c(2, 3, 1, 1),
                     ylab="Cases & Deaths", xlim=tlim,

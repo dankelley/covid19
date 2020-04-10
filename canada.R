@@ -132,19 +132,19 @@ message("# daily change")
 par(mfrow=c(2, 5))
 for (region in regions) {
     message("  ", region)
-    subTrial <- ds[ds$state == region, ]
-    sub <- fixDuplicatesAtEnd(subTrial)
+    sub <- ds[ds$state == region, ]
+    sub <- fixDuplicatesAtEnd(sub)
     time <- as.POSIXct(sub$date, tz="UTC")
-    num <- sub$confirmed
-    y <- diff(num)
-    oce.plot.ts(time[-1], y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
-                mar=c(2, 3, 1, 1),
-                xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))
+    y <- sub$confirmed_new
+    oce.plot.ts(time, y,
+                xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",
+                pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1),
+                xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- is.finite(y)
-    lines(smooth.spline(time[-1][ok], y[ok], df=length(y)/7), col="magenta")
+    lines(smooth.spline(time[ok], y[ok], df=length(y)/7), col="magenta")
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
-    points(time[-1][recent], y[recent], pch=20, cex=par("cex"))
+    points(time[recent], y[recent], pch=20, cex=par("cex"))
     mtext(abbreviateRegion(region), cex=par("cex"), adj=0)
     mtext(paste(format(tail(time,1), "%b %d")), adj=1, cex=par("cex"))
 }

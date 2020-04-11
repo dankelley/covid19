@@ -1,4 +1,4 @@
-# cofid19
+# covid19
 
 This is a system for graphing covid19 incidence over time.
 

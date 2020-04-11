@@ -5,7 +5,6 @@ recentNumberOfDays <- 10
 now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "Canada"
 regions <- if (length(args)) args else "World"
 
 if (!exists("ds")) # cache to save server load during code development

@@ -54,14 +54,13 @@ for (region in regions) {
     par(mfrow=c(3,1), pch=20, lwd=0.9)
 
     ##tlim <- range(sub$time)
-    oce::oce.plot.ts(sub$date, sub$confirmed,
-                     xlim=tlim,
-                     type="o", drawTimeRange=FALSE,
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     cex=par("cex") * ifelse(sub$confirmed==0, 0.25, 1),
-                     xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
-    mtext(region, adj=0, cex=par("cex"))
+    oce::oce.plot.ts(sub$date, sub$confirmed, xlim=tlim, type="l", col="gray",
+                     drawTimeRange=FALSE, xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
+    points(sub$time, sub$confirmed,
+           pch=20,
+           col=ifelse(recent, "black", "gray"),
+           cex=par("cex") * ifelse(sub$deaths==0, 0.25, 1))
+     mtext(region, adj=0, cex=par("cex"))
     now <- lubridate::with_tz(Sys.time(), "UTC")
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
     points(sub$time, sub$deaths,

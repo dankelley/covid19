@@ -20,11 +20,15 @@ abbreviateRegion <- function(r, wide=TRUE)
     r
 }
 
-fixDuplicatesAtEnd <- function(sub)
+fixDuplicatesAtEnd <- function(sub, disable=TRUE)
 {
-    if (0 == diff(tail(sub$confirmed, 2))) {
-        sub <- head(sub, -1)
-        message("    NOTE: removed final point, because it duplicated its predecessor")
+    if (disable) {
+        message("    NOTE: fixDuplicatedAtEnd was disabled on 2020-04-11 because the updated dataset does not suffer routine duplicates")
+    } else {
+        if (0 == diff(tail(sub$confirmed, 2))) {
+            sub <- head(sub, -1)
+            message("    NOTE: removed final point, because it duplicated its predecessor")
+        }
     }
     sub
 }

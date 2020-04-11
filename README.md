@@ -9,7 +9,7 @@ request on github.  While editing, *do not* add line breaks that do not match
 local patterns, and *do not* merge together adjacent lines; also, please resist
 the temptation to change any text other than as instructed below.
 
-1. Find the "proper" name for the country in the source file https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv.  This proper name must be used, not whatever you regard the name to be.
+1. Find the "proper" name for the country in the source file https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv.  This proper name must be used, not whatever you regard the name to be.
 2. Add the name to the `Makefile`, along with the other names. Put it in
    alphabetical order.  Be very careful not to permit your text editor to add a line break.
 3. Edit the `index.html` file.  Look for the line containing the text `Shortcut

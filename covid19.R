@@ -5,7 +5,7 @@ recentNumberOfDays <- 10
 now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "World"
+regions <- if (length(args)) args else "Canada"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- world("country")
@@ -105,13 +105,14 @@ for (region in regions) {
     y <- sub$confirmed_new
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time, y,
-                     xlim=tlim, type="o", drawTimeRange=FALSE, col="gray",
-                     pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1),
+                     xlim=tlim, type="l", drawTimeRange=FALSE, col="gray",
                      xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
     ## spline with df proportional to data length (the 7 is arbitrary)
+    points(sub$time, y,
+           pch=20,
+           col=ifelse(recent, "black", "gray"),
+           cex=par("cex") * ifelse(sub$deaths==0, 0.25, 1))
     lines(smooth.spline(sub$time, y, df=length(y)/7), col="magenta")
-    points(sub$time[recent], sub$confirmed_new[recent],
-           pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1))
     if (!interactive()) dev.off()
 }
 

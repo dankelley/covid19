@@ -3,8 +3,10 @@ library(oce)
 ds <- world("state")
 tlim <- range(as.POSIXct(ds$date))
 
-abbreviateRegion <- function(r)
+abbreviateRegion <- function(r, wide=TRUE)
 {
+    if (wide)
+        return(r)
     if (r == "Newfoundland and Labrador")
         return("NFLD & LAB")
     else if (r == "Prince Edward Island")

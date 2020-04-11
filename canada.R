@@ -1,5 +1,11 @@
 library(COVID19)
 library(oce)
+width <- 6
+height <- 4.5
+res <- 150
+pointsize <- 8
+mar <- c(1.8, 3, 0.75, 1.5)
+
 ds <- world("state")
 tlim <- range(as.POSIXct(ds$date))
 
@@ -18,19 +24,6 @@ abbreviateRegion <- function(r, wide=TRUE)
     else if (r == "Saskatchewan")
         return("Sask.")
     r
-}
-
-fixDuplicatesAtEnd <- function(sub, disable=TRUE)
-{
-    if (disable) {
-        message("    NOTE: fixDuplicatedAtEnd was disabled on 2020-04-11 because the updated dataset does not suffer routine duplicates")
-    } else {
-        if (0 == diff(tail(sub$confirmed, 2))) {
-            sub <- head(sub, -1)
-            message("    NOTE: removed final point, because it duplicated its predecessor")
-        }
-    }
-    sub
 }
 
 ## The name of the Canadian data file changed sometime near the start of
@@ -53,31 +46,31 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
              "Prince Edward Island", "Quebec", "Saskatchewan")
 
 if (!interactive())
-    png("canada_linear.png", width=7, height=5, unit="in", res=150, pointsize=11)
+    png("canada_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 
 message("# linear plots")
 par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
-    subTrial <- ds[ds$state == region, ]
-    sub <- fixDuplicatesAtEnd(subTrial)
+    sub <- ds[ds$state == region, ]
     time <- as.POSIXct(sub$date, tz="UTC")
     num <- sub$confirmed
     deaths <- sub$deaths
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
     oce.plot.ts(time, num,
-                mar=c(2, 3, 1, 1),
+                mar=mar,
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
-    mtext(abbreviateRegion(region), cex=par("cex"), adj=0)
-    mtext(paste(format(tail(time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(paste0(" ", abbreviateRegion(region), " / ",
+                 format(tail(time,1), "%b %d")),
+          cex=par("cex"), adj=0, line=-1)
 }
 if (!interactive())
     dev.off()
 if (!interactive())
-    png("canada_log.png", width=7, height=5, unit="in", res=150, pointsize=11)
+    png("canada_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 
 message("#log plots")
 par(mfrow=c(5, 2))
@@ -90,8 +83,7 @@ for (region in regions) {
 }
 for (region in regions) {
     message("  ", region)
-    subTrial <- ds[ds$state == region, ]
-    sub <- fixDuplicatesAtEnd(subTrial)
+    sub <- ds[ds$state == region, ]
     time <- as.POSIXct(sub$date, tz="UTC")
     num <- sub$confirmed
     deaths <- sub$deaths
@@ -99,13 +91,12 @@ for (region in regions) {
     if (any(num > 0)) {
         positive <- is.finite(num) & num > 0
         oce.plot.ts(time[positive], num[positive],
-                    mar=c(2, 3, 1, 1),
+                    mar=mar,
                     ylab="Cases & Deaths", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent[positive], "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
-        ## FIXME: numdeaths name?
         if (any(deaths[is.finite(deaths)] > 0))
             points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
         y <- num[recent]
@@ -119,40 +110,42 @@ for (region in regions) {
             lines(xx, 10^predict(m, list(x=xx)))
             growthRate <- coef(m)[2] * 86400 # in days
             doubleTime <- log10(2) / growthRate
-            mtext(sprintf(" Doubling time: %.1fd", doubleTime), side=3, adj=0, line=-1, cex=par("cex"))
+            mtext(sprintf(" Doubling time: %.1fd", doubleTime), side=3, adj=0, line=-2, cex=par("cex"))
         }
     } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")
         text(0.5, 0.5, "No counts")
     }
-    mtext(abbreviateRegion(region), cex=par("cex"), adj=0)
-    mtext(paste(format(tail(time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(paste0(" ", abbreviateRegion(region), " / ",
+                 format(tail(time,1), "%b %d")),
+          cex=par("cex"), adj=0, line=-1)
 }
 if (!interactive())
     dev.off()
 
 if (!interactive())
-    png("canada_change.png", width=7, height=5, unit="in", res=150, pointsize=11)
+    png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 
 message("# daily change")
 par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    sub <- fixDuplicatesAtEnd(sub)
     time <- as.POSIXct(sub$date, tz="UTC")
     y <- sub$confirmed_new
     oce.plot.ts(time, y,
                 xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",
+                mar=mar,
                 pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1),
-                xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
+                xlab="Time", ylab="Daily Change")
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- is.finite(y)
     lines(smooth.spline(time[ok], y[ok], df=length(y)/7), col="magenta")
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
     points(time[recent], y[recent], pch=20, cex=par("cex"))
-    mtext(abbreviateRegion(region), cex=par("cex"), adj=0)
-    mtext(paste(format(tail(time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(paste0(" ", abbreviateRegion(region), " / ",
+                 format(tail(time,1), "%b %d")),
+          cex=par("cex"), adj=0, line=-1)
 }
 
 if (!interactive())

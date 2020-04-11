@@ -47,10 +47,10 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
              "Prince Edward Island", "Quebec", "Saskatchewan")
 
 if (!interactive())
-    png("canada_linear.png", width=7, height=3, unit="in", res=150, pointsize=11)
+    png("canada_linear.png", width=7, height=5, unit="in", res=150, pointsize=11)
 
 message("# linear plots")
-par(mfrow=c(2, 5))
+par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     subTrial <- ds[ds$state == region, ]
@@ -71,10 +71,10 @@ for (region in regions) {
 if (!interactive())
     dev.off()
 if (!interactive())
-    png("canada_log.png", width=7, height=3, unit="in", res=150, pointsize=11)
+    png("canada_log.png", width=7, height=5, unit="in", res=150, pointsize=11)
 
 message("#log plots")
-par(mfrow=c(2, 5))
+par(mfrow=c(5, 2))
 ## Uniform scale for all log plots, to make
 ## it easier to see slope differences.
 ylim <- c(1, 0)
@@ -126,10 +126,10 @@ if (!interactive())
     dev.off()
 
 if (!interactive())
-    png("canada_change.png", width=7, height=3, unit="in", res=150, pointsize=11)
+    png("canada_change.png", width=7, height=5, unit="in", res=150, pointsize=11)
 
 message("# daily change")
-par(mfrow=c(2, 5))
+par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]

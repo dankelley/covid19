@@ -5,7 +5,7 @@ all: force
 	/usr/local/bin/Rscript covid19.R $(regions) # does not have 'Taiwan'
 	/usr/local/bin/Rscript canada.R
 	#Rscript canada_new.R
-	date > last_upated.html
+	date > last_updated.html
 	chmod a+r last_updated.html
 force:
 

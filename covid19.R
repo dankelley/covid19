@@ -52,7 +52,7 @@ for (region in regions) {
 
     ## Cases, linear axis
     oce::oce.plot.ts(sub$date, sub$confirmed,
-                     xlim=tlim, type="o",
+                     xlim=tlim, type="l",
                      pch=20,
                      col=ifelse(recent, "black", "gray"),
                      xlab="Time", ylab="Cumulative Case Count",
@@ -83,13 +83,17 @@ for (region in regions) {
     ylim <- c(1, 2*max(sub$confirmed, na.rm=TRUE))
     positive <- sub$confirmed > 0
     oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive],
-                     xlim=tlim, ylim=ylim, type="o",
+                     xlim=tlim, ylim=ylim, type="l",
                      pch=20,
                      log="y", logStyle="decade",
                      col=ifelse(recent[positive], "black", "gray"),
                      xlab="Time", ylab="Cumulative Case Count",
                      mar=c(2, 3, 1, 1.5),
                      drawTimeRange=FALSE)
+    points(sub$time[positive], sub$confirmed[positive],
+           pch=20,
+           col=ifelse(recent[positive], "black", "gray"),
+           cex=par("cex"))
     x <- as.numeric(sub$time[recent])
     y <- log10(sub$confirmed[recent])
     ok <- is.finite(x) & is.finite(y)

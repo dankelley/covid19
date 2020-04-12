@@ -48,11 +48,12 @@ for (region in regions) {
         next
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=5, height=5, unit="in", res=120, pointsize=11)
+                            width=5, height=5, unit="in", res=150, pointsize=11)
     par(mfrow=c(3,1))
 
     ## Cases, linear axis
-    oce::oce.plot.ts(sub$date, sub$confirmed,
+    ok <- is.finite(sub$confirmed)
+    oce::oce.plot.ts(sub$date[ok], sub$confirmed[ok],
                      xlim=tlim,
                      type="l",
                      col="gray",

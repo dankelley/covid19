@@ -28,6 +28,7 @@ tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
 confirmedWorld <- unlist(lapply(A, function(x) sum(x$confirmed)))
 deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
 now <- lubridate::with_tz(Sys.time(), "UTC")
+mar <- c(2, 3, 1, 1.5)
 
 for (region in regions) {
     message("handling ", region)
@@ -52,11 +53,12 @@ for (region in regions) {
 
     ## Cases, linear axis
     oce::oce.plot.ts(sub$date, sub$confirmed,
-                     xlim=tlim, type="l",
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     xlab="Time", ylab="Cumulative Case Count",
-                     mar=c(2,3,1,1.5),
+                     xlim=tlim,
+                     type="l",
+                     col="gray",
+                     xlab="Time",
+                     ylab="Cumulative Case Count",
+                     mar=mar,
                      drawTimeRange=FALSE)
     points(sub$time, sub$confirmed,
            pch=20,
@@ -82,13 +84,14 @@ for (region in regions) {
     ## Cases, log axis
     ylim <- c(1, 2*max(sub$confirmed, na.rm=TRUE))
     positive <- sub$confirmed > 0
-    oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive],
-                     xlim=tlim, ylim=ylim, type="l",
-                     pch=20,
-                     log="y", logStyle="decade",
-                     col=ifelse(recent[positive], "black", "gray"),
-                     xlab="Time", ylab="Cumulative Case Count",
-                     mar=c(2, 3, 1, 1.5),
+    oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive], log="y", logStyle="decade",
+                     xlim=tlim,
+                     ylim=ylim,
+                     type="l",
+                     col="gray",
+                     xlab="Time",
+                     ylab="Cumulative Case Count",
+                     mar=mar,
                      drawTimeRange=FALSE)
     points(sub$time[positive], sub$confirmed[positive],
            pch=20,
@@ -116,11 +119,12 @@ for (region in regions) {
     y <- sub$confirmed_new
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time, y,
-                     xlim=tlim, type="l",
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     xlab="Time", ylab="Daily Case Count",
-                     mar=c(2,3,1,1.5),
+                     xlim=tlim,
+                     type="l",
+                     col="gray",
+                     xlab="Time",
+                     ylab="Daily Case Count",
+                     mar=mar,
                      drawTimeRange=FALSE)
     ## spline with df proportional to data length (the 7 is arbitrary)
     points(sub$time, y,

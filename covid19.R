@@ -6,7 +6,6 @@ recentNumberOfDays <- 10
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
 regions <- if (length(args)) args else "Mozambique"
-regions <- if (length(args)) args else "Diamond Princess"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- world("country")
@@ -55,17 +54,14 @@ for (region in regions) {
     ok <- is.finite(sub$confirmed)
     oce::oce.plot.ts(sub$date[ok], sub$confirmed[ok],
                      xlim=tlim,
-                     type="l",
-                     col="gray",
+                     type="p",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     cex=par("cex"),
                      xlab="Time",
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    lines(sub$date[ok], sub$confirmed[ok], col="gray", lwd=par("lwd")) # why needed???
-    points(sub$time, sub$confirmed,
-           pch=20,
-           col=ifelse(recent, "black", "gray"),
-           cex=par("cex"))
     mtext(region, adj=0, cex=par("cex"))
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
     points(sub$time, sub$deaths,
@@ -89,8 +85,10 @@ for (region in regions) {
     oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive], log="y", logStyle="decade",
                      xlim=tlim,
                      ylim=ylim,
-                     type="l",
-                     col="gray",
+                     type="p",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     cex=par("cex"),
                      xlab="Time",
                      ylab="Cumulative Case Count",
                      mar=mar,
@@ -110,7 +108,7 @@ for (region in regions) {
         abline(m)
         growthRate <- coef(m)[2] * 86400 # in days
         doubleTime <- log10(2) / growthRate
-        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
+        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=par("cex"))
     }
     points(sub$time, sub$deaths,
            pch=20,
@@ -122,8 +120,10 @@ for (region in regions) {
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time, y,
                      xlim=tlim,
-                     type="l",
-                     col="gray",
+                     type="p",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     cex=par("cex"),
                      xlab="Time",
                      ylab="Daily Case Count",
                      mar=mar,

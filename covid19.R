@@ -51,8 +51,7 @@ for (region in regions) {
     par(mfrow=c(3,1))
 
     ## Cases, linear axis
-    ok <- is.finite(sub$confirmed)
-    oce::oce.plot.ts(sub$date[ok], sub$confirmed[ok],
+    oce::oce.plot.ts(sub$date, sub$confirmed,
                      xlim=tlim,
                      type="p",
                      pch=20,
@@ -62,6 +61,10 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
+    points(sub$time, sub$confirmed,
+           pch=20,
+           col=ifelse(recent, "black", "gray"),
+           cex=par("cex"))
     mtext(region, adj=0, cex=par("cex"))
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
     points(sub$time, sub$deaths,

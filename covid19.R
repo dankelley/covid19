@@ -2,10 +2,11 @@ library(COVID19)
 library(oce)
 
 recentNumberOfDays <- 10
-now <- Sys.time()
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
+regions <- if (length(args)) args else "Mozambique"
+regions <- if (length(args)) args else "Diamond Princess"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- world("country")
@@ -26,6 +27,7 @@ dateWorld <- names(lapply(A, function(x) x$date[[1]]))
 tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
 confirmedWorld <- unlist(lapply(A, function(x) sum(x$confirmed)))
 deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
+now <- lubridate::with_tz(Sys.time(), "UTC")
 
 for (region in regions) {
     message("handling ", region)
@@ -41,32 +43,32 @@ for (region in regions) {
     sub$time <- as.POSIXct(sub$date)
     lastTime <- tail(sub$time, 1)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    if (sum(recent) < 3)
-        stop("error: under 3 recent data. Is the data stream broken?")
-    ##print(recent)
-    deaths <- sub$deaths
-    ## recovered <- acquireCovid19(paste0(base, "/time_series_19-covid-Recovered.csv"), region=region)
+    if (!sum(recent))
+        next
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
                             width=5, height=5, unit="in", res=120, pointsize=11)
+    par(mfrow=c(3,1))
 
-    par(mfrow=c(3,1), pch=20, lwd=0.9)
-
-    ##tlim <- range(sub$time)
-    oce::oce.plot.ts(sub$date, sub$confirmed, xlim=tlim, type="l", col="gray",
-                     drawTimeRange=FALSE, xlab="Time", ylab="Case Count", mar=c(2,3,1,1.5))
+    ## Cases, linear axis
+    oce::oce.plot.ts(sub$date, sub$confirmed,
+                     xlim=tlim, type="o",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     xlab="Time", ylab="Cumulative Case Count",
+                     mar=c(2,3,1,1.5),
+                     drawTimeRange=FALSE)
     points(sub$time, sub$confirmed,
            pch=20,
            col=ifelse(recent, "black", "gray"),
-           cex=par("cex") * ifelse(sub$deaths==0, 0.25, 1))
-     mtext(region, adj=0, cex=par("cex"))
-    now <- lubridate::with_tz(Sys.time(), "UTC")
+           cex=par("cex"))
+    mtext(region, adj=0, cex=par("cex"))
     mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
     points(sub$time, sub$deaths,
            pch=20,
            col=ifelse(recent, "red", "pink"),
-           cex=par("cex") * ifelse(sub$deaths==0, 0.25, 1))
-    legend("topleft", pt.cex=1.4, cex=0.9, pch=20, bg="white",
+           cex=par("cex"))
+    legend("topleft", pt.cex=1, cex=1, pch=20, bg="white",
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"))
     mtext(sprintf("Confirmed: %d (%.2g%%); deaths: %d (%.2g%%)",
@@ -76,15 +78,17 @@ for (region in regions) {
                   100*tail(sub$deaths, 1)/sub$pop[1]),
                   side=3,
           cex=par("cex"))
-    ## Log axis
+
+    ## Cases, log axis
     ylim <- c(1, 2*max(sub$confirmed, na.rm=TRUE))
     positive <- sub$confirmed > 0
     oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive],
                      xlim=tlim, ylim=ylim, type="o",
-                     log="y", logStyle="decade",
                      pch=20,
+                     log="y", logStyle="decade",
                      col=ifelse(recent[positive], "black", "gray"),
-                     xlab="Time", ylab="Case Count", mar=c(2, 3, 1, 1.5),
+                     xlab="Time", ylab="Cumulative Case Count",
+                     mar=c(2, 3, 1, 1.5),
                      drawTimeRange=FALSE)
     x <- as.numeric(sub$time[recent])
     y <- log10(sub$confirmed[recent])
@@ -99,19 +103,26 @@ for (region in regions) {
         doubleTime <- log10(2) / growthRate
         mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, adj=1, cex=par("cex"))
     }
-    points(sub$time, sub$deaths, pch=20, col=ifelse(recent, "red", "pink"), type="o")
+    points(sub$time, sub$deaths,
+           pch=20,
+           col=ifelse(recent, "red", "pink"),
+           cex=par("cex"))
 
     ## Daily change
     y <- sub$confirmed_new
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time, y,
-                     xlim=tlim, type="l", drawTimeRange=FALSE, col="gray",
-                     xlab="Time", ylab="Daily Change", mar=c(2,3,1,1.5))
+                     xlim=tlim, type="l",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     xlab="Time", ylab="Daily Case Count",
+                     mar=c(2,3,1,1.5),
+                     drawTimeRange=FALSE)
     ## spline with df proportional to data length (the 7 is arbitrary)
     points(sub$time, y,
            pch=20,
            col=ifelse(recent, "black", "gray"),
-           cex=par("cex") * ifelse(sub$deaths==0, 0.25, 1))
+           cex=par("cex"))
     lines(smooth.spline(sub$time, y, df=length(y)/7), col="magenta")
     if (!interactive()) dev.off()
 }

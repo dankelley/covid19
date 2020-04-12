@@ -61,7 +61,7 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    lines(sub$data[ok], sub$confirmed[ok], col="gray") # why needed???
+    lines(sub$date[ok], sub$confirmed[ok], col="gray") # why needed???
     points(sub$time, sub$confirmed,
            pch=20,
            col=ifelse(recent, "black", "gray"),

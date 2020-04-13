@@ -5,7 +5,7 @@ recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
-regions <- if (length(args)) args else "Mozambique"
+#regions <- if (length(args)) args else "China"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- world("country")
@@ -27,7 +27,7 @@ tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
 confirmedWorld <- unlist(lapply(A, function(x) sum(x$confirmed)))
 deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
 now <- lubridate::with_tz(Sys.time(), "UTC")
-mar <- c(2, 3, 1, 1.5)
+mar <- c(2, 3, 1.5, 1.5)
 
 for (region in regions) {
     message("handling ", region)
@@ -40,15 +40,15 @@ for (region in regions) {
     } else {
         sub <- ds[ds$country == region, ]
     }
-    sub$time <- as.POSIXct(sub$date)
+    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), "UTC")
     lastTime <- tail(sub$time, 1)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     if (!sum(recent))
         next
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=5, height=5, unit="in", res=120, pointsize=11)
-    par(mfrow=c(3,1))
+                            width=6, height=5, unit="in", res=120, pointsize=11)
+    par(mfrow=c(2,2))
 
     ## Cases, linear axis
     oce::oce.plot.ts(sub$date, sub$confirmed,
@@ -65,22 +65,21 @@ for (region in regions) {
            pch=20,
            col=ifelse(recent, "black", "gray"),
            cex=par("cex"))
-    mtext(region, adj=0, cex=par("cex"))
-    mtext(paste(format(now, "%Y %b %d")), adj=1, cex=par("cex"))
     points(sub$time, sub$deaths,
            pch=20,
            col=ifelse(recent, "red", "pink"),
            cex=par("cex"))
-    legend("topleft", pt.cex=1, cex=1, pch=20, bg="white",
+    legend("topleft", pt.cex=1, cex=0.8, pch=20,
            col=c("black", "red"),
-           legend=c("Confirmed", "Deaths"))
-    mtext(sprintf("Confirmed: %d (%.2g%%); deaths: %d (%.2g%%)",
+           legend=c("Confirmed", "Deaths"),
+           title=region)
+    mtext(sprintf("Confirmed: %d (%4.2f%%); deaths: %d (%4.2f%%)",
                   tail(sub$confirmed, 1),
                   100*tail(sub$confirmed,1)/sub$pop[1],
                   tail(sub$deaths, 1),
                   100*tail(sub$deaths, 1)/sub$pop[1]),
                   side=3,
-          cex=par("cex"))
+          cex=0.9*par("cex"))
 
     ## Cases, log axis
     ylim <- c(1, 2*max(sub$confirmed, na.rm=TRUE))
@@ -96,6 +95,7 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
+    mtext(paste(format(now, "%Y %b %d")), adj=1, cex=0.9*par("cex"))
     points(sub$time[positive], sub$confirmed[positive],
            pch=20,
            col=ifelse(recent[positive], "black", "gray"),
@@ -111,7 +111,7 @@ for (region in regions) {
         abline(m)
         growthRate <- coef(m)[2] * 86400 # in days
         doubleTime <- log10(2) / growthRate
-        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=par("cex"))
+        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=0.9*par("cex"))
     }
     points(sub$time, sub$deaths,
            pch=20,
@@ -136,7 +136,20 @@ for (region in regions) {
            pch=20,
            col=ifelse(recent, "black", "gray"),
            cex=par("cex"))
-    lines(smooth.spline(sub$time, y, df=length(y)/7), col="magenta")
+    splineModel <- smooth.spline(sub$time, y, df=length(y)/7)
+    lines(splineModel, col="magenta")
+
+    oce::oce.plot.ts(sub$date, y+1, log="y", logStyle="decade",
+                     xlim=tlim,
+                     type="p",
+                     pch=20,
+                     col=ifelse(recent, "black", "gray"),
+                     cex=par("cex"),
+                     xlab="Time",
+                     ylab="1 + Daily Case Count",
+                     mar=mar,
+                     drawTimeRange=FALSE)
+    lines(splineModel, col="magenta")
+
     if (!interactive()) dev.off()
 }
-

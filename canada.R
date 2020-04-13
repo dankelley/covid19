@@ -53,7 +53,8 @@ par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    time <- as.POSIXct(sub$date, tz="UTC")
+    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    time <- sub$time
     num <- sub$confirmed
     deaths <- sub$deaths
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
@@ -84,7 +85,8 @@ for (region in regions) {
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    time <- as.POSIXct(sub$date, tz="UTC")
+    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    time <- sub$time
     num <- sub$confirmed
     deaths <- sub$deaths
     recent <- abs(as.numeric(now) - as.numeric(time)) <= recentNumberOfDays * 86400
@@ -131,7 +133,8 @@ par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    time <- as.POSIXct(sub$date, tz="UTC")
+    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    time <- sub$time
     y <- sub$confirmed_new
     oce.plot.ts(time, y,
                 xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",

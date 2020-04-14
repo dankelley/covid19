@@ -63,7 +63,7 @@ for (region in regions) {
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
-    points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+    points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=par("cex"))
     mtext(paste0(" ", abbreviateRegion(region), " / ",
                  format(tail(time,1), "%b %d")),
           cex=par("cex"), adj=0, line=-1)
@@ -96,11 +96,11 @@ for (region in regions) {
                     mar=mar,
                     ylab="Cases & Deaths", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent[positive], "black", "gray"),
-                    cex=ifelse(recent, 1, 0.7),
+                    cex=par("cex"),
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
         if (any(deaths[is.finite(deaths)] > 0))
-            points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+            points(time, deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=par("cex"))
         y <- num[recent]
         ok <- y > 0
         x <- (as.numeric(time)[recent])[ok]
@@ -139,7 +139,7 @@ for (region in regions) {
     oce.plot.ts(time, y,
                 xlim=tlim, type="p", drawTimeRange=FALSE, col="gray",
                 mar=mar,
-                pch=20, cex=par("cex") * ifelse(y==0, 0.25, 1),
+                pch=20, cex=par("cex"),
                 xlab="Time", ylab="Daily Change")
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- is.finite(y)

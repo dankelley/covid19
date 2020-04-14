@@ -47,7 +47,7 @@ for (region in regions) {
         next
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=6, height=5, unit="in", res=120, pointsize=11)
+                            width=7, height=5, unit="in", res=120, pointsize=11)
     par(mfrow=c(2,2))
 
     ## Cases, linear axis

@@ -73,7 +73,7 @@ for (region in regions) {
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"),
            title=region)
-    mtext(sprintf("Confirmed: %d (%4.2f%%); deaths: %d (%4.2f%%)",
+    mtext(sprintf("Confirmed: %d (%5.3f%%); deaths: %d (%5.3f%%)",
                   tail(sub$confirmed, 1),
                   100*tail(sub$confirmed,1)/sub$pop[1],
                   tail(sub$deaths, 1),

@@ -8,7 +8,7 @@ mar <- c(1.8, 3, 0.75, 1.5)
 
 ## We cache 'ds' for speed during development phase
 if (!exists("ds"))
-    ds <- covid19("CAN", level=2)
+    ds <- covid19("CAN", level=2, end=Sys.Date())
 ds$time <- lubridate::with_tz(as.POSIXct(ds$date), tz="UTC")
 ds <- ds[ds$country == "Canada", ]
 tlim <- range(as.POSIXct(ds$time))

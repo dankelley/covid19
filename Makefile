@@ -7,4 +7,7 @@ all: force
 	chmod a+r last_updated.html
 force:
 
+clean:
+	-rm -rf *~
+	-rm -rf *png
 

@@ -44,6 +44,21 @@ abbreviateRegion <- function(r, wide=TRUE)
 ##>     x
 ##> }
 
+population <- function(region)
+{
+    switch(region,
+           "Ontario"=14446515,
+           "Quebec"=8433301,
+           "British Columbia"=5020302,
+           "Alberta"=4345737,
+           "Manitoba"=1360396,
+           "Saskatchewan"=1168423,
+           "Nova Scotia"=965382,
+           "New Brunswick"=772094,
+           "Newfoundland and Labrador"=523790,
+           "Prince Edward Island"=154748)
+}
+
 recentNumberOfDays <- 10
 now <- Sys.time()
 regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
@@ -72,6 +87,12 @@ for (region in regions) {
     mtext(paste0(" ", abbreviateRegion(region), " / ",
                  format(tail(time,1), "%b %d")),
           cex=par("cex"), adj=0, line=-1)
+    mtext(sprintf(" Confirmed: %d (%.4f%%)",
+                  tail(sub$confirmed,1), 100*tail(sub$confirmed,1)/population(region)),
+          line=-2, cex=par("cex"), adj=0)
+    mtext(sprintf(" Deaths: %d (%.4f%%)",
+                  tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
+          line=-3, cex=par("cex"), adj=0)
 }
 if (!interactive())
     dev.off()

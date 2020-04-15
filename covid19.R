@@ -30,7 +30,8 @@ regions <- if (length(args)) args else "Canada"
 #regions <- if (length(args)) args else "China"
 
 if (!exists("ds")) # cache to save server load during code development
-    ds <- covid19()
+    ds <- covid19(end=Sys.Date())
+ds$time <- lubridate::with_tz(as.POSIXct(ds$date), "UTC")
 
 trimZeros <- function(x)
 {
@@ -67,14 +68,15 @@ for (region in regions) {
     ## Check for crazy drops in most recent day, compared to SD over past week
     ## (excluding most recent day).  This became necesary on 2020-04-15, as
     ## reported at https://github.com/emanuele-guidotti/COVID19/issues/4
+    subOrig <- sub
     SD <- sd(tail(head(sub$confirmed,-1), 7))
     if (abs(sub$confirmed[n] - sub$confirmed[n-1]) > 2 * SD) {
-        message("dropping most recent point since it differs from previous by ",
+        message("dropping most recent point (",
+               sub$confirmed[n], ") since it differs from previous by ",
                 round(abs(sub$confirmed[n] - sub$confirmed[n-1])),
                 ", more than 2* previous recent std-dev of ", round(SD))
         sub <- sub[seq(1, n-1), ]
     }
-    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), "UTC")
     lastTime <- tail(sub$time, 1)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     if (!sum(recent))
@@ -129,7 +131,7 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    mtext(paste(format(now, "%Y %b %d")), adj=1, cex=0.9*par("cex"))
+    mtext(paste(format(tail(sub$time,1), "Last point at %Y %b %d")), adj=1, cex=0.9*par("cex"))
     points(sub$time[positive], sub$confirmed[positive],
            pch=20,
            col=ifelse(recent[positive], "black", "gray"),

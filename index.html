@@ -380,12 +380,20 @@ summary {
 
 </div>
 
+<p>WARNING: the COVID19 package is acting up today (Wed 2020 Apr 15) so the results shown here may look insane, with</p>
+<ul>
+    <li> The most recent data point being wildly wrong (see
+        https://github.com/emanuele-guidotti/COVID19/issues/4)</li>
+    <li> Some  panels for countries (because of a change in country names
+        provided by COVID19).</li>
+</ul>
+
 <p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use<a href="last_updated.html">.</a></p>
 
 <p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The code used to create this website is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data are acquire from the Johns Hopkins University Center for Systems Science and Engineering by the <tt>world()</tt> function provided by the <tt>COVID19</tt> R package. The plots are made with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a>, respectively, driven by a
 <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob.  I am under the impression that the datasets are updated only once per day, but since the hour of the update is unknown to me, I have set up the system to re-download every two hours.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to reproduce the results as shown here.</p>
 
-<p>The gray and black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the pink and red symbols indicate deaths. (Gray turns to black, and pink to red, for the most recent 10 days of data.) The top-left graph shows raw counts.  The top-right panel shows the same thing on a logarithmic scale, and also shows a regression line fitted (in log space) to the recent data, plus a margin note on the doubling time that is calculated from the slope of this line. The bottom-left panel shows the daily change in counts, with a smoothing-spline fit drawn in magenta. The spline is repeated in bottom-left panel, which shows 1 plus the daily count on a logarithmic scale.  In this spline the degree-of-freedom parameter is set to the number of data points divided by 7, so it (roughly) represents weekly smoothing.</p>
+<p>The gray and black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the pink and red symbols indicate deaths. (Gray turns to black, and pink to red, for the most recent 10 days of data.) The top-left graph shows raw counts.  The top-right panel shows the same thing on a logarithmic scale, and also shows a regression line fitted (in log space) to the recent data, plus a margin note on the doubling time that is calculated from the slope of this line. The bottom-left panel shows the daily change in counts, with a smoothing-spline fit drawn in magenta, as a way to guide the eye through the data cloud. This same spline is repeated in bottom-left panel, which shows 1 plus the daily count on a logarithmic scale.  In this spline the degree-of-freedom parameter is set to the number of data points divided by 7, so it (roughly) represents weekly smoothing.</p>
 
 <p>I make no claim on the accuracy of the data I have downloaded to make these plots, nor of the correctness of my code or the plots shown here. Please report any coding errors to me at <a href="mailto:Dan.Kelley@Dal.Ca" class="email">Dan.Kelley@Dal.Ca</a> and I’ll see if I can make corrections. Also, please be on the lookout for old time-stamps on graphs, which will arise if the build system fails.</p>
 

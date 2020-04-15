@@ -8,7 +8,7 @@ regions <- if (length(args)) args else "Canada"
 #regions <- if (length(args)) args else "China"
 
 if (!exists("ds")) # cache to save server load during code development
-    ds <- world("country")
+    ds <- covid19()           # world("country")
 #sink("names.md");names(ds);sink()
 # [1] "id"             "date"           "country"        "state"          "city"           "lat"            "lng"
 # [8] "deaths"         "confirmed"      "tests"          "deaths_new"     "confirmed_new"  "tests_new"      "pop"
@@ -139,17 +139,18 @@ for (region in regions) {
     splineModel <- smooth.spline(sub$time, y, df=length(y)/7)
     lines(splineModel, col="magenta")
 
-    oce::oce.plot.ts(sub$date, y+1, log="y", logStyle="decade",
+    positive <- y > 0
+    oce::oce.plot.ts(sub$date[positive], y[positive], log="y", logStyle="decade",
                      xlim=tlim,
                      type="p",
                      pch=20,
-                     col=ifelse(recent, "black", "gray"),
+                     col=ifelse(recent[positive], "black", "gray"),
                      cex=par("cex"),
                      xlab="Time",
-                     ylab="1 + Daily Case Count",
+                     ylab="Daily Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    lines(splineModel, col="magenta")
+    lines(splineModel$x[positive], splineModel$y[positive], col="magenta")
 
     if (!interactive()) dev.off()
 }

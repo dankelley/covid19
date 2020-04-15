@@ -1,3 +1,25 @@
+# CHANGES:
+# 
+## 2020-04-15
+## Changes to the COVID19 package dictate the following changes:
+##     1. The code now examines the most recent 'confirmed' count, to be sure that
+##        it is not very different from the previous day.  (I reported
+##        this as https://github.com/emanuele-guidotti/COVID19/issues/4)
+##     2. The confirmed_new column has disappeared, so we now compute that.
+##     3. We use covid19() instead of world().
+##     4. The following country names had to be made (meaning changes in
+##        the Makefile and the index.html file).
+##         * Burma -> Myanmar
+##         * Cabo Verde -> Cape Verde
+##         * Congo (Brazzaville) -> Congo
+##         * Congo (Kinshasa) -> Congo, the Democratic Republic of the
+##         * Czechia -> Czech Republic
+##         * Eswatini -> removed, since I could not guess a new name
+##         * North Macedonia -> Macedonia
+##         * US -> United States
+##         * West Bank and Gaza -> removed, since I could not guess a new name
+
+
 library(COVID19)
 library(oce)
 
@@ -8,11 +30,7 @@ regions <- if (length(args)) args else "Canada"
 #regions <- if (length(args)) args else "China"
 
 if (!exists("ds")) # cache to save server load during code development
-    ds <- covid19()           # world("country")
-#sink("names.md");names(ds);sink()
-# [1] "id"             "date"           "country"        "state"          "city"           "lat"            "lng"
-# [8] "deaths"         "confirmed"      "tests"          "deaths_new"     "confirmed_new"  "tests_new"      "pop"
-#[15] "pop_14"         "pop_15_64"      "pop_65"         "pop_age"        "pop_density"    "pop_death_rate"
+    ds <- covid19()
 
 trimZeros <- function(x)
 {
@@ -32,13 +50,29 @@ mar <- c(2, 3, 1.5, 1.5)
 for (region in regions) {
     message("handling ", region)
     if (region == "World") {
-        sub <- list(date=dateWorld,
-                    confirmed=confirmedWorld,
-                    confirmed_new=c(0, diff(confirmedWorld)),
-                    deaths=deathsWorld,
-                    pop=7776617876)
+        sub <- data.frame(date=dateWorld,
+                          confirmed=confirmedWorld,
+                          confirmed_new=c(0, diff(confirmedWorld)),
+                          deaths=deathsWorld,
+                          pop=rep(7776617876, length(confirmedWorld)))
     } else {
         sub <- ds[ds$country == region, ]
+        sub$confirmed_new <- c(0, diff(sub$confirmed)) # until 2020-04-15, this was in dataset
+    }
+    n <- length(sub$confirmed)
+    if (n < 2) {
+        cat("Under 2 data points for", region, "so it is not plotted\n")
+        next
+    }
+    ## Check for crazy drops in most recent day, compared to SD over past week
+    ## (excluding most recent day).  This became necesary on 2020-04-15, as
+    ## reported at https://github.com/emanuele-guidotti/COVID19/issues/4
+    SD <- sd(tail(head(sub$confirmed,-1), 7))
+    if (abs(sub$confirmed[n] - sub$confirmed[n-1]) > 2 * SD) {
+        message("dropping most recent point since it differs from previous by ",
+                round(abs(sub$confirmed[n] - sub$confirmed[n-1])),
+                ", more than 2* previous recent std-dev of ", round(SD))
+        sub <- sub[seq(1, n-1), ]
     }
     sub$time <- lubridate::with_tz(as.POSIXct(sub$date), "UTC")
     lastTime <- tail(sub$time, 1)

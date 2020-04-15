@@ -6,8 +6,13 @@ res <- 150
 pointsize <- 8
 mar <- c(1.8, 3, 0.75, 1.5)
 
-ds <- world("state")
-tlim <- range(as.POSIXct(ds$date))
+## We cache 'ds' for speed during development phase
+if (!exists("ds"))
+    ds <- covid19("CAN", level=2)
+ds$time <- lubridate::with_tz(as.POSIXct(ds$date), tz="UTC")
+ds <- ds[ds$country == "Canada", ]
+tlim <- range(as.POSIXct(ds$time))
+message("Time range: ", format(tlim[1], "%Y-%m-%d %H:%M:%S %Z"), " to ", format(tlim[2], "%Y-%m-%d %H:%M:%S %Z"), " \n")
 
 abbreviateRegion <- function(r, wide=TRUE)
 {
@@ -53,7 +58,7 @@ par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    sub$confirmed_new <- c(0, diff(sub$confirmed))
     time <- sub$time
     num <- sub$confirmed
     deaths <- sub$deaths
@@ -80,12 +85,13 @@ par(mfrow=c(5, 2))
 ylim <- c(1, 0)
 for (region in regions) {
     sub <- ds[ds$state == region, ]
+    sub$confirmed_new <- c(0, diff(sub$confirmed))
     ylim[2] <- max(ylim[2], 1.5 * max(sub$confirmed))
 }
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    sub$confirmed_new <- c(0, diff(sub$confirmed))
     time <- sub$time
     num <- sub$confirmed
     deaths <- sub$deaths
@@ -133,7 +139,7 @@ par(mfrow=c(5, 2))
 for (region in regions) {
     message("  ", region)
     sub <- ds[ds$state == region, ]
-    sub$time <- lubridate::with_tz(as.POSIXct(sub$date), tz="UTC")
+    sub$confirmed_new <- c(0, diff(sub$confirmed))
     time <- sub$time
     y <- sub$confirmed_new
     oce.plot.ts(time, y,

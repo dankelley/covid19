@@ -7,8 +7,8 @@
 ##        this as https://github.com/emanuele-guidotti/COVID19/issues/4)
 ##     2. The confirmed_new column has disappeared, so we now compute that.
 ##     3. We use covid19() instead of world().
-##     4. The following country names had to be made (meaning changes in
-##        the Makefile and the index.html file).
+##     4. The following changes to country names had to be made (meaning changes
+##        in the Makefile and the index.html file).
 ##         * Burma -> Myanmar
 ##         * Cabo Verde -> Cape Verde
 ##         * Congo (Brazzaville) -> Congo
@@ -27,7 +27,6 @@ recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Canada"
-#regions <- if (length(args)) args else "China"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- covid19(end=Sys.Date())
@@ -39,7 +38,7 @@ trimZeros <- function(x)
     x
 }
 
-## Construct world
+## Construct world (inelegantly)
 A <- split(ds, ds$date)
 dateWorld <- names(lapply(A, function(x) x$date[[1]]))
 tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
@@ -65,8 +64,8 @@ for (region in regions) {
         cat("Under 2 data points for", region, "so it is not plotted\n")
         next
     }
-    ## Check for crazy drops in most recent day, compared to SD over past week
-    ## (excluding most recent day).  This became necesary on 2020-04-15, as
+    ## Check for unrealistic drops in most recent day, compared to SD over past week
+    ## (excluding most recent day).  This became necessary on 2020-04-15, as
     ## reported at https://github.com/emanuele-guidotti/COVID19/issues/4
     subOrig <- sub
     SD <- sd(tail(head(sub$confirmed,-1), 7))

@@ -26,7 +26,7 @@ library(oce)
 recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "Canada"
+regions <- if (length(args)) args else "Denmark"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- covid19(end=Sys.Date())
@@ -59,6 +59,7 @@ for (region in regions) {
         sub <- ds[ds$country == region, ]
         sub$confirmed_new <- c(0, diff(sub$confirmed)) # until 2020-04-15, this was in dataset
     }
+    sub$confirmed_new[sub$confirmed_new < 0] <- NA
     n <- length(sub$confirmed)
     if (n < 2) {
         cat("Under 2 data points for", region, "so it is not plotted\n")
@@ -146,7 +147,8 @@ for (region in regions) {
         abline(m)
         growthRate <- coef(m)[2] * 86400 # in days
         doubleTime <- log10(2) / growthRate
-        mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=0.9*par("cex"))
+        if (doubleTime > 0)
+            mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=0.9*par("cex"))
     }
     points(sub$time, sub$deaths,
            pch=20,
@@ -171,7 +173,8 @@ for (region in regions) {
            pch=20,
            col=ifelse(recent, "black", "gray"),
            cex=par("cex"))
-    splineModel <- smooth.spline(sub$time, y, df=length(y)/7)
+    canSpline <- is.finite(y)
+    splineModel <- smooth.spline(sub$time[canSpline], y[canSpline], df=length(y)/7)
     lines(splineModel, col="magenta")
 
     positive <- y > 0

@@ -93,7 +93,10 @@ for (region in regions) {
     mtext(sprintf(" Deaths: %d (%.4f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
           line=-3, cex=par("cex"), adj=0)
+    d <- function(a, b) round(100*(a-b)/(0.5*(a+b)),1)
+    cat("my pop: ", population(region), ", COVID19: ", sub$pop[1], ", ", d(population(region),sub$pop[1]), "%\n")
 }
+
 if (!interactive())
     dev.off()
 if (!interactive())

@@ -6,3 +6,5 @@
 *.out
 .Rapp.history
 last_updated.html
+.RData
+.Rhistory

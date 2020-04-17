@@ -29,7 +29,7 @@ args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Denmark"
 
 if (!exists("ds")) # cache to save server load during code development
-    ds <- covid19(end=Sys.Date())
+    ds <- covid19(end=Sys.Date()-1)
 ds$time <- lubridate::with_tz(as.POSIXct(ds$date), "UTC")
 
 trimZeros <- function(x)

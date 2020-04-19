@@ -75,7 +75,7 @@ res <- 150
 pointsize <- 9
 
 if (!interactive())
-    png("canada_linear_official.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("canada_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
 tlim <- range(d$time)
@@ -107,7 +107,7 @@ for (region in regions) {
 if (!interactive())
     dev.off()
 if (!interactive())
-    png("canada_log_official.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("canada_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 message("log plots")
 ## Uniform scale for all log plots, to make
@@ -159,7 +159,7 @@ if (!interactive())
     dev.off()
 
 if (!interactive())
-    png("canada_change_official.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 for (region in regions) {
     message(region)

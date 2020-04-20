@@ -28,6 +28,7 @@ recentNumberOfDays <- 10
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Denmark"
 regions <- if (length(args)) args else "United States"
+regions <- if (length(args)) args else "World"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- covid19(end=Sys.Date()-1)
@@ -51,11 +52,12 @@ mar <- c(2, 3, 1.5, 1.5)
 for (region in regions) {
     message("handling ", region)
     if (region == "World") {
-        sub <- data.frame(date=dateWorld,
-                          confirmed=confirmedWorld,
-                          confirmed_new=c(0, diff(confirmedWorld)),
-                          deaths=deathsWorld,
-                          pop=rep(7776617876, length(confirmedWorld)))
+        sub <- tibble::tibble(date=dateWorld,
+                              time=lubridate::with_tz(as.POSIXct(dateWorld), "UTC"),
+                              confirmed=confirmedWorld,
+                              confirmed_new=c(0, diff(confirmedWorld)),
+                              deaths=deathsWorld,
+                              pop=rep(7776617876, length(confirmedWorld)))
     } else {
         sub <- ds[ds$country == region, ]
         sub$confirmed_new <- c(0, diff(sub$confirmed)) # until 2020-04-15, this was in dataset
@@ -110,8 +112,8 @@ for (region in regions) {
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"),
            title=region)
-    message(region)
-    message(paste(head(sub$pop), collapse=" "))
+    ##message(region)
+    ##message(paste(head(sub$pop), collapse=" "))
     mtext(sprintf("Confirmed: %d (%5.3g%%); deaths: %d (%5.3g%%)",
                   tail(sub$confirmed, 1),
                   100*tail(sub$confirmed,1)/sub$pop[1],

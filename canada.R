@@ -84,7 +84,7 @@ tlim <- range(d$time)
 
 message("linear plots")
 for (region in regions) {
-    message(region)
+    message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
@@ -114,7 +114,7 @@ message("log plots")
 ## it easier to see slope differences.
 ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (region in regions) {
-    message(region)
+    message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- fixLastDuplicated(sub)
     sub <- sub[sub$num > 0, ]
@@ -162,7 +162,7 @@ if (!interactive())
     png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 for (region in regions) {
-    message(region)
+    message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- fixLastDuplicated(sub)
     y <- diff(sub$num)

@@ -27,6 +27,7 @@ recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Denmark"
+regions <- if (length(args)) args else "United States"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- covid19(end=Sys.Date()-1)
@@ -109,6 +110,8 @@ for (region in regions) {
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"),
            title=region)
+    message(region)
+    message(paste(sub$pop))
     mtext(sprintf("Confirmed: %d (%5.3g%%); deaths: %d (%5.3g%%)",
                   tail(sub$confirmed, 1),
                   100*tail(sub$confirmed,1)/sub$pop[1],

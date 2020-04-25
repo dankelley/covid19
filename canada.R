@@ -146,7 +146,9 @@ for (region in regions) {
             lines(xx, 10^predict(m, list(x=xx)))
             growthRate <- coef(m)[2] * 86400 # in days
             doubleTime <- log10(2) / growthRate
-            mtext(sprintf(" Doubling time: %.1f days", doubleTime), side=3, adj=0, line=-1, cex=par("cex"))
+            if (doubleTime > 0)
+                mtext(if (doubleTime < 100) sprintf(" Doubling time: %.1f days", doubleTime) else " Doubling time > 100 days",
+                      side=3, adj=0, line=-1, cex=par("cex"))
         }
     } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")

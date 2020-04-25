@@ -153,7 +153,8 @@ for (region in regions) {
         growthRate <- coef(m)[2] * 86400 # in days
         doubleTime <- log10(2) / growthRate
         if (doubleTime > 0)
-            mtext(sprintf("Doubling time: %.1fd", doubleTime), side=3, line=-1, cex=0.9*par("cex"))
+            mtext(if (doubleTime < 100) sprintf(" Doubling time: %.1f days", doubleTime) else " Doubling time > 100 days",
+                  side=3, line=-1, cex=0.9*par("cex"))
     }
     points(sub$time, sub$deaths,
            pch=20,

@@ -41,9 +41,8 @@ tlim <- range(d$time)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
-message("linear plots")
 for (region in regions) {
-    message("Handling ", region)
+    message("Handling linear plot for", region)
     if (region == "-") {
         plot(0:1, 0:1, xlab="", ylab="", type="n", axes=FALSE)
         text(0.5, 0.5, "Suggest a state")
@@ -75,15 +74,15 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+
 if (!interactive())
     png("usa_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
-message("log plots")
 ## Uniform scale for all log plots, to make
 ## it easier to see slope differences.
 ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (region in regions) {
-    message("Handling ", region)
+    message("Handling log plot for ", region)
     if (region == "-") {
         plot(0:1, 0:1, xlab="", ylab="", type="n", axes=FALSE)
         text(0.5, 0.5, "Suggest a state")
@@ -142,29 +141,29 @@ if (!interactive())
     png("usa_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 for (region in regions) {
-    message("Handling ", region)
+    message("Handling change-plot for ", region)
     if (region == "-") {
         plot(0:1, 0:1, xlab="", ylab="", type="n", axes=FALSE)
         text(0.5, 0.5, "Suggest a state")
         box()
-        next
+    } else {
+        sub <- subset(d, tolower(d$state)==tolower(region))
+        y <- c(0, diff(sub$num))
+        ok <- y > 0
+        y <- y[ok]
+        sub <- subset(sub, ok)
+        oce.plot.ts(sub$time, y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
+                    mar=c(2, 3, 1, 1),
+                    xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))
+        ## spline with df proportional to data length (the 7 is arbitrary)
+        ok <- is.finite(y)
+        lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta")
+        recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+        points(sub$time[recent], y[recent], pch=20, cex=par("cex"))
+        mtext(paste0(" ", region, " / ",
+                     format(tail(sub$time,1), "%b %d")),
+              cex=par("cex"), adj=0, line=-1)
     }
-    sub <- subset(d, tolower(d$state)==tolower(region))
-    y <- c(0, diff(sub$num))
-    ok <- y > 0
-    y <- y[ok]
-    sub <- subset(sub, ok)
-    oce.plot.ts(sub$time, y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
-                mar=c(2, 3, 1, 1),
-                xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))
-    ## spline with df proportional to data length (the 7 is arbitrary)
-    ok <- is.finite(y)
-    lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta")
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    points(sub$time[recent], y[recent], pch=20, cex=par("cex"))
-    mtext(paste0(" ", region, " / ",
-                 format(tail(sub$time,1), "%b %d")),
-          cex=par("cex"), adj=0, line=-1)
 }
 
 if (!interactive())

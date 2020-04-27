@@ -3,6 +3,8 @@ library(COVID19)
 
 recentNumberOfDays <- 10
 now <- Sys.time()
+mar <- c(2, 3, 1.5, 1.5)
+
 ## Cache for speed during code development
 if (!exists("d")) {
     message("downloading")
@@ -51,11 +53,16 @@ for (region in regions) {
     sub <- subset(d, tolower(d$state)==tolower(region))
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,
-                mar=c(2, 3, 1, 1),
                 ylab="Cases & Deaths", xlim=tlim,
-                type="p", pch=20, col=ifelse(recent, "black", "gray"),
+                type="p", pch=20, col=ifelse(recent, "black", "gray"), cex=par("cex"),
+                mar=mar,
                 drawTimeRange=FALSE)
     points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
+    points(sub$time, sub$deaths,
+           pch=20,
+           col=ifelse(recent, "red", "pink"),
+           cex=par("cex"))
+
     mtext(paste0(" ", region, " / ",
                  format(tail(sub$time,1), "%b %d")),
           cex=par("cex"), adj=0, line=-1)
@@ -100,6 +107,10 @@ for (region in regions) {
                     cex=ifelse(recent, 1, 0.7),
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
+        positive <- sub$deaths > 0
+        points(sub$time[positive], sub$deaths[positive], pch=20,
+               col=ifelse(recent[positive], "pink", "red"),
+               cex=par("cex")*ifelse(recent[positive], 1, 0.7))
         if (any(sub$num[is.finite(sub$num)] > 0))
             points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
         y <- (sub$num)[recent]

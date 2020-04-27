@@ -18,13 +18,13 @@ regions <- c("California",
              "Louisiana",
              "Maine",
              "Massachusetts",
+             "Montana",
              "New Hampshire",
              "New York",
              "Ohio",
              "Tennessee",
              "Vermont",
-             "Washington",
-             "-")
+             "Washington") 
 
 width <- 7
 height <- 5

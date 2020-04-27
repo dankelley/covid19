@@ -24,7 +24,7 @@ regions <- c("California",
              "Ohio",
              "Tennessee",
              "Vermont",
-             "Washington") 
+             "Washington")
 
 width <- 7
 height <- 5
@@ -55,7 +55,7 @@ for (region in regions) {
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
-    points(sub$time, sub$num, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+    points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
     mtext(paste0(" ", region, " / ",
                  format(tail(sub$time,1), "%b %d")),
           cex=par("cex"), adj=0, line=-1)
@@ -101,12 +101,12 @@ for (region in regions) {
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
         if (any(sub$num[is.finite(sub$num)] > 0))
-            points(sub$time, sub$num, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+            points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
         y <- (sub$num)[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
-        canFit <- length(x) > 3 && tolower(region) != "repatriated travellers"
+        canFit <- length(x) > 3
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)

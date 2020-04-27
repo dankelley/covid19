@@ -22,8 +22,8 @@ regions <- c("California",
              "New York",
              "Ohio",
              "Tennessee",
+             "Vermont",
              "Washington",
-             "-",
              "-")
 
 width <- 7

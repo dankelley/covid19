@@ -3,6 +3,7 @@ regions="World" "Afghanistan" "Albania" "Algeria" "Andorra" "Angola" "Antigua an
 all: force
 	/usr/local/bin/Rscript covid19.R $(regions)
 	/usr/local/bin/Rscript canada.R
+	/usr/local/bin/Rscript usa.R
 	date > last_updated.html
 	chmod a+r last_updated.html
 force:

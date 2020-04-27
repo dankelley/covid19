@@ -382,8 +382,7 @@ summary {
 
 <p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use<a href="last_updated.html">.</a></p>
 
-<p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The code used to create this website is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data are acquired from the Johns Hopkins University Center for Systems Science and Engineering by the <tt>covid19()</tt> function that is provided by the <tt>COVID19</tt> R package. The plots are made with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a>, respectively, driven by a
-<a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to reproduce the results as shown here.</p>
+<p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The code used to create this website is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data are acquired from the Johns Hopkins University Center for Systems Science and Engineering by the <tt>covid19()</tt> function that is provided by the <tt>COVID19</tt> R package. The plots are made with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, and by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selcted states.  These R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to reproduce the results as shown here.</p>
 
 <p>The gray and black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the pink and red symbols indicate deaths. (Gray turns to black, and pink to red, for the most recent 10 days of data.) The top-left graph shows raw counts.  The top-right panel shows the same thing on a logarithmic scale, and also shows a regression line fitted (in log space) to the recent data, plus a margin note on the doubling time that is calculated from the slope of this line. The bottom-left panel shows the daily change in counts, with a smoothing-spline fit drawn in magenta, as a way to guide the eye through the data cloud. This same spline is repeated in bottom-left panel, which shows 1 plus the daily count on a logarithmic scale.  In this spline the degree-of-freedom parameter is set to the number of data points divided by 7, so it (roughly) represents weekly smoothing.</p>
 
@@ -433,7 +432,7 @@ summary {
     <a href="#Cambodia">Cambodia</a> /
     <a href="#Cameroon">Cameroon</a> /
     <a href="#Canada">Canada</a> /
-    <a href="#Canada_by_province">Canada by Province</a> /
+    <a href="#Canada_by_province">Canada, by Province</a> /
     <a href="#Central_African_Republic">Central African Republic</a> /
     <a href="#Chad">Chad</a> /
     <a href="#Chile">Chile</a> /
@@ -610,6 +609,7 @@ summary {
     <a href="#United_Arab_Emirates">United Arab Emirates</a> /
     <a href="#United_Kingdom">United Kingdom</a> /
     <a href="#United_States">United States</a> /
+    <a href="#United_States_by_state">United States, by State</a> /
     <a href="#Uruguay">Uruguay</a> /
     <a href="#Uzbekistan">Uzbekistan</a>
 </li>
@@ -748,17 +748,6 @@ dataset used for other countries.</p>
 <p>NB. This dataset is from the Canadian government, and it differs from the
 dataset used for other countries.</p>
 <img src="canada_change.png" alt="Error: no such png is available">
-
-<!--
-<hr style="border-width: 5px;"> <h3 id="Canada_by_region">Canada by Region (new dataset)</h3>
-
-<p>
-<img src="canada_linear_new.png" alt="Error: no such_new.png is available">
-<hr style="border-width: 3px;">
-<img src="canada_log_new.png" alt="Error: no such_new.png is available">
-<hr style="border-width: 3px;">
-<img src="canada_change_new.png" alt="Error: no such_new.png is available">
--->
 
 
 <hr style="border-width: 5px;"> <h3 id="Central_African_Republic">Central African Republic</h3>
@@ -1180,6 +1169,20 @@ dataset used for other countries.</p>
 
 <hr style="border-width: 5px;"> <h3 id="United_States">United States</h3>
 <img src="covid19_United States.png" alt="Error: no such png is available">
+
+<hr style="border-width: 5px;"> <h3 id="United_States_by_state">United States by State</h3>
+
+<hr style="border-width: 3px;"> <h3>United States by State (case number)</h3>
+<img src="usa_linear.png" alt="Error: no such png is available">
+
+<hr style="border-width: 3px;"> <h3>United States by State (log10 of case number)</h3>
+<img src="usa_log.png" alt="Error: no such png is available">
+
+<hr style="border-width: 3px;"> <h3>United States by State (daily change)</h3>
+<img src="usa_change.png" alt="Error: no such png is available">
+
+
+
 
 <hr style="border-width: 5px;"> <h3 id="Uruguay">Uruguay</h3>
 <img src="covid19_Uruguay.png" alt="Error: no such png is available">

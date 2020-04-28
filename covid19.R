@@ -27,8 +27,8 @@ recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "Denmark"
-regions <- if (length(args)) args else "United States"
 regions <- if (length(args)) args else "World"
+regions <- if (length(args)) args else "United States"
 
 if (!exists("ds")) # cache to save server load during code development
     ds <- covid19(end=Sys.Date()-1)

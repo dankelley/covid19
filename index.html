@@ -383,7 +383,7 @@ summary {
 
 <p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use<a href="last_updated.html">.</a></p>
 
-<p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The code used to create this website is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data are acquired from the Johns Hopkins University Center for Systems Science and Engineering by the <tt>covid19()</tt> function that is provided by the <tt>COVID19</tt> R package. The plots are made with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, and by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selcted states.  These R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to reproduce the results as shown here.</p>
+<p>This website shows the reported incidence of the Covid-19 Novel coronavirus.  The code used to create this website is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data are acquired from the Johns Hopkins University Center for Systems Science and Engineering by the <tt>covid19()</tt> function that is provided by the <tt>COVID19</tt> R package. The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>. Following that is a series of multipanel plots, made with R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, and by <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selcted states.  These R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to reproduce the results as shown here.</p>
 
 <p>The gray and black symbols show the number of confirmed cases, summing across locations to obtain a world-wide estimate. Similarly, the pink and red symbols indicate deaths. (Gray turns to black, and pink to red, for the most recent 10 days of data.) The top-left graph shows raw counts.  The top-right panel shows the same thing on a logarithmic scale, and also shows a regression line fitted (in log space) to the recent data, plus a margin note on the doubling time that is calculated from the slope of this line. The bottom-left panel shows the daily change in counts, with a smoothing-spline fit drawn in magenta, as a way to guide the eye through the data cloud. This same spline is repeated in bottom-left panel, which shows 1 plus the daily count on a logarithmic scale.  In this spline the degree-of-freedom parameter is set to the number of data points divided by 7, so it (roughly) represents weekly smoothing.</p>
 
@@ -393,6 +393,9 @@ summary {
 
 <p>Shortcut links:</p>
 <ul>
+    <li>
+        <a href="#tests_per_pop">Tests per population for some nations</a>
+    </li>
     <li>
         <a href="#World">World</a>
     </li>
@@ -439,8 +442,8 @@ summary {
     <a href="#Chile">Chile</a> /
     <a href="#China">China</a> /
     <a href="#Colombia">Colombia</a> /
-    <a href="#Congo_Brazzaville">Congo (Brazzaville)</a> /
-    <a href="#Congo_the_Democratic_Republic_of_the">Congo, the Democratic Republic of the</a> /
+    <a href="#Congo_brazzaville">Congo (Brazzaville)</a> /
+    <a href="#Congo_kinshasa">Congo (Kinshasa)</a> /
     <a href="#Costa_Rica">Costa Rica</a> /
     <a href="#Cote_d'Ivoire">Cote d'Ivoire</a> /
     <a href="#Croatia">Croatia</a> /
@@ -504,12 +507,12 @@ summary {
     <a href="#Kazakhstan">Kazakhstan</a> /
     <a href="#Kenya">Kenya</a> /
     <a href="#Korea_South">Korea, South</a> /
-    <a href="#Kosovo">Kosovo</a> /
+    <!--<a href="#Kosovo">Kosovo</a> /-->
     <a href="#Kuwait">Kuwait</a> /
     <a href="#Kyrgyzstan">Kyrgyzstan</a>
 </li>
 <li>
-    <a href="#Laos">Laos</a> /
+    <!--<a href="#Laos">Laos</a> /-->
     <a href="#Latvia">Latvia</a> /
     <a href="#Lebanon">Lebanon</a> /
     <a href="#Liberia">Liberia</a> /
@@ -534,7 +537,7 @@ summary {
     <a href="#Montenegro">Montenegro</a> /
     <a href="#Morocco">Morocco</a> /
     <a href="#Mozambique">Mozambique</a> /
-    <a href="#MS_Zaandam">MS Zaandam</a> /
+    <!--<a href="#MS_Zaandam">MS Zaandam</a> /-->
     <a href="#Myanmar">Myanmar</a> /
 </li>
 <li>
@@ -553,7 +556,7 @@ summary {
 </li>
 <li>
     <a href="#Pakistan">Pakistan</a> /
-    <a href="#Palestine">Palestine</a> /
+    <!-- <a href="#Palestine">Palestine</a> /-->
     <a href="#Panama">Panama</a> /
     <a href="#Papua_New_Guinea">Papua New Guinea</a> /
     <a href="#Paraguay">Paraguay</a> /
@@ -596,7 +599,7 @@ summary {
     <a href="#Syria">Syria</a>
 </li>
 <li>
-    <a href="#Tanzania">Tanzania</a> /
+    <!--<a href="#Tanzania">Tanzania</a> /-->
     <a href="#Thailand">Thailand</a> /
     <a href="#Timor-Leste">Timor-Leste</a> /
     <a href="#Togo">Togo</a> /
@@ -609,7 +612,7 @@ summary {
     <a href="#Ukraine">Ukraine</a> /
     <a href="#United_Arab_Emirates">United Arab Emirates</a> /
     <a href="#United_Kingdom">United Kingdom</a> /
-    <a href="#United_States">United States</a> /
+    <a href="#United_States">United States of America</a> /
     <a href="#United_States_by_state">United States, by State</a> /
     <a href="#Uruguay">Uruguay</a> /
     <a href="#Uzbekistan">Uzbekistan</a>
@@ -629,6 +632,10 @@ summary {
     <a href="#Zimbabwe">Zimbabwe</a>
 </li>
 </ul>
+
+
+<hr style="border-width: 5px;"> <h3 id="tests_per_pop">Tests per Population for some nations</h3>
+<img src="tests_per_pop.png" alt="Error: no such png is available">
 
 
 <hr style="border-width: 5px;"> <h3 id="World">World</h3>
@@ -715,14 +722,16 @@ summary {
 <hr style="border-width: 5px;"> <h3 id="Burkina_Faso">Burkina Faso</h3>
 <img src="covid19_Burkina Faso.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="Burma">Burma</h3>
 <img src="covid19_Burma.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Burundi">Burundi</h3>
 <img src="covid19_Burundi.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Cabo_Verde">Cape Verde</h3>
-<img src="covid19_Cape Verde.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="Cabo_Verde">Cabo Verde</h3>
+<img src="covid19_Cabo Verde.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Cambodia">Cambodia</h3>
 <img src="covid19_Cambodia.png" alt="Error: no such png is available">
@@ -764,11 +773,11 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Colombia">Colombia</h3>
 <img src="covid19_Colombia.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Congo">Congo</h3>
-<img src="covid19_Congo.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="Congo_brazzaville">Congo (Brazzaville)</h3>
+<img src="covid19_Congo (Brazzaville).png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Congo_the_Democratic_Republic_of_the"> Congo, the Democratic Republic of the</h3>
-<img src="covid19_Congo, the Democratic Republic of the.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="Congo_kinshasa">Congo (Kinshasa)</h3>
+<img src="covid19_Congo (Kinshasa).png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Costa_Rica">Costa Rica</h3>
 <img src="covid19_Costa Rica.png" alt="Error: no such png is available">
@@ -785,8 +794,8 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Cyprus">Cyprus</h3>
 <img src="covid19_Cyprus.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Czech_Republic">Czech Republic</h3>
-<img src="covid19_Czech Republic.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="Czechia">Czechia</h3>
+<img src="covid19_Czechia.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Denmark">Denmark</h3>
 <img src="covid19_Denmark.png" alt="Error: no such png is available">
@@ -914,8 +923,10 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Korea_South">Korea, South</h3>
 <img src="covid19_Korea, South.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="Kosovo">Kosovo</h3>
 <img src="covid19_Kosovo.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Kuwait">Kuwait</h3>
 <img src="covid19_Kuwait.png" alt="Error: no such png is available">
@@ -923,8 +934,10 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Kyrgyzstan">Kyrgyzstan</h3>
 <img src="covid19_Kyrgyzstan.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="Laos">Laos</h3>
 <img src="covid19_Laos.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Latvia">Latvia</h3>
 <img src="covid19_Latvia.png" alt="Error: no such png is available">
@@ -992,8 +1005,10 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Mozambique">Mozambique</h3>
 <img src="covid19_Mozambique.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="MS_Zaandam">MS Zaandam</h3>
 <img src="covid19_MS Zaandam.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Namibia">Namibia</h3>
 <img src="covid19_Namibia.png" alt="Error: no such png is available">
@@ -1016,8 +1031,8 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Nigeria">Nigeria</h3>
 <img src="covid19_Nigeria.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="Macedonia">Macedonia</h3>
-<img src="covid19_Macedonia.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="North Macedonia">North Macedonia</h3>
+<img src="covid19_North Macedonia.png" alt="Error: no such png is available">
 
 <hr style="border-width: 5px;"> <h3 id="Norway">Norway</h3>
 <img src="covid19_Norway.png" alt="Error: no such png is available">
@@ -1028,8 +1043,10 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Pakistan">Pakistan</h3>
 <img src="covid19_Pakistan.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="Palestine">Palestine</h3>
 <img src="covid19_Palestine.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Panama">Panama</h3>
 <img src="covid19_Panama.png" alt="Error: no such png is available">
@@ -1133,8 +1150,10 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="Syria">Syria</h3>
 <img src="covid19_Syria.png" alt="Error: no such png is available">
 
+<!--
 <hr style="border-width: 5px;"> <h3 id="Tanzania">Tanzania</h3>
 <img src="covid19_Tanzania.png" alt="Error: no such png is available">
+-->
 
 <hr style="border-width: 5px;"> <h3 id="Thailand">Thailand</h3>
 <img src="covid19_Thailand.png" alt="Error: no such png is available">
@@ -1166,8 +1185,8 @@ dataset used for other countries.</p>
 <hr style="border-width: 5px;"> <h3 id="United_Kingdom">United Kingdom</h3>
 <img src="covid19_United Kingdom.png" alt="Error: no such png is available">
 
-<hr style="border-width: 5px;"> <h3 id="United_States">United States</h3>
-<img src="covid19_United States.png" alt="Error: no such png is available">
+<hr style="border-width: 5px;"> <h3 id="United_States">United States of America</h3>
+<img src="covid19_US.png" alt="Error: no such png is available">
 
 <hr style="border-width: 3px;"> <h4 id="United_States_by_state">United States, by Selected State (case number)</h3>
 <img src="usa_linear.png" alt="Error: no such png is available">

@@ -1,10 +1,5 @@
 # CHANGES:
 ##
-## 2020-04-28
-## I got weary, keeping track of changes to COVID19, and also with its slowness,
-## so I rewrote the code to download directly.  Rather than sift through my old
-## code, I just started from scratch, with get_data.R doing the setup work.
-##
 ## 2020-04-15
 ## Changes to the COVID19 package dictate the following changes:
 ##     1. The code now examines the most recent 'confirmed' count, to be sure that
@@ -25,63 +20,54 @@
 ##         * West Bank and Gaza -> removed, since I could not guess a new name
 
 
-#library(COVID19)
+library(COVID19)
 library(oce)
-source("get_data.R")
 
 recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
+regions <- if (length(args)) args else "Denmark"
 regions <- if (length(args)) args else "World"
 regions <- if (length(args)) args else "United States"
 regions <- if (length(args)) args else "Canada"
-regions <- if (length(args)) args else "Congo (Kinshasa)"
-regions <- if (length(args)) args else "US"
-
 #regions <- if (length(args)) args else "Australia"
 
-##if (!exists("d")) { # cache to save server load during code development
-##    d <- covid19(end=Sys.Date()-1)
-##    d$time <- lubridate::with_tz(as.POSIXct(d$date), "UTC")
-##}
+if (!exists("d")) { # cache to save server load during code development
+    d <- covid19(end=Sys.Date()-1)
+    d$time <- lubridate::with_tz(as.POSIXct(d$date), "UTC")
+}
 
 trimZeros <- function(x)
 {
     x[x==0] <- NA
     x
 }
+
+## Construct world (inelegantly)
+A <- split(d, d$date)
+dateWorld <- names(lapply(A, function(x) x$date[[1]]))
+tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
+confirmedWorld <- unlist(lapply(A, function(x) sum(x$confirmed)))
+deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
-tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
-
-if (FALSE) {
-    ## Construct world (inelegantly)
-    A <- split(d, d$date)
-    dateWorld <- names(lapply(A, function(x) x$date[[1]]))
-    tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
-    confirmedWorld <- unlist(lapply(A, function(x) sum(x$cases)))
-    deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
-}
 
 for (region in regions) {
     message("handling ", region)
     if (region == "World") {
-        message("FIXME: rewrite this")
-        ##? sub <- tibble::tibble(date=dateWorld,
-        ##?                       time=lubridate::with_tz(as.POSIXct(dateWorld), "UTC"),
-        ##?                       confirmed=confirmedWorld,
-        ##?                       confirmed_new=c(0, diff(confirmedWorld)),
-        ##?                       deaths=deathsWorld,
-        ##?                       pop=rep(7776617876, length(confirmedWorld)))
-        next
+        sub <- tibble::tibble(date=dateWorld,
+                              time=lubridate::with_tz(as.POSIXct(dateWorld), "UTC"),
+                              confirmed=confirmedWorld,
+                              confirmed_new=c(0, diff(confirmedWorld)),
+                              deaths=deathsWorld,
+                              pop=rep(7776617876, length(confirmedWorld)))
     } else {
         ##sub <- d[d$country == region, ]
-        sub <- getData(region)
-        ##sub <- subset(d, d$country == region)
-        sub$cases_new <- c(0, diff(sub$cases))
+        sub <- subset(d, d$country == region)
+        sub$confirmed_new <- c(0, diff(sub$confirmed)) # until 2020-04-15, this was in dataset
     }
-    sub$cases_new[sub$cases_new < 0] <- NA
-    n <- length(sub$cases)
+    sub$confirmed_new[sub$confirmed_new < 0] <- NA
+    n <- length(sub$confirmed)
     if (n < 2) {
         cat("Under 2 data points for", region, "so it is not plotted\n")
         next
@@ -90,16 +76,13 @@ for (region in regions) {
     ## (excluding most recent day).  This became necessary on 2020-04-15, as
     ## reported at https://github.com/emanuele-guidotti/COVID19/issues/4
     subOrig <- sub
-    SD <- sd(tail(head(sub$cases,-1), 7))
-    if (abs(sub$cases[n] - sub$cases[n-1]) > 2 * SD) {
+    SD <- sd(tail(head(sub$confirmed,-1), 7))
+    if (abs(sub$confirmed[n] - sub$confirmed[n-1]) > 2 * SD) {
         message("dropping most recent point (",
-               sub$cases[n], ") since it differs from previous by ",
-                round(abs(sub$cases[n] - sub$cases[n-1])),
+               sub$confirmed[n], ") since it differs from previous by ",
+                round(abs(sub$confirmed[n] - sub$confirmed[n-1])),
                 ", more than 2* previous recent std-dev of ", round(SD))
-        sub$time <- sub$time[seq(1, n-1)]
-        sub$cases <- sub$cases[seq(1, n-1)]
-        sub$cases_new <- sub$cases_new[seq(1, n-1)]
-        sub$deaths <- sub$deaths[seq(1, n-1)]
+        sub <- sub[seq(1, n-1), ]
     }
     lastTime <- tail(sub$time, 1)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
@@ -108,17 +91,17 @@ for (region in regions) {
 
     if (!interactive()) png(paste0("covid19_", region, ".png"),
                             width=7, height=5, unit="in", res=120, pointsize=11)
-    if (!any(sub$cases > 0)) {
+    if (!any(sub$confirmed > 0)) {
         par(mfrow=c(1,1))
         plot(c(0, 1), c(0, 1), xlab="", ylab="", axes=FALSE, type="n")
         box()
-        text(0.5, 0.5, paste0("No data are available for '", region, "';\nplease report this to dan.kelley@dal.ca"))
+        text(0.5, 0.5, paste0("No data are available for", region, ".\n(This is probably a temporary error; check back later.)"))
         next
     }
     par(mfrow=c(2,2))
 
     ## Cases, linear axis
-    oce::oce.plot.ts(sub$time, sub$cases,
+    oce::oce.plot.ts(sub$date, sub$confirmed,
                      xlim=tlim,
                      type="p",
                      pch=20,
@@ -128,7 +111,7 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    points(sub$time, sub$cases,
+    points(sub$time, sub$confirmed,
            pch=20,
            col=ifelse(recent, "black", "gray"),
            cex=par("cex"))
@@ -142,18 +125,18 @@ for (region in regions) {
            title=region)
     ##message(region)
     ##message(paste(head(sub$pop), collapse=" "))
-    mtext(sprintf("Confirmed: %d (%.4f%%); deaths: %d (%.4f%%)",
-                  tail(sub$cases, 1),
-                  100*tail(sub$cases,1)/sub$pop[1],
+    mtext(sprintf("Confirmed: %d (%5.3g%%); deaths: %d (%5.3g%%)",
+                  tail(sub$confirmed, 1),
+                  100*tail(sub$confirmed,1)/sub$pop[1],
                   tail(sub$deaths, 1),
                   100*tail(sub$deaths, 1)/sub$pop[1]),
                   side=3,
           cex=0.9*par("cex"))
 
     ## Cases, log axis
-    ylim <- c(1, 2*max(sub$cases, na.rm=TRUE))
-    positive <- sub$cases > 0
-    oce::oce.plot.ts(sub$time[positive], sub$cases[positive], log="y", logStyle="decade",
+    ylim <- c(1, 2*max(sub$confirmed, na.rm=TRUE))
+    positive <- sub$confirmed > 0
+    oce::oce.plot.ts(sub$time[positive], sub$confirmed[positive], log="y", logStyle="decade",
                      xlim=tlim,
                      ylim=ylim,
                      type="p",
@@ -165,12 +148,12 @@ for (region in regions) {
                      mar=mar,
                      drawTimeRange=FALSE)
     mtext(paste(format(tail(sub$time,1), "Last point at %Y %b %d")), adj=1, cex=0.9*par("cex"))
-    points(sub$time[positive], sub$cases[positive],
+    points(sub$time[positive], sub$confirmed[positive],
            pch=20,
            col=ifelse(recent[positive], "black", "gray"),
            cex=par("cex"))
     x <- as.numeric(sub$time[recent])
-    y <- log10(sub$cases[recent])
+    y <- log10(sub$confirmed[recent])
     ok <- is.finite(x) & is.finite(y)
     x <- x[ok]
     y <- y[ok]
@@ -190,7 +173,7 @@ for (region in regions) {
            cex=par("cex"))
 
     ## Daily change
-    y <- sub$cases_new
+    y <- sub$confirmed_new
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time, y,
                      xlim=tlim,
@@ -212,7 +195,7 @@ for (region in regions) {
     lines(splineModel, col="magenta")
 
     positive <- y > 0
-    oce::oce.plot.ts(sub$time[positive], y[positive], log="y", logStyle="decade",
+    oce::oce.plot.ts(sub$date[positive], y[positive], log="y", logStyle="decade",
                      xlim=tlim,
                      type="p",
                      pch=20,

@@ -1,3 +1,4 @@
+if (FALSE) {
 ## https://population.un.org/wpp/Download/Files/1_Indicators%20(Standard)/EXCEL_FILES/1_Population/WPP2019_POP_F01_1_TOTAL_POPULATION_BOTH_SEXES.xlsx
 ## Create population.rda holding population=data.frame(place,number)
 rm(list=ls())
@@ -47,3 +48,4 @@ regions <- c("World", "Afghanistan", "Algeria", "Albania", "Andorra", "Angola",
 a <- sapply(regions, function(r) any(population$place==r))
 stopifnot(sum(!a) == 0)
 save(population, file="population.rda")
+}

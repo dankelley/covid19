@@ -25,7 +25,6 @@
 ##         * West Bank and Gaza -> removed, since I could not guess a new name
 
 
-#library(COVID19)
 library(oce)
 source("get_data.R")
 

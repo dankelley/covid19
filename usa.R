@@ -1,20 +1,12 @@
 library(oce)
-library(COVID19)
+source("get_data.R")
+
 
 recentNumberOfDays <- 10
 now <- Sys.time()
 mar <- c(2, 3, 1.5, 1.5)
 
-## Cache for speed during code development
-if (!exists("d")) {
-    message("downloading")
-    d <- covid19(ISO="USA", level=2)
-    d$time <- as.POSIXct(d$date, format="%d-%m-%Y", tz="UTC")
-    d$num <- d$confirmed
-} else {
-    message("using downloaded data")
-}
-# select 10 regions
+# select 12 regions, shown in a 3x4 array of panels.
 regions <- c("California",
              "Georgia",
              "Louisiana",
@@ -36,27 +28,26 @@ pointsize <- 9
 if (!interactive())
     png("usa_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
-## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
-tlim <- range(d$time)
+tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
 for (region in regions) {
-    message("Handling linear plot for", region)
+    message("Handling linear plot for ", region)
     if (region == "-") {
         plot(0:1, 0:1, xlab="", ylab="", type="n", axes=FALSE)
         text(0.5, 0.5, "Suggest a state")
         box()
         next
     }
-    sub <- subset(d, tolower(d$state)==tolower(region))
+    sub <- getData("United States", region)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    oce.plot.ts(sub$time, sub$num,
+    oce.plot.ts(sub$time, sub$cases,
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"), cex=par("cex"),
                 mar=mar,
                 drawTimeRange=FALSE)
-    points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
+    points(sub$time, sub$cases, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
     points(sub$time, sub$deaths,
            pch=20,
            col=ifelse(recent, "red", "pink"),
@@ -66,7 +57,7 @@ for (region in regions) {
                  format(tail(sub$time,1), "%b %d")),
           cex=par("cex"), adj=0, line=-1)
     mtext(sprintf(" Confirmed: %d (%.4f%%)",
-                  tail(sub$num,1), 100*tail(sub$num,1)/sub$pop[1]),
+                  tail(sub$cases,1), 100*tail(sub$cases,1)/sub$pop[1]),
           line=-2, cex=par("cex"), adj=0)
     mtext(sprintf(" Deaths: %d (%.4f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/sub$pop[1]),
@@ -80,7 +71,6 @@ if (!interactive())
 par(mfrow=c(4, 3))
 ## Uniform scale for all log plots, to make
 ## it easier to see slope differences.
-ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (region in regions) {
     message("Handling log plot for ", region)
     if (region == "-") {
@@ -89,30 +79,24 @@ for (region in regions) {
         box()
         next
     }
-    sub <- subset(d, tolower(d$state)==tolower(region))
-    sub <- sub[sub$num > 0, ]
+    sub <- getData("United States", region)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    lastDuplicated <- 0 == diff(tail(sub$num, 2))
-    if (lastDuplicated) {
-        sub <- head(sub, -1)
-        message("NB. removed final point, because it duplicated its predecessor")
-    }
-    if (any(sub$num > 0)) {
-        positive <- sub$num > 0
-        oce.plot.ts(sub$time[positive], sub$num[positive],
+    if (any(sub$cases > 0)) {
+        positive <- sub$cases > 0
+        oce.plot.ts(sub$time[positive], sub$cases[positive],
                     mar=c(2, 3, 1, 1),
                     ylab="Cases & Deaths", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
-                    ylim=ylim, log="y", logStyle="decade",
+                    log="y", logStyle="decade",
                     drawTimeRange=FALSE)
         positive <- sub$deaths > 0
         points(sub$time[positive], sub$deaths[positive], pch=20,
                col=ifelse(recent[positive], "pink", "red"),
                cex=par("cex")*ifelse(recent[positive], 1, 0.7))
-        if (any(sub$num[is.finite(sub$num)] > 0))
-            points(sub$time, sub$num, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
-        y <- (sub$num)[recent]
+        if (any(sub$cases[is.finite(sub$cases)] > 0))
+            points(sub$time, sub$cases, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
+        y <- (sub$cases)[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
@@ -147,11 +131,13 @@ for (region in regions) {
         text(0.5, 0.5, "Suggest a state")
         box()
     } else {
-        sub <- subset(d, tolower(d$state)==tolower(region))
-        y <- c(0, diff(sub$num))
+        sub <- getData("United States", region)
+        y <- c(0, diff(sub$cases))
         ok <- y > 0
         y <- y[ok]
-        sub <- subset(sub, ok)
+        sub$time <- sub$time[ok]
+        sub$cases <- sub$cases[ok]
+        sub$deaths <- sub$deaths[ok]
         oce.plot.ts(sub$time, y, drawTimeRange=FALSE, ylab="Daily Cases", type="p",
                     mar=c(2, 3, 1, 1),
                     xlim=tlim, col="darkgray", pch=20, cex=par("cex"))# * ifelse(y==0, 0.25, 1))

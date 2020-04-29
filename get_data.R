@@ -30,7 +30,7 @@ if (!file.exists(confirmedSourcesUS$file)) {
     download.file(confirmedSourcesUS$url, confirmedSourcesUS$file)
 } else if ((as.numeric(Sys.time()) - as.numeric(file.info(confirmedSourcesUS$file)$ctime)) > 2 * 3600) {
     cat("Downloading", confirmedSourcesUS$file, "since it is more than 2 hours old\n")
-    download.file(confirmedSourcesiUS$url, confirmedSourcesus$file)
+    download.file(confirmedSourcesUS$url, confirmedSourcesUS$file)
 }
 
 ## deaths
@@ -84,7 +84,6 @@ time <- confirmedTimes
 getData <- function(Country.Region="Canada", Province.State=NULL)
 {
     if (Country.Region=="World") {
-        message("DANNY")
         res <- list(time=time,
                     cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
                     deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),

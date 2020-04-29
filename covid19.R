@@ -91,7 +91,7 @@ for (region in regions) {
 
     ## Cases, linear axis
     oce::oce.plot.ts(sub$time, sub$cases,
-                     xlim=tlim,
+                     xaxs="i", xlim=tlim,
                      type="p",
                      pch=20,
                      col=ifelse(recent, "black", "gray"),

@@ -1,5 +1,5 @@
 rm(list=ls())
-showExample <- FALSE
+showExample <- !FALSE
 load("population.rda")
 
 ## Get data straight from the Johns Hopkins github page, which
@@ -83,44 +83,52 @@ time <- confirmedTimes
 
 getData <- function(Country.Region="Canada", Province.State=NULL)
 {
-    if (is.null(Province.State)) {
-        sub <- confirmed[confirmed$Country.Region == Country.Region, ]
-        cases <- unname(apply(sub[seq(5L, dim(sub)[2])], 2, sum))
-        sub <- deaths[deaths$Country.Region == Country.Region, ]
-        deaths <- unname(apply(sub[seq(5L, dim(sub)[2])], 2, sum))
+    if (Country.Region=="World") {
         res <- list(time=time,
-                    cases=cases,
-                    deaths=deaths,
-                    population=population[[Country.Region]])
+                    cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
+                    deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),
+                    population=sum(as.numeric(population), na.rm=TRUE))
     } else {
-        if (Country.Region == "United States" || Country.Region == "US" || Country.Region == "USA") {
-            tmp <- confirmedUS[confirmedUS$Province_State == Province.State, ]
-            head(names(tmp), 15)
-            tmpData <- as.matrix(tmp[, 12:dim(tmp)[2]])
-            cases <- apply(tmpData, 2, sum)
-            tmp <- deathsUS[deathsUS$Province_State == Province.State, ]
-            head(names(tmp), 15)
-            population <- sum(tmp$Population)
-            tmpData <- as.matrix(tmp[, 13:dim(tmp)[2]])
-            deaths <- apply(tmpData, 2, sum)
-            res <- list(time=time,
-                        cases=unname(cases),
-                        deaths=unname(deaths),
-                        population=population)
- 
-        } else {
-            sub <- confirmed[confirmed$Country.Region == Country.Region & confirmed$Province.State == Province.State, ]
-            cases <- as.numeric(sub[1, seq(5L, length(sub))])
-            sub <- deaths[deaths$Country.Region == Country.Region & deaths$Province.State == Province.State, ]
-            deaths <- as.numeric(sub[1, seq(5L, length(sub))])
+        if (is.null(Province.State)) {
+            sub <- confirmed[confirmed$Country.Region == Country.Region, ]
+            cases <- unname(apply(sub[seq(5L, dim(sub)[2])], 2, sum))
+            sub <- deaths[deaths$Country.Region == Country.Region, ]
+            deaths <- unname(apply(sub[seq(5L, dim(sub)[2])], 2, sum))
             res <- list(time=time,
                         cases=cases,
                         deaths=deaths,
-                        population=population[[Province.State]])
+                        population=population[[Country.Region]])
+        } else {
+            if (Country.Region == "United States" || Country.Region == "US" || Country.Region == "USA") {
+                tmp <- confirmedUS[confirmedUS$Province_State == Province.State, ]
+                head(names(tmp), 15)
+                tmpData <- as.matrix(tmp[, 12:dim(tmp)[2]])
+                cases <- apply(tmpData, 2, sum)
+                tmp <- deathsUS[deathsUS$Province_State == Province.State, ]
+                head(names(tmp), 15)
+                population <- sum(tmp$Population)
+                tmpData <- as.matrix(tmp[, 13:dim(tmp)[2]])
+                deaths <- apply(tmpData, 2, sum)
+                res <- list(time=time,
+                            cases=unname(cases),
+                            deaths=unname(deaths),
+                            population=population)
+            } else {
+                sub <- confirmed[confirmed$Country.Region == Country.Region & confirmed$Province.State == Province.State, ]
+                cases <- as.numeric(sub[1, seq(5L, length(sub))])
+                sub <- deaths[deaths$Country.Region == Country.Region & deaths$Province.State == Province.State, ]
+                deaths <- as.numeric(sub[1, seq(5L, length(sub))])
+                res <- list(time=time,
+                            cases=cases,
+                            deaths=deaths,
+                            population=population[[Province.State]])
+            }
         }
     }
     res
 }
+
+d <- getData("World")
 
 if (showExample) {
     library(oce)
@@ -137,7 +145,7 @@ if (showExample) {
     points(d$time, d$deaths, col="red", cex=cex, pch=pch)
     mtext(paste("Population:", round(d$population/1e6,2), "million"), cex=par("cex"))
 
-    place <- "Australia"
+    place <- "World"
     d <- getData(place)
     oce.plot.ts(d$time, d$cases, ylab=place, drawTimeRange=FALSE, type="p", cex=cex, pch=pch)
     points(d$time, d$deaths, col="red", cex=cex, pch=pch)

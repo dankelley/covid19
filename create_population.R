@@ -38,6 +38,9 @@ names(population) <- gsub("^Congo$", "Congo (Brazzaville)", names(population))
 names(population) <- gsub("State of Palestine", "Palestine", names(population))
 names(population) <- gsub("United States", "US", names(population))
 
+## world (summing gives 27 billion, so must be double-counting things)
+population[["World"]] <- 7781073029    # https://www.worldometers.info/world-population/
+
 ## Insert Canadian provinces
 #population[["Canada"]] <- 37894799
 population[["Ontario"]] <- 14446515

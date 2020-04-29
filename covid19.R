@@ -1,9 +1,12 @@
 # CHANGES:
 ##
 ## 2020-04-28
-## I got weary, keeping track of changes to COVID19, and also with its slowness,
-## so I rewrote the code to download directly.  Rather than sift through my old
-## code, I just started from scratch, with get_data.R doing the setup work.
+## World, USA and Canada plots no longer us the COVID19 package.  That package
+## is now used only for the test/population plot.  The reason for this change is
+## to increase processing speed, and to reduce the effort involved in keeping
+## up with changes to the COVID19 package.  Rather than sift through my old
+## code that was written before my trial with the COVID19 package, I
+## I simply started from scratch, writing get_data.R doing the setup work.
 ##
 ## 2020-04-15
 ## Changes to the COVID19 package dictate the following changes:

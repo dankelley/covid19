@@ -6,7 +6,7 @@
 ## to increase processing speed, and to reduce the effort involved in keeping
 ## up with changes to the COVID19 package.  Rather than sift through my old
 ## code that was written before my trial with the COVID19 package, I
-## I simply started from scratch, writing get_data.R doing the setup work.
+## started from scratch, writing get_data.R for the setup work.
 ##
 ## 2020-04-15
 ## Changes to the COVID19 package dictate the following changes:
@@ -39,47 +39,20 @@ regions <- if (length(args)) args else "United States"
 regions <- if (length(args)) args else "Canada"
 regions <- if (length(args)) args else "Congo (Kinshasa)"
 regions <- if (length(args)) args else "US"
+regions <- if (length(args)) args else "World"
 
-#regions <- if (length(args)) args else "Australia"
-
-##if (!exists("d")) { # cache to save server load during code development
-##    d <- covid19(end=Sys.Date()-1)
-##    d$time <- lubridate::with_tz(as.POSIXct(d$date), "UTC")
-##}
-
-trimZeros <- function(x)
-{
-    x[x==0] <- NA
-    x
-}
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
 tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
-
-if (FALSE) {
-    ## Construct world (inelegantly)
-    A <- split(d, d$date)
-    dateWorld <- names(lapply(A, function(x) x$date[[1]]))
-    tlim <- range(as.POSIXct(dateWorld, tz="UTC"))
-    confirmedWorld <- unlist(lapply(A, function(x) sum(x$cases)))
-    deathsWorld <- unlist(lapply(A, function(x) sum(x$deaths)))
-}
 
 for (region in regions) {
     message("handling ", region)
     if (region == "World") {
         message("FIXME: rewrite this")
-        ##? sub <- tibble::tibble(date=dateWorld,
-        ##?                       time=lubridate::with_tz(as.POSIXct(dateWorld), "UTC"),
-        ##?                       confirmed=confirmedWorld,
-        ##?                       confirmed_new=c(0, diff(confirmedWorld)),
-        ##?                       deaths=deathsWorld,
-        ##?                       pop=rep(7776617876, length(confirmedWorld)))
-        next
-    } else {
-        ##sub <- d[d$country == region, ]
         sub <- getData(region)
-        ##sub <- subset(d, d$country == region)
+        sub$cases_new <- c(0, diff(sub$cases))
+    } else {
+        sub <- getData(region)
         sub$cases_new <- c(0, diff(sub$cases))
     }
     sub$cases_new[sub$cases_new < 0] <- NA
@@ -88,9 +61,6 @@ for (region in regions) {
         cat("Under 2 data points for", region, "so it is not plotted\n")
         next
     }
-    ## Check for unrealistic drops in most recent day, compared to SD over past week
-    ## (excluding most recent day).  This became necessary on 2020-04-15, as
-    ## reported at https://github.com/emanuele-guidotti/COVID19/issues/4
     subOrig <- sub
     SD <- sd(tail(head(sub$cases,-1), 7))
     if (abs(sub$cases[n] - sub$cases[n-1]) > 2 * SD) {
@@ -142,8 +112,6 @@ for (region in regions) {
            col=c("black", "red"),
            legend=c("Confirmed", "Deaths"),
            title=region)
-    ##message(region)
-    ##message(paste(head(sub$pop), collapse=" "))
     mtext(sprintf("Confirmed: %d (%.4f%%); deaths: %d (%.4f%%)",
                   tail(sub$cases, 1),
                   100*tail(sub$cases,1)/sub$pop[1],

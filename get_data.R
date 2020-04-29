@@ -1,5 +1,5 @@
 rm(list=ls())
-showExample <- !FALSE
+showExample <- FALSE
 load("population.rda")
 
 ## Get data straight from the Johns Hopkins github page, which
@@ -84,10 +84,11 @@ time <- confirmedTimes
 getData <- function(Country.Region="Canada", Province.State=NULL)
 {
     if (Country.Region=="World") {
+        message("DANNY")
         res <- list(time=time,
                     cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
                     deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),
-                    population=sum(as.numeric(population), na.rm=TRUE))
+                    population=population[["World"]])
     } else {
         if (is.null(Province.State)) {
             sub <- confirmed[confirmed$Country.Region == Country.Region, ]
@@ -128,7 +129,6 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
     res
 }
 
-d <- getData("World")
 
 if (showExample) {
     library(oce)
@@ -145,14 +145,14 @@ if (showExample) {
     points(d$time, d$deaths, col="red", cex=cex, pch=pch)
     mtext(paste("Population:", round(d$population/1e6,2), "million"), cex=par("cex"))
 
+    d <- getData("United States", "Ohio")
+    oce.plot.ts(d$time, d$cases, ylab="Ohio", type="p", drawTimeRange=FALSE, cex=cex, pch=pch)
+    points(d$time, d$deaths, col=2, cex=cex, pch=pch)
+    mtext(paste("Population:", round(d$population/1e6,2), "million"), cex=cex)
+
     place <- "World"
     d <- getData(place)
     oce.plot.ts(d$time, d$cases, ylab=place, drawTimeRange=FALSE, type="p", cex=cex, pch=pch)
     points(d$time, d$deaths, col="red", cex=cex, pch=pch)
     mtext(paste("Population:", round(d$population/1e6,2), "million"), cex=par("cex"))
-    ## US case
-    d <- getData("United States", "Ohio")
-    oce.plot.ts(d$time, d$cases, ylab="Ohio", type="p", drawTimeRange=FALSE, cex=cex, pch=pch)
-    points(d$time, d$deaths, col=2, cex=cex, pch=pch)
-    mtext(paste("Population:", round(d$population/1e6,2), "million"), cex=cex)
 }

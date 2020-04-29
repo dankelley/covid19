@@ -9,10 +9,11 @@ germany <- subset(d, d$country=="Germany")
 canada <- subset(d, d$country=="Canada")
 usa <- subset(d, d$country=="United States")
 uk <- subset(d, d$country=="United Kingdom")
-tlim <- range(c(usa$time, canada$time, germany$time, uk$time))
+now <- lubridate::with_tz(Sys.time(), "UTC")
+tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
 ylim <- 100 * range(c(usa$testsPerPop, canada$testsPerPop, germany$testsPerPop, uk$testsPerPop))
 
-if (!interactive()) png("tests_per_pop.png", height=4, width=7, pointsize=11, unit="in", res=120)
+if (!interactive()) png("tests_per_pop.png", height=3, width=5, pointsize=9, unit="in", res=120)
 pch <- 20
 cex <- 3/4
 oce.plot.ts(canada$time, 100*germany$testsPerPop, type="o", xaxs="i",

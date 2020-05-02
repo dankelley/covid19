@@ -5,6 +5,7 @@ source("get_data.R")
 recentNumberOfDays <- 10
 now <- Sys.time()
 mar <- c(2, 3, 1.5, 1.5)
+colDeath <- "red"
 
 # select 12 regions, shown in a 3x4 array of panels.
 regions <- c("California",
@@ -20,9 +21,9 @@ regions <- c("California",
              "Vermont",
              "Washington")
 
-width <- 7
+width <- 8
 height <- 5
-res <- 150
+res <- 200
 pointsize <- 9
 
 if (!interactive())
@@ -52,16 +53,14 @@ for (region in regions) {
            pch=20,
            col=ifelse(recent, "red", "pink"),
            cex=par("cex"))
-
-    mtext(paste0(" ", region, " / ",
-                 format(tail(sub$time,1), "%b %d")),
-          cex=par("cex"), adj=0, line=-1)
     mtext(sprintf(" Confirmed: %d (%.4f%%)",
                   tail(sub$cases,1), 100*tail(sub$cases,1)/sub$pop[1]),
-          line=-2, cex=par("cex"), adj=0)
+          line=-1, cex=par("cex"), adj=0)
     mtext(sprintf(" Deaths: %d (%.4f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/sub$pop[1]),
-          line=-3, cex=par("cex"), adj=0)
+          line=-2, cex=par("cex"), adj=0)
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()
@@ -86,6 +85,7 @@ for (region in regions) {
         oce.plot.ts(sub$time[positive], sub$cases[positive],
                     mar=c(2, 3, 1, 1),
                     ylab="Cases & Deaths", xlim=tlim,
+                    ylim=c(1, 2*max(sub$cases[positive])),
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
                     log="y", logStyle="decade",
@@ -96,6 +96,7 @@ for (region in regions) {
                cex=par("cex")*ifelse(recent[positive], 1, 0.7))
         if (any(sub$cases[is.finite(sub$cases)] > 0))
             points(sub$time, sub$cases, pch=20, col=ifelse(recent, "black", "gray"), cex=ifelse(recent, 1, 0.7))
+        ## case doubling time
         y <- (sub$cases)[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
@@ -104,14 +105,30 @@ for (region in regions) {
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            lines(xx, 10^predict(m, list(x=xx)))
             growthRate <- coef(m)[2] * 86400 # in days
-            doubleTime <- log10(2) / growthRate
-            if (doubleTime > 0)
-                mtext(if (doubleTime < 100) sprintf(" Doubling time: %.1f days", doubleTime) else " Doubling time > 100 days",
-                      side=3, adj=0, line=-1, cex=par("cex"))
+            t2 <- log10(2) / growthRate
+            if (0 < t2 && t2 < 100) {
+                lines(xx, 10^predict(m, list(x=xx)), lty="dotted")
+                mtext(sprintf(" cases double in %.0fd", t2), side=3, adj=0, line=-1, cex=par("cex"))
+            }
         }
-    } else {
+        ## death doubling time
+        y <- (sub$deaths)[recent]
+        ok <- y > 0
+        x <- (as.numeric(sub$time)[recent])[ok]
+        y <- log10(y[ok])
+        canFit <- length(x) > 3
+        if (canFit) {
+            m <- lm(y ~ x)
+            xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
+            growthRate <- coef(m)[2] * 86400 # in days
+            t2 <- log10(2) / growthRate
+            if (0 < t2 && t2 < 100) {
+                lines(xx, 10^predict(m, list(x=xx)), col=colDeath, lty="dotted")
+                mtext(sprintf(" deaths double in %.0fd", t2), side=3, adj=0, line=-2, col=colDeath, cex=par("cex"))
+            }
+        }
+     } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")
         text(0.5, 0.5, "No counts")
     }
@@ -146,10 +163,9 @@ for (region in regions) {
         lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta")
         recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
         points(sub$time[recent], y[recent], pch=20, cex=par("cex"))
-        mtext(paste0(" ", region, " / ",
-                     format(tail(sub$time,1), "%b %d")),
-              cex=par("cex"), adj=0, line=-1)
     }
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 
 if (!interactive())

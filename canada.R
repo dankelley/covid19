@@ -1,4 +1,3 @@
-rm(list=ls())
 library(oce)
 ## The name of the Canadian data file changed sometime near the start of
 ## April, from the commented-out line to the line after it.
@@ -69,9 +68,9 @@ regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswic
              "Prince Edward Island", "Quebec", "Saskatchewan",
              "Repatriated travellers")
 
-width <- 7
+width <- 8
 height <- 5
-res <- 150
+res <- 200
 pointsize <- 9
 
 if (!interactive())
@@ -94,15 +93,14 @@ for (region in regions) {
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
-    mtext(paste0(" ", abbreviateRegion(region), " / ",
-                 format(tail(sub$time,1), "%b %d")),
-          cex=par("cex"), adj=0, line=-1)
     mtext(sprintf(" Confirmed: %d (%.4f%%)",
                   tail(sub$num,1), 100*tail(sub$num,1)/population(region)),
-          line=-2, cex=par("cex"), adj=0)
+          line=-1, cex=par("cex"), adj=0)
     mtext(sprintf(" Deaths: %d (%.4f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
-          line=-3, cex=par("cex"), adj=0)
+          line=-2, cex=par("cex"), adj=0)
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 if (!interactive())
     dev.off()
@@ -135,6 +133,7 @@ for (region in regions) {
                     drawTimeRange=FALSE)
         if (any(sub$numdeaths[is.finite(sub$numdeaths)]) > 0)
             points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+        ## Case doubling time
         y <- (sub$numconf + sub$numprob)[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
@@ -143,12 +142,28 @@ for (region in regions) {
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            lines(xx, 10^predict(m, list(x=xx)))
             growthRate <- coef(m)[2] * 86400 # in days
-            doubleTime <- log10(2) / growthRate
-            if (doubleTime > 0)
-                mtext(if (doubleTime < 100) sprintf(" Doubling time: %.1f days", doubleTime) else " Doubling time > 100 days",
-                      side=3, adj=0, line=-1, cex=par("cex"))
+            t2 <- log10(2) / growthRate
+            if (0 < t2 && t2 < 100) {
+                lines(xx, 10^predict(m, list(x=xx)), lty="dotted")
+                mtext(sprintf(" cases double in %.0fd", t2), side=3, adj=0, line=-1, cex=par("cex"))
+            }
+        }
+        ## Death doubling time
+        y <- sub$deaths[recent]
+        ok <- y > 0
+        x <- (as.numeric(sub$time)[recent])[ok]
+        y <- log10(y[ok])
+        canFit <- length(x) > 3 && tolower(region) != "repatriated travellers"
+        if (canFit) {
+            m <- lm(y ~ x)
+            xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
+            growthRate <- coef(m)[2] * 86400 # in days
+            t2 <- log10(2) / growthRate
+            if (0 < t2 && t2 < 100) {
+                lines(xx, 10^predict(m, list(x=xx)), col="red", lty="dotted")
+                mtext(sprintf(" deaths double in %.0fd", t2), side=3, adj=0, line=-2, col="red", cex=par("cex"))
+            }
         }
     } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")
@@ -176,9 +191,8 @@ for (region in regions) {
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta")
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=par("cex"))
-    mtext(paste0(" ", abbreviateRegion(region), " / ",
-                 format(tail(sub$time,1), "%b %d")),
-          cex=par("cex"), adj=0, line=-1)
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 
 if (!interactive())

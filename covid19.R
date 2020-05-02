@@ -44,6 +44,7 @@ regions <- if (length(args)) args else "World"
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
 tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
+colDeath <- "red"
 
 for (region in regions) {
     message("handling ", region)
@@ -134,11 +135,13 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    mtext(paste(format(tail(sub$time,1), "Last point at %Y %b %d")), adj=1, cex=0.9*par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=0.9*par("cex"))
     points(sub$time[positive], sub$cases[positive],
            pch=20,
            col=ifelse(recent[positive], "black", "gray"),
            cex=par("cex"))
+    points(sub$time, sub$deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=par("cex"))
+    ## Case doubling time
     x <- as.numeric(sub$time[recent])
     y <- log10(sub$cases[recent])
     ok <- is.finite(x) & is.finite(y)
@@ -147,17 +150,30 @@ for (region in regions) {
     canFit <- length(x) > 3
     if (canFit) {
         m <- lm(y ~ x)
-        abline(m)
         growthRate <- coef(m)[2] * 86400 # in days
-        doubleTime <- log10(2) / growthRate
-        if (doubleTime > 0)
-            mtext(if (doubleTime < 100) sprintf(" Doubling time: %.1f days", doubleTime) else " Doubling time > 100 days",
-                  side=3, line=-1, cex=0.9*par("cex"))
+        t2 <- log10(2) / growthRate
+        if (0 < t2 && t2 < 100) {
+            abline(m, lty="dotted")
+            mtext(sprintf(" cases double in %.0fd", t2), adj=0, side=3, line=-1, cex=par("cex"))
+        }
     }
-    points(sub$time, sub$deaths,
-           pch=20,
-           col=ifelse(recent, "red", "pink"),
-           cex=par("cex"))
+    ## Death doubling time
+    x <- as.numeric(sub$time[recent])
+    y <- log10(sub$deaths[recent])
+    ok <- is.finite(x) & is.finite(y)
+    x <- x[ok]
+    y <- y[ok]
+    canFit <- length(x) > 3
+    if (canFit) {
+        m <- lm(y ~ x)
+        growthRate <- coef(m)[2] * 86400 # in days
+        t2 <- log10(2) / growthRate
+        if (0 < t2 && t2 < 100) {
+            abline(m, col=colDeath, lty="dotted")
+            mtext(sprintf(" deaths double in %.0fd", t2), adj=0, side=3, line=-2, col=colDeath, cex=par("cex"))
+        }
+    }
+
 
     ## Daily change
     y <- sub$cases_new

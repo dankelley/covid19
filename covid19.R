@@ -1,13 +1,22 @@
 # CHANGES:
-##
+
 ## 2020-04-28
-## World, USA and Canada plots no longer us the COVID19 package.  That package
-## is now used only for the test/population plot.  The reason for this change is
-## to increase processing speed, and to reduce the effort involved in keeping
-## up with changes to the COVID19 package.  Rather than sift through my old
-## code that was written before my trial with the COVID19 package, I
-## started from scratch, writing get_data.R for the setup work.
+## World, USA and Canada plots no longer use the COVID19 package, but instead
+## use data from the Johns Hopkins github site.  The exception is the
+## test/population plot, which uses COVID19 because that package lists test
+## counts.
 ##
+## The reason for this change is to increase processing speed, and to reduce
+## the effort involved in keeping up with changes to the COVID19 package.
+## Rather than sift through my old code that was written before my trial with
+## the COVID19 package, I started from scratch, writing get_data.R for the
+## setup work.
+##
+## Several country names that were found by COVID19 are not found in the Johns
+## Hopkins dataset. Rather than spend time doing web searches to find
+## equivalent country names, I simply deleted the unknown names from the
+## processing stream (altering Makefile and index.html).
+
 ## 2020-04-15
 ## Changes to the COVID19 package dictate the following changes:
 ##     1. The code now examines the most recent 'confirmed' count, to be sure that

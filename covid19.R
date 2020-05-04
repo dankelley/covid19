@@ -58,7 +58,6 @@ colDeath <- "red"
 for (region in regions) {
     message("handling ", region)
     if (region == "World") {
-        message("FIXME: rewrite this")
         sub <- getData(region)
         sub$cases_new <- c(0, diff(sub$cases))
     } else {
@@ -124,9 +123,9 @@ for (region in regions) {
            title=region)
     mtext(sprintf("Confirmed: %d (%.4f%%); deaths: %d (%.4f%%)",
                   tail(sub$cases, 1),
-                  100*tail(sub$cases,1)/sub$pop[1],
+                  100*tail(sub$cases,1)/sub$population[1],
                   tail(sub$deaths, 1),
-                  100*tail(sub$deaths, 1)/sub$pop[1]),
+                  100*tail(sub$deaths, 1)/sub$population[1]),
                   side=3,
           cex=0.9*par("cex"))
 

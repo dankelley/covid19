@@ -87,7 +87,7 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
         res <- list(time=time,
                     cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
                     deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),
-                    population=population[["World"]])
+                    population=subset(population, place=="World")$number)
     } else {
         if (is.null(Province.State)) {
             sub <- confirmed[confirmed$Country.Region == Country.Region, ]
@@ -97,7 +97,7 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
             res <- list(time=time,
                         cases=cases,
                         deaths=deaths,
-                        population=population[[Country.Region]])
+                        population=subset(population, place==Country.Region)$number)
         } else {
             if (Country.Region == "United States" || Country.Region == "US" || Country.Region == "USA") {
                 tmp <- confirmedUS[confirmedUS$Province_State == Province.State, ]

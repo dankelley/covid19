@@ -53,10 +53,10 @@ for (region in regions) {
            pch=20,
            col=ifelse(recent, "red", "pink"),
            cex=par("cex"))
-    mtext(sprintf(" Confirmed: %d (%.4f%%)",
+    mtext(sprintf(" Confirmed: %d (%.3f%%)",
                   tail(sub$cases,1), 100*tail(sub$cases,1)/sub$pop[1]),
           line=-1, cex=par("cex"), adj=0)
-    mtext(sprintf(" Deaths: %d (%.4f%%)",
+    mtext(sprintf(" Deaths: %d (%.3f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/sub$pop[1]),
           line=-2, cex=par("cex"), adj=0)
     mtext(region, cex=par("cex"), adj=0)
@@ -102,14 +102,15 @@ for (region in regions) {
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
         canFit <- length(x) > 3
+        t2c <- NA
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            growthRate <- coef(m)[2] * 86400 # in days
-            t2 <- log10(2) / growthRate
-            if (0 < t2 && t2 < 100) {
+            growthRate <- coef(m)[[2]] * 86400 # in days
+            t2c <- log10(2) / growthRate
+            if (0 < t2c && t2c < 100) {
                 lines(xx, 10^predict(m, list(x=xx)), lty="dotted")
-                mtext(sprintf(" cases double in %.0fd", t2), side=3, adj=0, line=-1, cex=par("cex"))
+                ##mtext(sprintf(" cases double in %.0fd", t2c), side=3, adj=0, line=-1, cex=par("cex"))
             }
         }
         ## death doubling time
@@ -118,16 +119,31 @@ for (region in regions) {
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
         canFit <- length(x) > 3
+        td2 <- NA
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            growthRate <- coef(m)[2] * 86400 # in days
-            t2 <- log10(2) / growthRate
-            if (0 < t2 && t2 < 100) {
+            growthRate <- coef(m)[[2]] * 86400 # in days
+            t2d <- log10(2) / growthRate
+            if (0 < t2d && t2d < 100) {
                 lines(xx, 10^predict(m, list(x=xx)), col=colDeath, lty="dotted")
-                mtext(sprintf(" deaths double in %.0fd", t2), side=3, adj=0, line=-2, col=colDeath, cex=par("cex"))
+                ## mtext(sprintf(" deaths double in %.0fd", t2d), side=3, adj=0, line=-2, col=colDeath, cex=par("cex"))
             }
         }
+        lab <- paste0(" Cases double in ",
+                      if (is.finite(t2c) && t2c < 100 && t2c > 0) round(t2c,0) else ">100",
+                      "d, deaths in ",
+                      if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
+        mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
+        if (tail(sub$deaths,1) == 0) {
+            mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
+        } else {
+            if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
+                mtext(sprintf(" Case Fatality Rate: %.1f%%",
+                              100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
+                      side=3, line=-2, cex=par("cex"), adj=0)
+        }
+ 
      } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")
         text(0.5, 0.5, "No counts")
@@ -175,8 +191,8 @@ for (region in regions) {
     Tc <- 3.96                         # mean generation interval (Du et al 2020)
     sigma <- 4.75                      # std dev generation intvl (Du et al 2020)
     R <- exp(r*Tc - 0.5*r^2*sigma^2)   # rep number (Wallinga and Lipsitch 2007, eqn 3.4)
-    cat("coef(M)[2]=", coef(M)[2], ", r=", r, ", pop=", sub$population, "; using Tc=", Tc, ", sigma=", sigma, ", infer R=", R, "\n", sep="")
-    mtext(sprintf(" R=%.5f", R), adj=0, side=3, line=-1, cex=par("cex"))
+    ##cat("coef(M)[2]=", coef(M)[2], ", r=", r, ", pop=", sub$population, "; using Tc=", Tc, ", sigma=", sigma, ", infer R=", R, "\n", sep="")
+    ##mtext(sprintf(" R=%.5f", R), adj=0, side=3, line=-1, cex=par("cex"))
 }
 
 if (!interactive())

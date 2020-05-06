@@ -143,7 +143,7 @@ for (region in regions) {
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            growthRate <- coef(m)[2] * 86400 # in days
+            growthRate <- coef(m)[[2]] * 86400 # in days
             t2c <- log10(2) / growthRate
             if (0 < t2c && t2c < 100) {
                 lines(xx, 10^predict(m, list(x=xx)), lty="dotted")
@@ -160,9 +160,11 @@ for (region in regions) {
         if (canFit) {
             m <- lm(y ~ x)
             xx <- seq(par("usr")[1], par("usr")[2], length.out=100)
-            growthRate <- coef(m)[2] * 86400 # in days
+            growthRate <- coef(m)[[2]] * 86400 # in days
             t2d <- log10(2) / growthRate
-            if (0 < t2d && t2d < 100) {
+            if (is.infinite(t2d))
+                t2d <- 1000 # used so we can get CFL later
+            if (!is.na(t2d) && 0 < t2d && t2d < 100) {
                 lines(xx, 10^predict(m, list(x=xx)), col="red", lty="dotted")
                 ##mtext(sprintf(" deaths double in %.0fd", t2), side=3, adj=0, line=-2, col="red", cex=par("cex"))
             }
@@ -172,7 +174,6 @@ for (region in regions) {
                       "d, deaths in ",
                       if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
         mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-        ##if (region == "New Brunswick") browser()
         if (tail(sub$deaths,1) == 0) {
             mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
         } else {

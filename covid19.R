@@ -49,6 +49,7 @@ regions <- if (length(args)) args else "Canada"
 regions <- if (length(args)) args else "Congo (Kinshasa)"
 regions <- if (length(args)) args else "US"
 regions <- if (length(args)) args else "China"
+regions <- if (length(args)) args else "Botswana"
 
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
@@ -161,7 +162,7 @@ for (region in regions) {
         m <- lm(y ~ x)
         growthRate <- coef(m)[[2]] * 86400 # in days
         t2c <- log10(2) / growthRate
-        if (0 < t2c && t2c < 100) {
+        if (is.finite(t2c) && 0 < t2c && t2c < 100) {
             abline(m, lty="dotted")
             ##mtext(sprintf(" cases double in %.0fd", t2c), adj=0, side=3, line=-1, cex=par("cex"))
         }
@@ -178,7 +179,9 @@ for (region in regions) {
         m <- lm(y ~ x)
         growthRate <- coef(m)[[2]] * 86400 # in days
         t2d <- log10(2) / growthRate
-        if (0 < t2d && t2d < 100) {
+        if (is.infinite(t2d))
+            t2d <- 1000 # so we can show CFR later
+        if (is.finite(t2d) && 0 < t2d && t2d < 100) {
             abline(m, col=colDeath, lty="dotted")
             ##mtext(sprintf(" deaths double in %.0fd", t2d), adj=0, side=3, line=-2, col=colDeath, cex=par("cex"))
         }
@@ -188,11 +191,14 @@ for (region in regions) {
                   "d, deaths in ",
                   if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
     mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-    if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
-        mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                      100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
-                      side=3, line=-2, cex=par("cex"), adj=0)
-
+    if (tail(sub$deaths,1) == 0) {
+        mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
+    } else {
+        if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
+            mtext(sprintf(" Case Fatality Rate: %.1f%%",
+                          100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
+                  side=3, line=-2, cex=par("cex"), adj=0)
+    }
     ## Daily change
     y <- sub$cases_new
     ylim <- c(0, max(y))

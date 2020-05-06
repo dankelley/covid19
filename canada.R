@@ -174,12 +174,13 @@ for (region in regions) {
                       "d, deaths in ",
                       if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
         mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-        if (tail(sub$deaths,1) == 0) {
+        lastDeaths <- tail(sub$deaths[is.finite(sub$deaths)],1)
+        if (lastDeaths == 0) {
             mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
         } else {
             if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
                 mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                              100 * tail(sub$deaths, 1) / tail(sub$num, 1)),
+                              100 * lastDeaths / tail(sub$num, 1)),
                       side=3, line=-2, cex=par("cex"), adj=0)
         }
     } else {

@@ -43,12 +43,8 @@ source("get_data.R")
 recentNumberOfDays <- 10
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "World"
-regions <- if (length(args)) args else "United States"
 regions <- if (length(args)) args else "Canada"
-regions <- if (length(args)) args else "Congo (Kinshasa)"
-regions <- if (length(args)) args else "US"
-regions <- if (length(args)) args else "China"
+regions <- if (length(args)) args else "Italy"
 
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
@@ -119,9 +115,9 @@ for (region in regions) {
            cex=par("cex"))
     legend("topleft", pt.cex=1, cex=0.8, pch=20,
            col=c("black", "red"),
-           legend=c("Cases", "Deaths"),
-           title=paste(region, " (", format(tail(sub$time,1), "%b %d"), ")", sep=""))
-    mtext(sprintf("Cases: %d (%.3f%%); deaths: %d (%.3f%%)",
+           legend=c("Confirmed", "Deaths"),
+           title=region)
+    mtext(sprintf("Confirmed: %d (%.4f%%); deaths: %d (%.4f%%)",
                   tail(sub$cases, 1),
                   100*tail(sub$cases,1)/sub$population[1],
                   tail(sub$deaths, 1),
@@ -143,7 +139,7 @@ for (region in regions) {
                      ylab="Cumulative Case Count",
                      mar=mar,
                      drawTimeRange=FALSE)
-    ## mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=0.9*par("cex"))
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=0.9*par("cex"))
     points(sub$time[positive], sub$cases[positive],
            pch=20,
            col=ifelse(recent[positive], "black", "gray"),
@@ -155,16 +151,27 @@ for (region in regions) {
     ok <- is.finite(x) & is.finite(y)
     x <- x[ok]
     y <- y[ok]
-    t2c <- NA
     canFit <- length(x) > 3
     if (canFit) {
         m <- lm(y ~ x)
-        growthRate <- coef(m)[[2]] * 86400 # in days
-        t2c <- log10(2) / growthRate
-        if (0 < t2c && t2c < 100) {
+        growthRate <- coef(m)[2] * 86400 # in days
+        t2 <- log10(2) / growthRate
+        if (0 < t2 && t2 < 100) {
             abline(m, lty="dotted")
-            ##mtext(sprintf(" cases double in %.0fd", t2c), adj=0, side=3, line=-1, cex=par("cex"))
+            mtext(sprintf(" cases double in %.0fd", t2), adj=0, side=3, line=-1, cex=par("cex"))
         }
+        ## R as defined by Wallinga and Lipsitch 2007 eqn 3.4, using generation
+        ## interval mean (Tc) and std-dev (sigma) from Du et al. 2002.
+        day <- as.numeric(sub$time[recent]) / 86400
+        count <- diff(sub$cases)[recent]
+        r <- coef(lm(count ~ day))[[2]] / sub$population
+        Tc <- 3.96                     # mean generation interval (Du et al 2020)
+        sigma <- 4.75                  # std dev generation intvl (Du et al 2020)
+        ## Wallinga and Lipsitch 2007 eqn 3.4 for Normal Distribution of generation interval
+        R <- exp(r*Tc - 0.5*r^2*sigma^2)
+        cat("r=", r, ", Tc=", Tc, ", sigma=", sigma, ", yield R=", R, "\n", sep="")
+        mtext(sprintf(" R=%.5f", R), adj=0, side=3, line=0, cex=par("cex"))
+        #mtext("dan", adj=0, side=3, line=0, cex=par("cex"))
     }
     ## Death doubling time
     x <- as.numeric(sub$time[recent])
@@ -172,26 +179,17 @@ for (region in regions) {
     ok <- is.finite(x) & is.finite(y)
     x <- x[ok]
     y <- y[ok]
-    t2d <- NA
     canFit <- length(x) > 3
     if (canFit) {
         m <- lm(y ~ x)
-        growthRate <- coef(m)[[2]] * 86400 # in days
-        t2d <- log10(2) / growthRate
-        if (0 < t2d && t2d < 100) {
+        growthRate <- coef(m)[2] * 86400 # in days
+        t2 <- log10(2) / growthRate
+        if (0 < t2 && t2 < 100) {
             abline(m, col=colDeath, lty="dotted")
-            ##mtext(sprintf(" deaths double in %.0fd", t2d), adj=0, side=3, line=-2, col=colDeath, cex=par("cex"))
+            mtext(sprintf(" deaths double in %.0fd", t2), adj=0, side=3, line=-2, col=colDeath, cex=par("cex"))
         }
     }
-    lab <- paste0(" Cases double in ",
-                  if (is.finite(t2c) && t2c < 100 && t2c > 0) round(t2c,0) else ">100",
-                  "d, deaths in ",
-                  if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
-    mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-    if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
-        mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                      100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
-                      side=3, line=-2, cex=par("cex"), adj=0)
+
 
     ## Daily change
     y <- sub$cases_new

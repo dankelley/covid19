@@ -22,9 +22,9 @@ regions <- c("California",
              "Washington")
 
 width <- 8
-height <- 5
+height <- 6
 res <- 200
-pointsize <- 9
+pointsize <- 11
 
 if (!interactive())
     png("usa_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
@@ -166,6 +166,17 @@ for (region in regions) {
     }
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+    ## R as defined by Wallinga and Lipsitch 2007 eqn 3.4, using generation
+    ## interval mean (Tc) and std-dev (sigma) from Du et al. 2002.
+    day <- as.numeric(sub$time[recent]) / 86400
+    count <- diff(sub$cases)[recent]
+    M <- lm(count ~ day)
+    r <- coef(M)[[2]] / sub$population
+    Tc <- 3.96                         # mean generation interval (Du et al 2020)
+    sigma <- 4.75                      # std dev generation intvl (Du et al 2020)
+    R <- exp(r*Tc - 0.5*r^2*sigma^2)   # rep number (Wallinga and Lipsitch 2007, eqn 3.4)
+    cat("coef(M)[2]=", coef(M)[2], ", r=", r, ", pop=", sub$population, "; using Tc=", Tc, ", sigma=", sigma, ", infer R=", R, "\n", sep="")
+    mtext(sprintf(" R=%.5f", R), adj=0, side=3, line=-1, cex=par("cex"))
 }
 
 if (!interactive())

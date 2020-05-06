@@ -9,12 +9,12 @@ colDeath <- "red"
 
 # select 12 regions, shown in a 3x4 array of panels.
 regions <- c("California",
+             "Florida",
              "Georgia",
              "Louisiana",
              "Maine",
              "Massachusetts",
              "Montana",
-             "New Hampshire",
              "New York",
              "Ohio",
              "Tennessee",

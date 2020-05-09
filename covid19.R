@@ -66,6 +66,9 @@ for (region in regions) {
         sub$cases_new <- c(0, diff(sub$cases))
     }
     sub$cases_new[sub$cases_new < 0] <- NA
+    if (is.na(sub$population[1]))
+        stop("unknown population for ", region)
+
     n <- length(sub$cases)
     if (n < 2) {
         cat("Under 2 data points for", region, "so it is not plotted\n")

@@ -39,6 +39,10 @@
 
 library(oce)
 source("get_data.R")
+width <- 8
+height <- 5.5
+res <- 200
+pointsize <- 11
 
 recentNumberOfDays <- 10
 ## can specify region in the commandline
@@ -91,8 +95,13 @@ for (region in regions) {
     if (!sum(recent))
         next
 
-    if (!interactive()) png(paste0("covid19_", region, ".png"),
-                            width=7, height=5, unit="in", res=120, pointsize=11)
+    if (!interactive())
+        png(paste0("covid19_", region, ".png"),
+            width=width,
+            height=height,
+            unit="in",
+            res=res,
+            pointsize=pointsize)
     if (!any(sub$cases > 0)) {
         par(mfrow=c(1,1))
         plot(c(0, 1), c(0, 1), xlab="", ylab="", axes=FALSE, type="n")

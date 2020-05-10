@@ -22,12 +22,17 @@ regions <- c("California",
              "Washington")
 
 width <- 8
-height <- 6
+height <- 5.5
 res <- 200
 pointsize <- 11
 
 if (!interactive())
-    png("usa_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("usa_linear.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
 par(mfrow=c(4, 3))
 tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken

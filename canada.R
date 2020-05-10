@@ -69,12 +69,17 @@ regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswic
              "Repatriated travellers")
 
 width <- 8
-height <- 6
+height <- 5.5
 res <- 200
 pointsize <- 11
 
 if (!interactive())
-    png("canada_linear.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("canada_linear.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
 par(mfrow=c(4, 3))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
 tlim <- range(d$time)

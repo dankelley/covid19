@@ -6,7 +6,7 @@ if (!exists("d")) { # cache to save server load during code development
     d$testsPerPop <- d$tests / d$pop
 }
 now <- lubridate::with_tz(Sys.time(), "UTC")
-places <- c("Canada", "France", "Germany", "Italy", "United Kingdom", "United States")
+places <- c("Canada", "France", "Germany", "Italy", "Korea, South", "United Kingdom", "United States")
 cols <- seq_along(places)
 ylim <- c(0, 100*max(sapply(places, function(p) max(subset(d, d$country==p)$testsPerPop))))
 if (!interactive()) png("tests_per_pop.png", height=5, width=7, pointsize=9, unit="in", res=120)

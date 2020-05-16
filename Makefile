@@ -4,7 +4,7 @@ all: force
 	/usr/local/bin/Rscript covid19.R $(regions)
 	/usr/local/bin/Rscript canada.R
 	/usr/local/bin/Rscript usa.R
-	/usr/local/bin/Rscript tests_per_pop.R # uses COVID19 package
+	#/usr/local/bin/Rscript tests_per_pop.R # uses COVID19 package
 	date > last_updated.html
 	chmod a+r last_updated.html
 force:

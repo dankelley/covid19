@@ -1,6 +1,7 @@
 library(oce)
 source("get_data.R")
 
+twelveStateFormat <- !TRUE
 
 recentNumberOfDays <- 10
 now <- Sys.time()
@@ -8,21 +9,24 @@ mar <- c(2, 3, 1.5, 1.5)
 colDeath <- "red"
 
 # select 12 regions, shown in a 3x4 array of panels.
-regions <- c("California",
-             "Florida",
-             "Georgia",
-             "Illinois",
-             "Louisiana",
-             "Montana",
-             "New York",
-             "Ohio",
-             "Oklahoma",
-             "Tennessee",
-             "Vermont",
-             "Washington")
+regions <- if (twelveStateFormat) {
+    c("California", "Florida", "Georgia", "Illinois", "Louisiana",
+      "Montana", "New York", "Ohio", "Oklahoma", "Tennessee",
+      "Vermont", "Washington")
+} else {
+    c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+      "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+      "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+      "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+      "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+      "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+      "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+      "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
+      "Wisconsin", "Wyoming")
+}
 
 width <- 8
-height <- 5.5
+height <- 5.5 * if (twelveStateFormat) 1 else 50 / 12
 res <- 200
 pointsize <- 11
 
@@ -33,10 +37,8 @@ if (!interactive())
         unit="in",
         res=res,
         pointsize=pointsize)
-par(mfrow=c(4, 3))
+par(mfrow=c(if (twelveStateFormat) 4 else 17, 3))
 tlim <- c(as.POSIXct("2020-01-15", format="%Y-%m-%d", tz="UTC"), now)
-## Ignore the territories (few data) and also repatriated travellers (oddly broken
-## up into two groups, presumably because of poor data handling).
 
 for (region in regions) {
     message("Handling linear plot for ", region)
@@ -72,7 +74,7 @@ if (!interactive())
 
 if (!interactive())
     png("usa_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-par(mfrow=c(4, 3))
+par(mfrow=c(if (twelveStateFormat) 4 else 17, 3))
 ## Uniform scale for all log plots, to make
 ## it easier to see slope differences.
 for (region in regions) {
@@ -161,7 +163,7 @@ if (!interactive())
 
 if (!interactive())
     png("usa_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-par(mfrow=c(4, 3))
+par(mfrow=c(if (twelveStateFormat) 4 else 17, 3))
 for (region in regions) {
     message("Handling change-plot for ", region)
     if (region == "-") {

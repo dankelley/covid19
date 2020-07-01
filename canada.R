@@ -51,7 +51,7 @@ population <- function(region)
 
 
 
-recentNumberOfDays <- 10
+recentNumberOfDays <- 14
 now <- Sys.time()
 ## Cache for speed during code development
 if (!exists("d")) {

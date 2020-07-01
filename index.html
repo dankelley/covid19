@@ -386,12 +386,14 @@ summary {
 <p>This website shows the reported incidence of the Covid-19 Novel coronavirus for some selected nations, and for subregions in Canada and the United States of America.  The source code is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The source data are acquired from the [Johns Hopkins University Center for Systems Science and Engineering](https://github.com/CSSEGISandData/COVID-19).</p>
 
 <p>The world and country views have four panels: (a) the top-left shows case
-and death counts over time, highlighting the most recent 10 days, (b) the
+and death counts over time, highlighting the most recent 14 days (this
+used to be 10 days, until 2020 July 1, when it was changed to 14 days,
+which is typically taken as the incubation period), (b) the
 top-right is the same, but with a logarithmic axis for count, (c) the
 lower-left shows daily case count, with a magenta line for a smoothing spline
 set to have 1 degree of freedom per 7 days of time interval, and (d) the
 bottom-right is like the bottom left, but with logarithmic axis (and the same
-spline shown).  The margin labels should be self explantory, but note that the
+spline shown).  The margin labels should be self explanatory, but note that the
 Case Fatality Rate is only shown if both doubling times exceed 30 days (meaning
 that the counts are relatively static).</p>
 

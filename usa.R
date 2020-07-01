@@ -3,7 +3,7 @@ source("get_data.R")
 
 twelveStateFormat <- !TRUE
 
-recentNumberOfDays <- 10
+recentNumberOfDays <- 14
 now <- Sys.time()
 mar <- c(2, 3, 1.5, 1.5)
 colDeath <- "red"

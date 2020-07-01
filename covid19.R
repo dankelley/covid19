@@ -44,7 +44,7 @@ height <- 5.5
 res <- 200
 pointsize <- 11
 
-recentNumberOfDays <- 10
+recentNumberOfDays <- 14
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
 regions <- if (length(args)) args else "World"

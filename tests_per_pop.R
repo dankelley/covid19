@@ -3,13 +3,13 @@ library(oce)
 if (!exists("d")) { # cache to save server load during code development
     d <- covid19(end=Sys.Date()-1)
     d$time <- lubridate::with_tz(as.POSIXct(d$date), "UTC")
-    d$testsPerPop <- d$tests / d$pop
+    d$testsPerPop <- d$tests / d$population
+    d$country <- d$administrative_area_level_1
 }
 ## These are the R4 colours
 now <- lubridate::with_tz(Sys.time(), "UTC")
 places <- c("Canada", "France", "Germany", "Italy", "Korea, South", "United Kingdom", "United States")
-R4colors <- c("#000000", "#DF536B", "#61D04F", "#2297E6", "#28E2E5", "#CD0BBC",
-              "#F5C710", "#9E9E9E")
+R4colors <- c("#000000", "#DF536B", "#61D04F", "#2297E6", "#28E2E5", "#CD0BBC", "#F5C710", "#9E9E9E")
 cols <- R4colors[seq_along(places)%%length(R4colors)]
 ylim <- c(0, 100*max(sapply(places, function(p) max(subset(d, d$country==p)$testsPerPop))))
 if (!interactive()) png("tests_per_pop.png", height=5, width=7, pointsize=9, unit="in", res=120)

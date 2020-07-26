@@ -383,7 +383,9 @@ summary {
 
 <p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use<a href="last_updated.html">.</a></p>
 
-<p>This website shows the reported incidence of the Covid-19 Novel coronavirus for some selected nations, and for subregions in Canada and the United States of America.  The source code is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The source data are acquired from the [Johns Hopkins University Center for Systems Science and Engineering](https://github.com/CSSEGISandData/COVID-19).</p>
+<p>This website shows the reported incidence of the Covid-19 Novel coronavirus for some selected nations, and for subregions in Canada and the United States of America.  The source code is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The source data are acquired from the
+<href="https://github.com/CSSEGISandData/COVID-19">
+Johns Hopkins University Center for Systems Science and Engineering</a>.
 
 <p>The world and country views have four panels: (a) the top-left shows case
 and death counts over time, highlighting the most recent 14 days (this
@@ -398,7 +400,7 @@ Case Fatality Rate is only shown if both doubling times exceed 30 days (meaning
 that the counts are relatively static).</p>
 
 <!--
-<p>The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>, with data being downloaded by the COVID19 R package.  All other 
+<p>The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>, with data being downloaded by the COVID19 R package.  All other
 -->
 
 <p>The plots access the source data directly, in R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selcted states, all of which use <a href="https://raw.githubusercontent.com/dankelley/covid19/master/get_data.R">get_data.R</a> to download the data.  The R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to produce results like those shown here.</p>

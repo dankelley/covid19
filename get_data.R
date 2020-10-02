@@ -125,6 +125,15 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
             }
         }
     }
+    n <- length(res$time)
+    if (length(res$cases) > n) {
+        cat(region, ": trimming trailing cases to reduce length from ", length(res$cases), " to ", n, "\n", sep="")
+        res$cases <- res$cases[1:n]
+    }
+    if (length(res$deaths) > n) {
+        cat(region, ": trimming trailing deaths to reduce length from ", length(res$cases), " to ", n, "\n", sep="")
+        res$deaths <- res$deaths[1:n]
+    }
     res
 }
 

@@ -74,9 +74,11 @@ deathsNum <- deaths[, seq(5L, dim(deaths)[2])]
 
 #stopifnot(names(confirmedUS) == names(deathsUS))
 
-tmp <- gsub("X", "", names(confirmed)[grep("^X[1-9]\\.", names(confirmed))])
+tmp <- gsub("X", "", names(confirmed)[grep("^X[1-9][0,1]{0,1}\\.", names(confirmed))])
 confirmedTimes <- lubridate::with_tz(as.POSIXct(tmp, format="%m.%d.%y", tz="UTC"), "UTC")
-tmp <- gsub("X", "", names(deaths)[grep("^X[1-9]\\.", names(deaths))])
+## ensure times not misordered (as e.g. if mon/day mixed up)
+stopifnot(all(1==diff(order(confirmedTimes))))
+tmp <- gsub("X", "", names(deaths)[grep("^X[1-9][0,1]{0,1}\\.", names(deaths))])
 deathsTimes <- lubridate::with_tz(as.POSIXct(tmp, format="%m.%d.%y", tz="UTC"), "UTC")
 stopifnot(confirmedTimes == deathsTimes)
 time <- confirmedTimes

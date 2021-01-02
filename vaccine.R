@@ -8,8 +8,19 @@ vaccineStart <- as.POSIXct("2020-12-10")
 now <- Sys.Date()
 d$time <- as.POSIXct(d$date)
 print(c(vaccineStart, now))
+
+width <- 8
+height <- 5.5
+res <- 200
+pointsize <- 11
 if (!interactive())
-    pdf("vaccine.pdf")
+    png("vaccine.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
+
 par(mfcol=c(2,3))
 for (location in c("Canada", "United Kingdom", "United States")) {
     placeOK <- d$location == location
@@ -21,10 +32,10 @@ for (location in c("Canada", "United Kingdom", "United States")) {
         v100 <- dlook$total_vaccinations_per_hundred
         m <- lm(v100 ~ day)
         oce.plot.ts(dlook$time, dlook$total_vaccinations_per_hundred, xlab="", ylab="Vaccines/100", drawTimeRange=FALSE, grid=TRUE, xlim=c(vaccineStart, now), type="o")
-        mtext(location, adj=1)
-        mtext(sprintf("%.3f v100/d", coef(m)[2]), adj=0, line=-1, cex=par("cex"))
+        mtext(location, adj=1, cex=1.1*par("cex"))
+        mtext(sprintf(" Trend: %.3f vaccinations/100 persons/day", coef(m)[2]), adj=0, line=-1, cex=0.9*par("cex"))
         oce.plot.ts(dlook$time, dlook$total_vaccinations_per_hundred, xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE, grid=TRUE, xlim=c(vaccineStart, now), type="o")
-        mtext(sprintf("General Life Expectancy: %.1fy", dlook$life_expectancy[1]), cex=par("cex"))
+        # mtext(sprintf("General Life Expectancy: %.1fy", dlook$life_expectancy[1]), cex=par("cex"))
 
         cat("#", location, "\n")
         cat(oce::vectorShow(dlook$population_density[1]))

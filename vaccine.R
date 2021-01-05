@@ -7,9 +7,10 @@ variables <- sort(names(d))
 cat("variables follow (in alphabetical order)\n")
 print(variables)
 
-vaccineStart <- as.POSIXct("2020-12-10")
-now <- Sys.Date()
-d$time <- as.POSIXct(d$date)
+vaccineStart <- as.POSIXct("2020-12-10", tz="UTC")
+## now <- Sys.Date()
+now <- as.POSIXct(system("date +'%Y-%m-%d'",intern=TRUE),tz="UTC")
+d$time <- as.POSIXct(d$date, tz="UTC")
 print(c(vaccineStart, now))
 d <- d[d$time >= vaccineStart, ] # ignore old stuff
 

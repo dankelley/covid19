@@ -8,10 +8,11 @@ cat("variables follow (in alphabetical order)\n")
 print(variables)
 
 vaccineStart <- as.POSIXct("2020-12-10", tz="UTC")
-## now <- Sys.Date()
-now <- as.POSIXct(system("date +'%Y-%m-%d'",intern=TRUE),tz="UTC")
+now <- as.POSIXct(Sys.time(), tz="UTC")
 d$time <- as.POSIXct(d$date, tz="UTC")
+xlim <- c(vaccineStart, now)
 print(c(vaccineStart, now))
+print(xlim)
 d <- d[d$time >= vaccineStart, ] # ignore old stuff
 
 locations <- c("Canada", "United Kingdom", "United States")
@@ -37,7 +38,7 @@ for (location in c("Canada", "United Kingdom", "United States")) {
         m <- lm(v100 ~ day)
         plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
              xlab="", ylab="Vaccines/100",
-             xlim=c(vaccineStart, now), type="o")
+             xlim=xlim, type="o")
         mtext(location, adj=1, cex=1.1*par("cex"))
         trend <- coef(m)[2]
         mtext(sprintf(" Trend: %.3f vaccinations/100 persons/day", trend), adj=0, line=-1, cex=0.9*par("cex"))
@@ -45,7 +46,7 @@ for (location in c("Canada", "United Kingdom", "United States")) {
         mtext(sprintf(" Implies %.1f years to 100%%", yearsToAll), adj=0, line=-2, cex=0.9*par("cex"))
         plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
              xlab="", ylab="Vaccines/100", log="y",
-             xlim=c(vaccineStart, now), type="o")
+             xlim=xlim, type="o")
         # mtext(sprintf("General Life Expectancy: %.1fy", dd$life_expectancy[1]), cex=par("cex"))
         cat("#", location, "\n")
         cat(oce::vectorShow(dd$population_density[1]))

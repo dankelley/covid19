@@ -1,5 +1,3 @@
-library(oce)
-
 uniformScale <- TRUE
 
 file <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
@@ -26,7 +24,7 @@ res <- 200
 pointsize <- 11
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-par(mfcol=c(2,3))
+par(mfcol=c(2,3), mar=c(3,3,1,1), mgp=c(2,0.7,0))
 for (location in c("Canada", "United Kingdom", "United States")) {
     dd <- d[d$location == location,]
     ## Trim the zero values (for old oce 1.2.0 and earlier, which does not ignore the <=0 cases)
@@ -36,15 +34,17 @@ for (location in c("Canada", "United Kingdom", "United States")) {
         day <- (dd$time - dd$time[1]) / 86400
         v100 <- dd$total_vaccinations_per_hundred
         m <- lm(v100 ~ day)
-        oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                    xlab="", ylab="Vaccines/100", drawTimeRange=FALSE, grid=TRUE, xlim=c(vaccineStart, now), type="o")
+        plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
+             xlab="", ylab="Vaccines/100",
+             xlim=c(vaccineStart, now), type="o")
         mtext(location, adj=1, cex=1.1*par("cex"))
         trend <- coef(m)[2]
         mtext(sprintf(" Trend: %.3f vaccinations/100 persons/day", trend), adj=0, line=-1, cex=0.9*par("cex"))
         yearsToAll <- 100 / trend / 365
         mtext(sprintf(" Implies %.1f years to 100%%", yearsToAll), adj=0, line=-2, cex=0.9*par("cex"))
-        oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                    xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE, grid=TRUE, xlim=c(vaccineStart, now), type="o")
+        plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
+             xlab="", ylab="Vaccines/100", log="y",
+             xlim=c(vaccineStart, now), type="o")
         # mtext(sprintf("General Life Expectancy: %.1fy", dd$life_expectancy[1]), cex=par("cex"))
         cat("#", location, "\n")
         cat(oce::vectorShow(dd$population_density[1]))

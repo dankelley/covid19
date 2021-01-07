@@ -40,31 +40,43 @@ for (ilocation in seq_along(locations)) {
         day <- as.numeric((dd$time - dd$time[1]) / 86400)
         v100 <- dd$total_vaccinations_per_hundred
         oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                    xlab="", ylab="Vaccines/100", drawTimeRange=FALSE,
+                    xlab="", ylab="Vaccinations / 100 Persons", drawTimeRange=FALSE,
                     xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         grid()
         if (nrow(dd) > 2) {
             m <- lm(v100 ~ day + I(day^2))
-            yearsToAll <- uniroot(function(x) 100 - predict(m, list(day=x)), c(0.1, 10000))$root / 365
+            yearsToAll <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,1], c(0.1, 10000))$root / 365
+            yearsToAll2 <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,2], c(0.1, 10000))$root / 365
+            yearsToAll3 <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,3], c(0.1, 10000))$root / 365
         }
-        if (!is.null(m))
-            lines(dd$time, predict(m), col="blue", lwd=2)
+        if (!is.null(m)) {
+            P <- predict(m, interval="prediction")
+            lines(dd$time, P[,1], col="blue", lwd=1.4)
+            lines(dd$time, P[,2], col="blue", lwd=0.5)
+            lines(dd$time, P[,3], col="blue", lwd=0.5)
+        }
         mtext(locations[ilocation], adj=1, cex=1.1*par("cex"))
         if (!is.null(m))
-            mtext(sprintf(" %.1fy to 100%%", yearsToAll), adj=0, line=-1, cex=0.9*par("cex"), col="blue")
+            mtext(sprintf(" Predict Full Coverage\n in %.2f to %.2f years",
+                          yearsToAll3, yearsToAll2),
+                  adj=0, line=-2, cex=0.9*par("cex"), col="blue")
         if (packageVersion("oce") > "1.0.1") {
             oce::oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                             xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE,
+                             xlab="", ylab="Vaccinations / 100 Persons", log="y", logStyle="decade", drawTimeRange=FALSE,
                              xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         } else {
             plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                 xlab="", ylab="Vaccines/100", log="y",
+                 xlab="", ylab="Vaccinations/100", log="y",
                  xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         }
         grid()
         ## predictions
-        if (!is.null(m))
-            lines(dd$time, predict(m), col="blue", lwd=2)
+        if (!is.null(m)) {
+            lines(dd$time, P[,1], col="blue", lwd=1.4)
+            lines(dd$time, P[,2], col="blue", lwd=0.5)
+            lines(dd$time, P[,3], col="blue", lwd=0.5)
+        }
+
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))
             cat(oce::vectorShow(dd$median_age[1]))

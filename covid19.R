@@ -39,9 +39,9 @@
 
 library(oce)
 source("get_data.R")
-width <- 8
-height <- 5.5
-res <- 200
+width <- 7
+height <- 5
+res <- 110
 pointsize <- 11
 
 recentNumberOfDays <- 14

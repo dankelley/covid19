@@ -23,9 +23,9 @@ ylim <- if (uniformScale)
     range(sapply(locations, function(l) range(d[d$location==l,]$total_vaccinations_per_hundred))) else NULL
 cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
 
-width <- 8
-height <- 5
-res <- 200
+width <- 7
+height <- 4
+res <- 120
 pointsize <- 12
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
@@ -43,7 +43,7 @@ for (ilocation in seq_along(locations)) {
                     xlab="", ylab="Vaccinations / 100 Persons", drawTimeRange=FALSE,
                     xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         grid()
-        if (nrow(dd) > 2) {
+        if (nrow(dd) > 3) {
             m <- lm(v100 ~ day + I(day^2))
             yearsToAll <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,1], c(0.1, 10000))$root / 365
             yearsToAll2 <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,2], c(0.1, 10000))$root / 365

@@ -424,6 +424,9 @@ format.</p>
 -->
 <ul>
     <li>
+        <a href="#Vaccinations">Vaccinations</a> in Selected Regions
+    </li>
+    <li>
         <a href="#World">World</a>
     </li>
     <li>
@@ -663,9 +666,6 @@ format.</p>
         <a href="#Zambia">Zambia</a> /
         <a href="#Zimbabwe">Zimbabwe</a>
     </li>
-    <li>
-        <a href="#Vaccinations">Vaccinations</a>
-    </li>
 </ul>
 
 
@@ -676,6 +676,24 @@ uses the COVID19 R package, which seems to be prone to errors. For that reason,
 it may be wise to view this graph with a skeptical eye.</p>
 <img src="tests_per_pop.png" alt="Error: no such png is available">
 -->
+
+<hr style="border-width: 5px;"> <h3 id="Vaccinations">Vaccinations in Selected Regions</h3>
+
+<p>The following graphs are made with
+<a href="https://raw.githubusercontent.com/dankelley/covid19/master/vaccine.R">vaccine.R</a>,
+using data downloaded from <a
+    href="https://covid.ourworldindata.org/data/owid-covid-data.csv">
+    covid.ourworldindata.org</a>, using the column named
+<tt>total_vaccinations_per_hundred</tt>.
+The blue lines are the result of a quadratic fit (done with the <tt>lm</tt> R
+function) of the time dependence of the cumulative number of vaccinations per
+hundred persons in the region.  The thicker line is the prediction, and the
+thinner lines are the prediction intervals. The latter are used to infer a
+rough estimate of the time it might take to vaccinate the full population, by
+extending these intervals beyond the interval illustrated.</p>
+
+<img src="vaccine.png" alt="Error: no such png is available">
+
 
 <hr style="border-width: 5px;"> <h3 id="World">World</h3>
 <img src="covid19_World.png" alt="Error: no such png is available">
@@ -1261,20 +1279,6 @@ dataset used for other countries.</p>
 
 <hr style="border-width: 5px;"> <h3 id="Zimbabwe">Zimbabwe</h3>
 <img src="covid19_Zimbabwe.png" alt="Error: no such png is available">
-
-<hr style="border-width: 5px;"> <h3 id="Vaccinations">Vaccinations in selected regions</h3>
-
-<p>The following graph is made using data downloaded from <a
-    href="https://covid.ourworldindata.org/data/owid-covid-data.csv">
-    covid.ourworldindata.org</a>, using the columns named
-<tt>location</tt> and <tt>total_vaccinations_per_hundred</tt>.
-The blue line is the result of a quadratic fit of vaccinations per hundred
-persons, as a function of time, and the text at the top of the plot
-indicates the time it takes this fit to predict 100 percent of the population
-be vaccinated.</p>
-
-<img src="vaccine.png" alt="Error: no such png is available">
-
 
 
 </div>

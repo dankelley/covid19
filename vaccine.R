@@ -18,15 +18,15 @@ d <- d0[OK, ] # ignore old stuff
 xlim <- range(d$time)
 cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
-locations <- c("Canada", "United Kingdom", "United States", "World")
+locations <- c("Canada", "United Kingdom", "United States")# , "World")
 ylim <- if (uniformScale)
     range(sapply(locations, function(l) range(d[d$location==l,]$total_vaccinations_per_hundred))) else NULL
 cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
 
 width <- 8
-height <- 5.5
+height <- 5
 res <- 200
-pointsize <- 11
+pointsize <- 12
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfcol=c(2,length(locations)), mar=c(3,3,1,1), mgp=c(2,0.7,0))
@@ -42,6 +42,7 @@ for (ilocation in seq_along(locations)) {
         oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
                     xlab="", ylab="Vaccines/100", drawTimeRange=FALSE,
                     xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+        grid()
 
         if (nrow(dd) > 2) {
             m <- lm(v100 ~ day + I(day^2))
@@ -72,6 +73,7 @@ for (ilocation in seq_along(locations)) {
         oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
                     xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE,
                     xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+        grid()
 
         ## predictions
         if (!is.null(m))

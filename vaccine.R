@@ -43,46 +43,28 @@ for (ilocation in seq_along(locations)) {
                     xlab="", ylab="Vaccines/100", drawTimeRange=FALSE,
                     xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         grid()
-
         if (nrow(dd) > 2) {
             m <- lm(v100 ~ day + I(day^2))
             yearsToAll <- uniroot(function(x) 100 - predict(m, list(day=x)), c(0.1, 10000))$root / 365
         }
-
-        ## exponential fit (red)
-        ##> dayOut <- seq(min(day), max(day) + diff(range(day)), length.out=100)
-        ##> t <- try(mnls <- nls(v100~a+b*exp(day/c), start=list(a=0, b=0.1, c=5)), silent=TRUE)
-        ##> yearsToAllNonlinear <- NA
-        ##> if (!inherits(t, "try-error")) {
-        ##>     message("nls worked")
-        ##>     mp <- predict(mnls)
-        ##>     lines(dd$time, mp, col="red", lwd=2)
-        ##>     yearsToAllNonlinear <- uniroot(function(x) 100 - predict(mnls, list(day=x)), c(0, 5000))$root / 365
-        ##> }
-        ## linear fit (blue)
         if (!is.null(m))
             lines(dd$time, predict(m), col="blue", lwd=2)
         mtext(locations[ilocation], adj=1, cex=1.1*par("cex"))
-        ## trend <- coef(m)[2]
-        ## mtext(sprintf(" %.3f vacc./100 persons/day", trend), adj=0, line=-1, cex=0.9*par("cex"))
-        ##?yearsToAll <- 100 / trend / 365
         if (!is.null(m))
             mtext(sprintf(" %.1fy to 100%%", yearsToAll), adj=0, line=-1, cex=0.9*par("cex"), col="blue")
-        ##> if (is.finite(yearsToAllNonlinear))
-        ##>     mtext(sprintf(" Expon.: %.1fy to 100%%", yearsToAllNonlinear), adj=0, line=-2, cex=0.9*par("cex"), col="red")
-        oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-                    xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE,
-                    xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+        if (packageVersion("oce") > "1.0.1") {
+            oce::oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
+                             xlab="", ylab="Vaccines/100", log="y", logStyle="decade", drawTimeRange=FALSE,
+                             xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+        } else {
+            plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
+                 xlab="", ylab="Vaccines/100", log="y",
+                 xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+        }
         grid()
-
         ## predictions
         if (!is.null(m))
             lines(dd$time, predict(m), col="blue", lwd=2)
-        ##>if (!inherits(t, "try-error")) {
-        ##>    lines(dd$time, mp, col="red", lwd=2)
-        ##>}
-
-        cat("#", locations[ilocation], "\n")
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))
             cat(oce::vectorShow(dd$median_age[1]))
@@ -98,8 +80,7 @@ for (ilocation in seq_along(locations)) {
             cat(oce::vectorShow(dd$life_expectancy[1]))
             cat(oce::vectorShow(dd$human_development_index[1]))
         }
-    } else {
-        ## warning("'", locations[ilocation], "' not found\n")
+        cat("#", locations[ilocation], "\n")
     }
 }
 

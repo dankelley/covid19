@@ -9,31 +9,38 @@ if (!exists("d0")) {
 }
 
 variables <- sort(names(d0))
-cat("variables follow (in alphabetical order)\n")
-print(variables)
+if (debug) {
+    cat("variables follow (in alphabetical order)\n")
+    print(variables)
+}
 
 OK <- is.finite(d0$total_vaccinations_per_hundred) & d0$total_vaccinations_per_hundred > 0
 d <- d0[OK, ] # ignore old stuff
 xlim <- range(d$time)
-cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
+if (debug)
+    cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
 locations <- c("Canada", "Israel", "United Kingdom", "United States")# , "World")
 ylim <- if (uniformScale)
     range(sapply(locations, function(l) range(d[d$location==l,]$total_vaccinations_per_hundred))) else NULL
-cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
+if (debug)
+    cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
 
 width <- 7
 height <- 4
-res <- 200
+res <- 150
 pointsize <- 10
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfcol=c(2,length(locations)), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 
 for (ilocation in seq_along(locations)) {
+    cat("handling ", locations[ilocation], "\n")
     dd <- d[d$location == locations[ilocation],]
-    cat("locations[", ilocation, "]='", locations[ilocation], "'\n", sep="")
-    cat("nrow:", nrow(dd), "\n")
+    if (debug) {
+        cat("locations[", ilocation, "]='", locations[ilocation], "'\n", sep="")
+        cat("nrow:", nrow(dd), "\n")
+    }
     m <- NULL # to avoid problem with too few data to fit for prediction
     if (nrow(dd)) {
         ## Linear plot
@@ -44,10 +51,15 @@ for (ilocation in seq_along(locations)) {
         grid(lty=1, col="lightgray", lwd=0.33)
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
+            past <- diff(range(day))
+            if (debug)
+                cat("past=", past, "\n")
             m <- lm(v100 ~ day + I(day^2))
-            yearsToAll <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,1], c(0.01, 1000))$root / 365
-            yearsToAll2 <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,2], c(0.01, 1000))$root / 365
-            yearsToAll3 <- uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,3], c(0.01, 1000))$root / 365
+            yearsToAll <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,1], c(0.01, 1000))$root - past) / 365
+            yearsToAll2 <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,2], c(0.01, 1000))$root - past) / 365
+            yearsToAll3 <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,3], c(0.01, 1000))$root - past) / 365
+        } else {
+            cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
         newdata <- list(day=seq(min(day), max(day), length.out=200))
         if (!is.null(m)) {
@@ -89,10 +101,6 @@ for (ilocation in seq_along(locations)) {
             cat(oce::vectorShow(dd$life_expectancy[1]))
             cat(oce::vectorShow(dd$human_development_index[1]))
         }
-        cat("#", locations[ilocation], "\n")
     }
 }
-
-if (!interactive())
-    dev.off()
 

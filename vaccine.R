@@ -17,7 +17,7 @@ d <- d0[OK, ] # ignore old stuff
 xlim <- range(d$time)
 cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
-locations <- c("Canada", "France", "Israel", "United Kingdom", "United States")# , "World")
+locations <- c("Canada", "Israel", "United Kingdom", "United States")# , "World")
 ylim <- if (uniformScale)
     range(sapply(locations, function(l) range(d[d$location==l,]$total_vaccinations_per_hundred))) else NULL
 cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")

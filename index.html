@@ -685,12 +685,15 @@ using data downloaded from <a
     href="https://covid.ourworldindata.org/data/owid-covid-data.csv">
     covid.ourworldindata.org</a>, using the column named
 <tt>total_vaccinations_per_hundred</tt>.
-The blue lines are the result of a quadratic fit (done with the <tt>lm</tt> R
-function) of the time dependence of the cumulative number of vaccinations per
-hundred persons in the region.  The thicker line is the prediction, and the
-thinner lines are the prediction intervals. The latter are used to infer a
-rough estimate of the time it might take to vaccinate the full population, by
-extending these intervals beyond the those plotted.</p>
+The top panels have linear axes for vaccinations per hundred persons, while the
+bottom ones have logarithmic axes. Time runs from mid December of 2020 through
+to 2021.  The blue lines show the results of quadratic fits (done with the
+<tt>lm</tt> R function) of the time dependence of the cumulative number of
+vaccinations per hundred persons in the region.  The thicker lines are the
+least-square predictions themselves, and the thinner lines represent confidence
+intervals on those predictions.  Those intervals are extended to obtain rough
+estimates of the time that might be required to vaccinate the full population.
+</p>
 
 <img src="vaccine.png" alt="Error: no such png is available">
 

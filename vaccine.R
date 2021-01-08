@@ -28,7 +28,7 @@ res <- 200
 pointsize <- 10
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-par(mfcol=c(2,length(locations)), mar=c(3,2,1,1), mgp=c(2,0.7,0))
+par(mfcol=c(2,length(locations)), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 
 for (ilocation in seq_along(locations)) {
     dd <- d[d$location == locations[ilocation],]

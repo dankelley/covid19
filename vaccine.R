@@ -35,7 +35,7 @@ if (!interactive())
 par(mfcol=c(2,length(locations)), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 
 for (ilocation in seq_along(locations)) {
-    cat("handling ", locations[ilocation], "\n")
+    cat("handling", locations[ilocation], "\n")
     dd <- d[d$location == locations[ilocation],]
     if (debug) {
         cat("locations[", ilocation, "]='", locations[ilocation], "'\n", sep="")
@@ -70,10 +70,17 @@ for (ilocation in seq_along(locations)) {
         }
         points(dd$time, dd$total_vaccinations_per_hundred, pch=20, col=2, cex=1.0)
         mtext(locations[ilocation], adj=1, cex=1.1*par("cex"))
-        if (!is.null(m))
-            mtext(sprintf(" Predict full coverage\n in %.2f to %.2f years",
-                          yearsToAll3, yearsToAll2),
-                  adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+        if (!is.null(m)) {
+            if (12*(yearsToAll2 - yearsToAll3) < 1) {
+                mtext(sprintf(" Predict full coverage\n in %.0f to %.0f weeks",
+                              round(4*12*yearsToAll3), round(4*12*yearsToAll2)),
+                      adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+            } else {
+                mtext(sprintf(" Predict full coverage\n in %.0f to %.0f months",
+                              round(12*yearsToAll3), round(12*yearsToAll2)),
+                      adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+            }
+        }
         ## Log plot
         plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
              xlab="", ylab="Vaccinations/100", log="y",

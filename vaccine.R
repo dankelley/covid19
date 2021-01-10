@@ -55,9 +55,10 @@ for (ilocation in seq_along(locations)) {
             if (debug)
                 cat("past=", past, "\n")
             m <- lm(v100 ~ day + I(day^2))
-            yearsToAll <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,1], c(0.01, 1000))$root - past) / 365
-            yearsToAll2 <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,2], c(0.01, 1000))$root - past) / 365
-            yearsToAll3 <- (uniroot(function(x) 100 - predict(m, list(day=x), interval="prediction")[,3], c(0.01, 1000))$root - past) / 365
+            x <- seq(min(day), min(day) + 5*365, 1)
+            yearsToAll <- which(as.vector(predict(m, list(day=x))) > 100)[1] / 365
+            yearsToAll2 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,2]) > 100)[1] / 365
+            yearsToAll3 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,3]) > 100)[1] / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
@@ -70,15 +71,25 @@ for (ilocation in seq_along(locations)) {
         }
         points(dd$time, dd$total_vaccinations_per_hundred, pch=20, col=2, cex=1.0)
         mtext(locations[ilocation], adj=1, cex=1.1*par("cex"))
-        if (!is.null(m)) {
-            if (12*(yearsToAll2 - yearsToAll3) < 1) {
-                mtext(sprintf(" Predict full coverage\n in %.0f to %.0f weeks",
-                              round(4*12*yearsToAll3), round(4*12*yearsToAll2)),
-                      adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+        if (!is.null(m) && is.finite(yearsToAll)) {
+            if (is.finite(yearsToAll2) && is.finite(yearsToAll3)) {
+                if (12*(yearsToAll2 - yearsToAll3) < 1) {
+                    mtext(sprintf(" Predict full coverage\n in %.0f to %.0f weeks",
+                                  round(4*12*yearsToAll3), round(4*12*yearsToAll2)),
+                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+                } else {
+                    mtext(sprintf(" Predict full coverage\n in %.0f to %.0f months",
+                                  round(12*yearsToAll3), round(12*yearsToAll2)),
+                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+                }
             } else {
-                mtext(sprintf(" Predict full coverage\n in %.0f to %.0f months",
-                              round(12*yearsToAll3), round(12*yearsToAll2)),
-                      adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+                if (12 * yearsToAll < 2) {
+                    mtext(sprintf(" Predict full coverage\n in about %.0f weeks", round(4*12*yearsToAll)),
+                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+                } else {
+                    mtext(sprintf(" Predict full coverage\n in about %.0f months", round(12*yearsToAll)),
+                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
+                }
             }
         }
         ## Log plot

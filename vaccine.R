@@ -56,9 +56,10 @@ for (ilocation in seq_along(locations)) {
                 cat("past=", past, "\n")
             m <- lm(v100 ~ day + I(day^2))
             x <- seq(min(day), min(day) + 5*365, 1)
-            yearsToAll <- which(as.vector(predict(m, list(day=x))) > 100)[1] / 365
-            yearsToAll2 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,2]) > 100)[1] / 365
-            yearsToAll3 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,3]) > 100)[1] / 365
+            criterion <- 200           # 2 shots/person
+            yearsToAll <- which(as.vector(predict(m, list(day=x))) > criterion)[1] / 365
+            yearsToAll2 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,2]) > criterion)[1] / 365
+            yearsToAll3 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,3]) > criterion)[1] / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }

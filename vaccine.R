@@ -27,7 +27,7 @@ if (debug)
     cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
 
 width <- 7
-height <- 4
+height <- 3.5
 res <- 150
 pointsize <- 10
 if (!interactive())
@@ -95,7 +95,7 @@ for (ilocation in seq_along(locations)) {
         }
         ## Log plot
         plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-             xlab="", ylab="Vaccinations/100", log="y",
+             xlab="", ylab="Vaccinations / 100 Persons", log="y",
              xlim=xlim, type="p", col=2, pch=20, cex=1.0)
         grid(lty=1, col="lightgray", lwd=0.33)
         ## predictions
@@ -105,6 +105,8 @@ for (ilocation in seq_along(locations)) {
             lines(dd$time[1]+newdata[[1]]*86400, P[,3], col="blue", lwd=0.5)
         }
         points(dd$time, dd$total_vaccinations_per_hundred, pch=20, col=2, cex=1.0)
+        print(tail(dd$total_vaccinations_per_hundred,1))
+        mtext(sprintf(" Latest: %.2f\n [%s]", tail(dd$total_vaccinations_per_hundred,1), format(tail(dd$time,1), format="%Y %b %e")), side=3, line=-2, cex=0.9*par("cex"), col="red", adj=0)
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))
             cat(oce::vectorShow(dd$median_age[1]))

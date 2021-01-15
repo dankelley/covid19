@@ -682,17 +682,13 @@ using data downloaded from <a
     href="https://covid.ourworldindata.org/data/owid-covid-data.csv">
     covid.ourworldindata.org</a>, using the column named
 <tt>total_vaccinations_per_hundred</tt>.
-The top panels have linear axes for vaccinations per hundred persons, while the
-bottom ones have a logarithmic axis for vaccinations.
-Time runs from mid December of 2020 through
-to 2021.  The blue lines show the results of quadratic fits (done with the
-<tt>lm</tt> R function) of the time dependence of the cumulative number of
-vaccinations per hundred persons in the region.  The thicker lines are the
-least-square predictions themselves, and the thinner lines represent confidence
-intervals on those predictions.  Those intervals are extended to obtain rough
-estimates of the time that might be required to administer two vaccinations
-per person.
-</p>
+The panels show the number of vaccinations per hundred persons in various
+countries. The time axes start in December of 2020 and proceed through to 2021.
+The lines indicate the predictions of linear regressions fitted to the most
+recent 10 days of data. (The symbol size indicates this time interval.)
+Extrapolation yields an estimate of the time it might take to achieve full
+population coverage, assuming the need for 2 doses per person (as is required
+for vaccines being used as of January 2021).</p>
 
 <img src="vaccine.png" alt="Error: no such png is available">
 

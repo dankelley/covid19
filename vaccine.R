@@ -1,6 +1,8 @@
 options(warn=0)
 debug <- FALSE
-uniformScale <- TRUE
+lwd <- 3
+spd <- 86400                           # seconds/day
+LOOK <- 10                             # days at end for linear fit
 
 if (!exists("d0")) {
     file <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
@@ -17,22 +19,21 @@ if (debug) {
 OK <- is.finite(d0$total_vaccinations_per_hundred) & d0$total_vaccinations_per_hundred > 0
 d <- d0[OK, ] # ignore old stuff
 xlim <- range(d$time)
+lastTenDays <- tail(d$time, 1) - LOOK * spd
+
 if (debug)
     cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
-locations <- c("Canada", "Israel", "United Kingdom", "United States")# , "World")
-ylim <- if (uniformScale)
-    range(sapply(locations, function(l) range(d[d$location==l,]$total_vaccinations_per_hundred))) else NULL
-if (debug)
-    cat("ylim:", ylim[1], " to ", ylim[2], " (range of vaccinations/[100 persons]) \n")
+locations <- c("Canada", "Israel", "United Kingdom", "United States")
 
 width <- 7
 height <- 3.5
-res <- 150
+res <- 120
 pointsize <- 10
 if (!interactive())
-    png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-par(mfcol=c(2,length(locations)), mar=c(2,3,1,1), mgp=c(2,0.7,0))
+    png("vaccine2.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+N <- ceiling(sqrt(length(locations)))
+par(mfrow=c(N,N), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 
 for (ilocation in seq_along(locations)) {
     cat("handling", locations[ilocation], "\n")
@@ -41,72 +42,47 @@ for (ilocation in seq_along(locations)) {
         cat("locations[", ilocation, "]='", locations[ilocation], "'\n", sep="")
         cat("nrow:", nrow(dd), "\n")
     }
-    m <- NULL # to avoid problem with too few data to fit for prediction
+    m1 <- NULL # to avoid problem with too few data to fit for prediction
     if (nrow(dd)) {
         ## Linear plot
         v100 <- dd$total_vaccinations_per_hundred
-        plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
+        focus <- dd$time >= (tail(dd$time, 1) - 10*spd)
+        plot(dd$time, dd$total_vaccinations_per_hundred,
              xlab="", ylab="Vaccinations / 100 Persons",
-             xlim=xlim, type="p", col=2, pch=20, cex=1.0)
+             xlim=xlim, type="p",
+             cex=ifelse(focus, 1, 0.5),
+             col=ifelse(focus, "black", "gray"))
         grid(lty=1, col="lightgray", lwd=0.33)
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             past <- diff(range(day))
             if (debug)
                 cat("past=", past, "\n")
-            m <- lm(v100 ~ day + I(day^2))
-            x <- seq(min(day), min(day) + 5*365, 1)
+            weights <- ifelse(day > max(day) - 10, 1, 0)
+            m1 <- lm(v100 ~ day, w=weights)
+            cat(locations[ilocation], " coef(m1): ", paste(coef(m1), collapse=", "), "\n")
+            print(summary(m1))
+
+            x <- seq(min(day)-5, min(day) + 20*365, 0.5)
             criterion <- 200           # 2 shots/person
-            yearsToAll <- which(as.vector(predict(m, list(day=x))) > criterion)[1] / 365
-            yearsToAll2 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,2]) > criterion)[1] / 365
-            yearsToAll3 <- which(as.vector(predict(m, list(day=x), interval="prediction")[,3]) > criterion)[1] / 365
+            yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
-        newdata <- list(day=seq(min(day), max(day), length.out=200))
-        if (!is.null(m)) {
-            P <- predict(m, newdata=newdata, interval="prediction")
-            lines(dd$time[1]+newdata[[1]]*86400, P[,1], col="blue", lwd=1.4)
-            lines(dd$time[1]+newdata[[1]]*86400, P[,2], col="blue", lwd=0.5)
-            lines(dd$time[1]+newdata[[1]]*86400, P[,3], col="blue", lwd=0.5)
+        newdata <- list(day=seq(tail(day,1)-LOOK, max(day), 0.5))
+
+        if (!is.null(m1)) {
+            P1 <- predict(m1, newdata=newdata)
+            lines((dd$time[1]+newdata[[1]]*86400), P1, col=2, lwd=lwd)
         }
-        points(dd$time, dd$total_vaccinations_per_hundred, pch=20, col=2, cex=1.0)
-        mtext(locations[ilocation], adj=1, cex=1.1*par("cex"))
-        if (!is.null(m) && is.finite(yearsToAll)) {
-            if (is.finite(yearsToAll2) && is.finite(yearsToAll3)) {
-                if (12*(yearsToAll2 - yearsToAll3) < 1) {
-                    mtext(sprintf(" Predict full coverage\n in %.0f to %.0f weeks",
-                                  round(4*12*yearsToAll3), round(4*12*yearsToAll2)),
-                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
-                } else {
-                    mtext(sprintf(" Predict full coverage\n in %.0f to %.0f months",
-                                  round(12*yearsToAll3), round(12*yearsToAll2)),
-                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
-                }
-            } else {
-                if (12 * yearsToAll < 2) {
-                    mtext(sprintf(" Predict full coverage\n in about %.0f weeks", round(4*12*yearsToAll)),
-                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
-                } else {
-                    mtext(sprintf(" Predict full coverage\n in about %.0f months", round(12*yearsToAll)),
-                          adj=0, line=-2, cex=0.9*par("cex"), col="blue")
-                }
-            }
+        points(dd$time, dd$total_vaccinations_per_hundred,
+               cex=ifelse(focus, 1, 0.5),
+               col=ifelse(focus, "black", "gray"))
+        mtext(locations[ilocation], side=3, cex=par("cex"))
+        if (!is.null(m1) && is.finite(yearsToAll1)) {
+            mtext(sprintf(" Expect 2 vaccinations per\n person within %.1f years,\n based on linear fit\n over last 10 days.", yearsToAll1),
+                  font=2, adj=0, line=-4, cex=0.9*par("cex"), col=2)
         }
-        ## Log plot
-        plot(dd$time, dd$total_vaccinations_per_hundred, ylim=ylim,
-             xlab="", ylab="Vaccinations / 100 Persons", log="y",
-             xlim=xlim, type="p", col=2, pch=20, cex=1.0)
-        grid(lty=1, col="lightgray", lwd=0.33)
-        ## predictions
-        if (!is.null(m)) {
-            lines(dd$time[1]+newdata[[1]]*86400, P[,1], col="blue", lwd=1.4)
-            lines(dd$time[1]+newdata[[1]]*86400, P[,2], col="blue", lwd=0.5)
-            lines(dd$time[1]+newdata[[1]]*86400, P[,3], col="blue", lwd=0.5)
-        }
-        points(dd$time, dd$total_vaccinations_per_hundred, pch=20, col=2, cex=1.0)
-        print(tail(dd$total_vaccinations_per_hundred,1))
-        mtext(sprintf(" Latest: %.2f\n [%s]", tail(dd$total_vaccinations_per_hundred,1), format(tail(dd$time,1), format="%Y %b %e")), side=3, line=-2, cex=0.9*par("cex"), col="red", adj=0)
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))
             cat(oce::vectorShow(dd$median_age[1]))

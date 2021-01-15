@@ -80,7 +80,8 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" Expect 2 vaccinations per\n person within %.1f years,\n based on linear fit\n over last 10 days.", yearsToAll1),
+            mtext(sprintf(" Over last %d days, %.2fM doses\n were administered per day,\n which suggests full (2-dose)\n coverage in %.1f years",
+                         LOOK, coef(m1)[[2]]/100*dd$population[1]/1e6, yearsToAll1),
                   font=2, adj=0, line=-4, cex=0.9*par("cex"), col=2)
         }
         if (debug) {

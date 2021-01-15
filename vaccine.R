@@ -73,7 +73,7 @@ for (ilocation in seq_along(locations)) {
 
         if (!is.null(m1)) {
             P1 <- predict(m1, newdata=newdata)
-            lines((dd$time[1]+newdata[[1]]*86400), P1, col=2, lwd=lwd)
+            lines((dd$time[1]+newdata[[1]]*86400), P1, col=4, lwd=lwd)
         }
         points(dd$time, dd$total_vaccinations_per_hundred,
                cex=ifelse(focus, 1, 0.5),
@@ -82,7 +82,7 @@ for (ilocation in seq_along(locations)) {
         if (!is.null(m1) && is.finite(yearsToAll1)) {
             mtext(sprintf(" Over last %d days, %.2fM doses\n were administered per day,\n which suggests full (2-dose)\n coverage in %.1f years",
                          LOOK, coef(m1)[[2]]/100*dd$population[1]/1e6, yearsToAll1),
-                  font=2, adj=0, line=-4, cex=0.9*par("cex"), col=2)
+                  font=2, adj=0, line=-4, cex=0.9*par("cex"), col=4)
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

@@ -31,7 +31,7 @@ height <- 3.5
 res <- 120
 pointsize <- 10
 if (!interactive())
-    png("vaccine2.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+    png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 N <- ceiling(sqrt(length(locations)))
 par(mfrow=c(N,N), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 

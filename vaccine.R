@@ -79,11 +79,13 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.2fM doses had been\n administered. Over the previous %d days,\n %.2fM doses had been administered\n per day, suggesting full (2-dose)\n coverage in %.1f years.",
+            mtext(sprintf(" As of %s, %.1fM doses had been\n administered. Over the previous %d days,\n %.2fM doses had been administered\n per day, suggesting full (2-dose)\n coverage in %.1f years.",
                          format(tail(dd$time,1), "%b %d"),
-                         round(tail(dd$total_vaccinations,1)/1e6, 2),
+                         round(tail(dd$total_vaccinations,1)/1e6, 1),
                          LOOK, coef(m1)[[2]]/100*dd$population[1]/1e6, yearsToAll1),
                   adj=0, line=-5, cex=0.9*par("cex"))
+            mtext(sprintf("Recent trend: \n%.2f doses/100 persons/day ",
+                          round(coef(m1)[2], 3)), adj=1, side=1, line=-1, cex=0.9*par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

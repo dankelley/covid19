@@ -52,7 +52,6 @@ for (ilocation in seq_along(locations)) {
              xlim=xlim, type="p",
              cex=ifelse(focus, 1, 0.5),
              col=ifelse(focus, "black", "gray"))
-        grid(lty=1, col="lightgray", lwd=0.33)
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             past <- diff(range(day))
@@ -80,7 +79,7 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.2fM doses had been\n administered. Over previous %d days,\n %.2fM doses had been administered\n per day, suggesting full (2-dose)\n coverage in %.1f years.",
+            mtext(sprintf(" As of %s, %.2fM doses had been\n administered. Over the previous %d days,\n %.2fM doses had been administered\n per day, suggesting full (2-dose)\n coverage in %.1f years.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 2),
                          LOOK, coef(m1)[[2]]/100*dd$population[1]/1e6, yearsToAll1),

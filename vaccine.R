@@ -36,7 +36,7 @@ N <- ceiling(sqrt(length(locations)))
 par(mfrow=c(N,N), mar=c(2,3,1,1), mgp=c(2,0.7,0))
 
 for (ilocation in seq_along(locations)) {
-    cat("handling", locations[ilocation], "\n")
+    cat("# ", locations[ilocation], "\n")
     dd <- d[d$location == locations[ilocation],]
     if (debug) {
         cat("locations[", ilocation, "]='", locations[ilocation], "'\n", sep="")
@@ -59,7 +59,6 @@ for (ilocation in seq_along(locations)) {
                 cat("past=", past, "\n")
             weights <- ifelse(day > max(day) - 10, 1, 0)
             m1 <- lm(v100 ~ day, w=weights)
-            cat(locations[ilocation], " coef(m1): ", paste(coef(m1), collapse=", "), "\n")
             print(summary(m1))
 
             x <- seq(min(day)-5, min(day) + 20*365, 0.5)

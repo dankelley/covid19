@@ -61,9 +61,10 @@ for (ilocation in seq_along(locations)) {
             m1 <- lm(v100 ~ day, w=weights)
             print(summary(m1))
 
-            x <- seq(min(day)-5, min(day) + 20*365, 0.5)
+            x <- seq(min(day), min(day) + 20*365, 1)
             criterion <- 200           # 2 shots/person
             yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365
+            browser()
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }

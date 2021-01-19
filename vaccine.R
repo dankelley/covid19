@@ -24,16 +24,18 @@ lastTenDays <- tail(d$time, 1) - LOOK * spd
 if (debug)
     cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
-locations <- c("Canada", "Israel", "United Kingdom", "United States")
-
+locations <- c("Canada", "France", "Germany", "Israel", "United Kingdom", "United States")
 width <- 7
-height <- 3.5
+height <- 7
 res <- 120
 pointsize <- 10
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+par(mar=c(2,3,1,1), mgp=c(2,0.7,0))
+nlocations <- length(locations)
 N <- ceiling(sqrt(length(locations)))
-par(mfrow=c(N,N), mar=c(2,3,1,1), mgp=c(2,0.7,0))
+par(mfrow=c(N, ceiling(nlocations/N)))
+
 
 for (ilocation in seq_along(locations)) {
     cat("# ", locations[ilocation], "\n")
@@ -64,7 +66,6 @@ for (ilocation in seq_along(locations)) {
             x <- seq(min(day), min(day) + 20*365, 1)
             criterion <- 200           # 2 shots/person
             yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365
-            browser()
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
@@ -79,11 +80,14 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.1fM doses had been\n administered. Over the previous %d days,\n %.2fM doses had been administered\n per day, suggesting full (2-dose)\n coverage in %.1f years.",
+            mtext(sprintf(" As of %s, %.1fM doses had been given. Over\n the previous %d days, %.2fM doses were\n administered daily (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %.1f years.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
-                         LOOK, coef(m1)[[2]]/100*dd$population[1]/1e6, yearsToAll1),
-                  adj=0, line=-5, cex=0.9*par("cex"))
+                         LOOK,
+                         coef(m1)[[2]]/100*dd$population[1]/1e6,
+                         round(coef(m1)[2],3),
+                         yearsToAll1),
+                  adj=0, line=-4, cex=par("cex"))
             mtext(sprintf("Recent trend: \n%.2f doses/100 persons/day ",
                           round(coef(m1)[2], 3)), adj=1, side=1, line=-1, cex=0.9*par("cex"))
         }

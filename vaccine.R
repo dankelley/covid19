@@ -88,8 +88,6 @@ for (ilocation in seq_along(locations)) {
                          round(coef(m1)[2],3),
                          yearsToAll1),
                   adj=0, line=-4, cex=par("cex"))
-            mtext(sprintf("Recent trend: \n%.2f doses/100 persons/day ",
-                          round(coef(m1)[2], 3)), adj=1, side=1, line=-1, cex=0.9*par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

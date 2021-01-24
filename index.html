@@ -396,11 +396,12 @@ used to be 10 days, until 2020 July 1, when it was changed to 14 days,
 which is typically taken as the incubation period), (b) the
 top-right is the same, but with a logarithmic axis for count, (c) the
 lower-left shows daily case count, with a magenta line for a smoothing spline
-set to have 1 degree of freedom per 7 days of time interval, and (d) the
-bottom-right is like the bottom left, but with logarithmic axis (and the same
-spline shown).  The margin labels should be self explanatory, but note that the
-Case Fatality Rate is only shown if both doubling times exceed 30 days (meaning
-that the counts are relatively static).</p>
+set to have 1 degree of freedom per 14 days of time interval (NOTE: until
+2020-Jan-24, this was 7 days, yielding more wiggly spline predictions), and (d)
+the bottom-right is like the bottom left, but with logarithmic axis (and the
+same spline shown).  The margin labels should be self explanatory, but note
+that the Case Fatality Rate is only shown if both doubling times exceed 30 days
+(meaning that the counts are relatively static).</p>
 
 <!--
 <p>The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>, with data being downloaded by the COVID19 R package.  All other

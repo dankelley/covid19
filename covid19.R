@@ -214,36 +214,20 @@ for (region in regions) {
     ## Daily change
     y <- sub$cases_new
     ylim <- c(0, max(y))
-    oce::oce.plot.ts(sub$time, y,
-                     xlim=tlim,
-                     type="p",
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     cex=par("cex"),
-                     xlab="Time",
-                     ylab="Daily Case Count",
-                     mar=mar,
-                     drawTimeRange=FALSE)
+    oce::oce.plot.ts(sub$time, y, xlim=tlim, type="p", pch=20,
+        col=ifelse(recent, "black", "gray"), cex=par("cex"), xlab="Time",
+        ylab="Daily Case Count", mar=mar, drawTimeRange=FALSE)
     ## spline with df proportional to data length (the 7 is arbitrary)
-    points(sub$time, y,
-           pch=20,
-           col=ifelse(recent, "black", "gray"),
-           cex=par("cex"))
+    points(sub$time, y, pch=20, col=ifelse(recent, "black", "gray"),
+        cex=par("cex"))
     canSpline <- is.finite(y)
-    splineModel <- smooth.spline(sub$time[canSpline], y[canSpline], df=length(y)/7)
+    splineModel <- smooth.spline(sub$time[canSpline], y[canSpline], df=length(y[canSpline])/14)
     lines(splineModel, col="magenta")
-
     positive <- y > 0
-    oce::oce.plot.ts(sub$time[positive], y[positive], log="y", logStyle="decade",
-                     xlim=tlim,
-                     type="p",
-                     pch=20,
-                     col=ifelse(recent[positive], "black", "gray"),
-                     cex=par("cex"),
-                     xlab="Time",
-                     ylab="Daily Case Count",
-                     mar=mar,
-                     drawTimeRange=FALSE)
+    oce::oce.plot.ts(sub$time[positive], y[positive], log="y",
+        logStyle="decade", xlim=tlim, type="p", pch=20,
+        col=ifelse(recent[positive], "black", "gray"), cex=par("cex"),
+        xlab="Time", ylab="Daily Case Count", mar=mar, drawTimeRange=FALSE)
     lines(splineModel$x[positive], splineModel$y[positive], col="magenta")
 
     if (!interactive()) dev.off()

@@ -2,7 +2,7 @@ options(warn=0)
 debug <- FALSE
 lwd <- 6
 spd <- 86400                           # seconds/day
-LOOK <- 10                             # days at end for linear fit
+LOOK <- 10                             # points at end for linear fit
 
 if (!exists("d0")) {
     file <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
@@ -19,7 +19,6 @@ if (debug) {
 OK <- is.finite(d0$total_vaccinations_per_hundred) & d0$total_vaccinations_per_hundred > 0
 d <- d0[OK, ] # ignore old stuff
 xlim <- range(d$time)
-lastTenDays <- tail(d$time, 1) - LOOK * spd
 
 if (debug)
     cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
@@ -45,10 +44,11 @@ for (ilocation in seq_along(locations)) {
         cat("nrow:", nrow(dd), "\n")
     }
     m1 <- NULL # to avoid problem with too few data to fit for prediction
-    if (nrow(dd)) {
+    ndata <- nrow(dd)
+    if (ndata > 10) {
         ## Linear plot
         v100 <- dd$total_vaccinations_per_hundred
-        focus <- dd$time >= (tail(dd$time, 1) - 10*spd)
+        focus <- c(rep(FALSE,ndata-LOOK),rep(TRUE,LOOK))
         plot(dd$time, dd$total_vaccinations_per_hundred,
              xlab="", ylab="Vaccinations / 100 Persons",
              xlim=xlim, type="p",
@@ -56,11 +56,8 @@ for (ilocation in seq_along(locations)) {
              col=ifelse(focus, "black", "gray"))
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
-            past <- diff(range(day))
-            if (debug)
-                cat("past=", past, "\n")
             weights <- ifelse(day > max(day) - 10, 1, 0)
-            m1 <- lm(v100 ~ day, w=weights)
+            m1 <- lm(v100 ~ day, w=ifelse(focus, 1, 0))
             print(summary(m1))
 
             x <- seq(min(day), min(day) + 20*365, 1)
@@ -69,7 +66,7 @@ for (ilocation in seq_along(locations)) {
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
-        newdata <- list(day=seq(tail(day,1)-LOOK, max(day), 0.5))
+        newdata <- list(day=sort(tail(day, LOOK)))
 
         if (!is.null(m1)) {
             P1 <- predict(m1, newdata=newdata)
@@ -80,14 +77,14 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.1fM doses had been given. Over\n the previous %d days, %.2fM doses were\n administered daily (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %.1f years.",
+            mtext(sprintf(" As of %s, %.1fM doses have been given. The last %d reports\n indicate %.2fM doses/day (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %.1f years.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
                          LOOK,
                          coef(m1)[[2]]/100*dd$population[1]/1e6,
                          round(coef(m1)[2],3),
                          yearsToAll1),
-                  adj=0, line=-4, cex=par("cex"))
+                  adj=0, line=-3, cex=par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

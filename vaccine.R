@@ -1,3 +1,4 @@
+library(oce)
 options(warn=0)
 debug <- FALSE
 lwd <- 6
@@ -49,11 +50,12 @@ for (ilocation in seq_along(locations)) {
         ## Linear plot
         v100 <- dd$total_vaccinations_per_hundred
         focus <- c(rep(FALSE,ndata-LOOK),rep(TRUE,LOOK))
-        plot(dd$time, dd$total_vaccinations_per_hundred,
-             xlab="", ylab="Vaccinations / 100 Persons",
-             xlim=xlim, type="p",
-             cex=ifelse(focus, 1, 0.5),
-             col=ifelse(focus, "black", "gray"))
+        oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred,
+            drawTimeRange=FALSE,
+            xlab="", ylab="Vaccinations / 100 Persons",
+            xlim=xlim, type="p",
+            cex=ifelse(focus, 1, 0.5),
+            col=ifelse(focus, "black", "gray"))
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             weights <- ifelse(day > max(day) - 10, 1, 0)

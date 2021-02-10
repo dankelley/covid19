@@ -82,9 +82,9 @@ for (region in regions) {
     SD <- sd(tail(head(sub$cases,-1), 7))
     if (abs(sub$cases[n] - sub$cases[n-1]) > 2 * SD) {
         message("dropping most recent point (",
-               sub$cases[n], ") since it differs from previous by ",
-                round(abs(sub$cases[n] - sub$cases[n-1])),
-                ", more than 2* previous recent std-dev of ", round(SD))
+            sub$cases[n], ") since it differs from previous by ",
+            round(abs(sub$cases[n] - sub$cases[n-1])),
+            ", more than 2* previous recent std-dev of ", round(SD))
         sub$time <- sub$time[seq(1, n-1)]
         sub$cases <- sub$cases[seq(1, n-1)]
         sub$cases_new <- sub$cases_new[seq(1, n-1)]
@@ -112,55 +112,63 @@ for (region in regions) {
     par(mfrow=c(2,2))
 
     ## Cases, linear axis
-    oce::oce.plot.ts(sub$time, sub$cases,
-                     xaxs="i", xlim=tlim,
-                     type="p",
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     cex=par("cex"),
-                     xlab="Time",
-                     ylab="Cumulative Case Count",
-                     mar=mar,
-                     drawTimeRange=FALSE)
+    oce::oce.plot.ts(sub$time,
+        sub$cases,
+        xaxs="i",
+        xlim=tlim,
+        type="p",
+        pch=20,
+        col=ifelse(recent, "black", "gray"),
+        cex=par("cex"),
+        xlab="Time",
+        ylab="Cumulative Cases & Deaths",
+        mar=mar,
+        drawTimeRange=FALSE)
     points(sub$time, sub$cases,
-           pch=20,
-           col=ifelse(recent, "black", "gray"),
-           cex=par("cex"))
+        pch=20,
+        col=ifelse(recent, "black", "gray"),
+        cex=par("cex"))
     points(sub$time, sub$deaths,
-           pch=20,
-           col=ifelse(recent, "red", "pink"),
-           cex=par("cex"))
+        pch=20,
+        col=ifelse(recent, "red", "pink"),
+        cex=par("cex"))
     legend("topleft", pt.cex=1, cex=0.8, pch=20,
-           col=c("black", "red"),
-           legend=c("Cases", "Deaths"),
-           title=paste(region, " (", format(tail(sub$time,1), "%b %d"), ")", sep=""))
+        col=c("black", "red"),
+        legend=c("Cases", "Deaths"),
+        title=paste(region, " (", format(tail(sub$time,1), "%b %d"), ")", sep=""))
     mtext(sprintf("Cases: %d (%.3f%%); deaths: %d (%.3f%%)",
-                  tail(sub$cases, 1),
-                  100*tail(sub$cases,1)/sub$population[1],
-                  tail(sub$deaths, 1),
-                  100*tail(sub$deaths, 1)/sub$population[1]),
-                  side=3,
-          cex=0.9*par("cex"))
+            tail(sub$cases, 1),
+            100*tail(sub$cases,1)/sub$population[1],
+            tail(sub$deaths, 1),
+            100*tail(sub$deaths, 1)/sub$population[1]),
+        side=3,
+        cex=0.9*par("cex"))
 
     ## Cases, log axis
     ylim <- c(1, 2*max(sub$cases, na.rm=TRUE))
     positive <- sub$cases > 0
-    oce::oce.plot.ts(sub$time[positive], sub$cases[positive], log="y", logStyle="decade",
-                     xlim=tlim,
-                     ylim=ylim,
-                     type="p",
-                     pch=20,
-                     col=ifelse(recent, "black", "gray"),
-                     cex=par("cex"),
-                     xlab="Time",
-                     ylab="Cumulative Case Count",
-                     mar=mar,
-                     drawTimeRange=FALSE)
+
+
+    oce::oce.plot.ts(sub$time[positive],
+        sub$cases[positive],
+        xaxs="i",
+        log="y",
+        logStyle="decade",
+        xlim=tlim,
+        ylim=ylim,
+        type="p",
+        pch=20,
+        col=ifelse(recent, "black", "gray"),
+        cex=par("cex"),
+        xlab="Time",
+        ylab="Cumulative Cases & Deaths",
+        mar=mar,
+        drawTimeRange=FALSE)
     ## mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=0.9*par("cex"))
     points(sub$time[positive], sub$cases[positive],
-           pch=20,
-           col=ifelse(recent[positive], "black", "gray"),
-           cex=par("cex"))
+        pch=20,
+        col=ifelse(recent[positive], "black", "gray"),
+        cex=par("cex"))
     points(sub$time, sub$deaths, pch=20, col=ifelse(recent, "red", "pink"), cex=par("cex"))
     ## Case doubling time
     x <- as.numeric(sub$time[recent])
@@ -199,24 +207,32 @@ for (region in regions) {
         }
     }
     lab <- paste0(" Cases double in ",
-                  if (is.finite(t2c) && t2c < 100 && t2c > 0) round(t2c,0) else ">100",
-                  "d, deaths in ",
-                  if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
+        if (is.finite(t2c) && t2c < 100 && t2c > 0) round(t2c,0) else ">100",
+        "d, deaths in ",
+        if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
     mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
     if (tail(sub$deaths,1) == 0) {
         mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
     } else {
         if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
             mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                          100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
-                  side=3, line=-2, cex=par("cex"), adj=0)
+                    100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
+                side=3, line=-2, cex=par("cex"), adj=0)
     }
     ## Daily change
     y <- sub$cases_new
     ylim <- c(0, max(y))
-    oce::oce.plot.ts(sub$time, y, xlim=tlim, type="p", pch=20,
-        col=ifelse(recent, "black", "gray"), cex=par("cex"), xlab="Time",
-        ylab="Daily Case Count", mar=mar, drawTimeRange=FALSE)
+    oce::oce.plot.ts(sub$time,
+        y,
+        xaxs="i",
+        xlim=tlim,
+        type="p",
+        pch=20,
+        col=ifelse(recent, "black", "gray"),
+        cex=par("cex"), xlab="Time",
+        ylab="Daily Cases",
+        mar=mar,
+        drawTimeRange=FALSE)
     ## spline with df proportional to data length (the 7 is arbitrary)
     points(sub$time, y, pch=20, col=ifelse(recent, "black", "gray"),
         cex=par("cex"))
@@ -224,10 +240,20 @@ for (region in regions) {
     splineModel <- smooth.spline(sub$time[canSpline], y[canSpline], df=length(y[canSpline])/14)
     lines(splineModel, col="magenta")
     positive <- y > 0
-    oce::oce.plot.ts(sub$time[positive], y[positive], log="y",
-        logStyle="decade", xlim=tlim, type="p", pch=20,
-        col=ifelse(recent[positive], "black", "gray"), cex=par("cex"),
-        xlab="Time", ylab="Daily Case Count", mar=mar, drawTimeRange=FALSE)
+    oce::oce.plot.ts(sub$time[positive],
+        y[positive],
+        xaxs="i",
+        log="y",
+        logStyle="decade",
+        xlim=tlim,
+        type="p",
+        pch=20,
+        col=ifelse(recent[positive], "black", "gray"),
+        cex=par("cex"),
+        xlab="Time",
+        ylab="Daily Cases",
+        mar=mar,
+        drawTimeRange=FALSE)
     lines(splineModel$x[positive], splineModel$y[positive], col="magenta")
 
     if (!interactive()) dev.off()

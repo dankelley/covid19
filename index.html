@@ -381,27 +381,29 @@ summary {
 
 </div>
 
-<p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone who is interested in the Covid-19 time-series, who set up a website for his own use<a href="last_updated.html">.</a></p>
+<p>First, please note that this is not an official website of Dalhousie University, and that I am not a medical doctor or health researcher. I am just someone with an interest in the Covid-19 time-series, who knows how to set up a website<a href="last_updated.html">.</a></p>
 
-<p>This website shows the reported incidence of the Covid-19 Novel coronavirus for some selected nations, and for subregions in Canada and the United States of America.  The (R) source code for making these plots is available at <a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data for Canada are acquired from
+<p>Graphs given below illustrate vaccination rates for a few nations and
+covid19 incidence rates for a wider set of nations.  The (R) source code for
+making these plots is available at
+<a href="https://github.com/dankelley/covid19">https://github.com/dankelley/covid19</a>. The data for Canada are acquired from
 <a href="https://health-infobase.canada.ca/src/data/covidLive/covid19.csv">
 health-infobase.canada.ca</a>
-and the data for other countries are acquired from
-the <a href="https://github.com/CSSEGISandData/COVID-19">
-Johns Hopkins University Center for Systems Science and Engineering</a>.
+and the data for other countries are acquired from the
+<a href="https://github.com/CSSEGISandData/COVID-19">Johns Hopkins University Center for Systems Science and Engineering</a>.
 
 <p>The world and country views have four panels: (a) the top-left shows case
-and death counts over time, highlighting the most recent 14 days (this
-used to be 10 days, until 2020 July 1, when it was changed to 14 days,
-which is typically taken as the incubation period), (b) the
-top-right is the same, but with a logarithmic axis for count, (c) the
-lower-left shows daily case count, with a magenta line for a smoothing spline
-set to have 1 degree of freedom per 14 days of time interval (NOTE: until
-2020-Jan-24, this was 7 days, yielding more wiggly spline predictions), and (d)
-the bottom-right is like the bottom left, but with logarithmic axis (and the
-same spline shown).  The margin labels should be self explanatory, but note
-that the Case Fatality Rate is only shown if both doubling times exceed 30 days
-(meaning that the counts are relatively static).</p>
+and death counts over time, highlighting the most recent 14 days (this used to
+be 10 days, until 2020 July 1, when it was changed to 14 days, an estimate of
+the incubation period), (b) the top-right is the same, but with a logarithmic
+axis for count, (c) the lower-left shows daily case count, with a magenta line
+for a smoothing spline set to have 1 degree of freedom per 14 days of time
+interval (NOTE: until 2020-Jan-24, this was 7 days, yielding more wiggly spline
+predictions), and (d) the bottom-right is like the bottom left, but with
+logarithmic axis (and the same spline shown).  The margin labels should be self
+explanatory, but note that the Case Fatality Rate is only shown if both
+doubling times exceed 30 days (meaning that the counts are relatively
+static).</p>
 
 <!--
 <p>The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>, with data being downloaded by the COVID19 R package.  All other
@@ -413,9 +415,13 @@ that the Case Fatality Rate is only shown if both doubling times exceed 30 days
 each, and the per-state view for the United States of America follows the same
 format.</p>
 
-<p>I make no claim on the accuracy of the data I have downloaded to make these plots, nor of the correctness of my code or the plots shown here. Please report any coding errors to me at <a href="mailto:Dan.Kelley@Dal.Ca" class="email">Dan.Kelley@Dal.Ca</a> and I’ll see if I can make corrections. Also, please be on the lookout for old time-stamps on graphs, which will arise if the build system fails.</p>
+<p>I make no claim on the accuracy of the data I have downloaded to make these
+plots, nor of the correctness of my code or the plots shown here. Please report
+any coding errors to me at
+<a href="mailto:Dan.Kelley@Dal.Ca" class="email">Dan.Kelley@Dal.Ca</a>
+and I’ll see if I can make corrections. Also, please be on the lookout for old
+time-stamps on graphs, which will arise if the build system fails.</p>
 
-<p>This site is on a personal computer, and may be taken down at any time, if load becomes an issue or if the machine goes down and cannot be restarted, during the government mandated stay-at-home period.</p>
 
 <p>Shortcut links:</p>
 <!--

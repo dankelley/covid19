@@ -5,6 +5,11 @@ lwd <- 6
 spd <- 86400                           # seconds/day
 LOOK <- 10                             # points at end for linear fit
 
+timeFormat <- function(t)
+{
+    if (t > 1.5) paste(round(t, 1), "years") else paste(round(12*t, 0), "months")
+}
+
 if (!exists("d0")) {
     file <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
     d0 <- read.csv(file, header=TRUE)
@@ -79,13 +84,13 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.1fM doses have been given. The last %d reports\n indicate %.2fM doses/day (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %.1f years.",
+            mtext(sprintf(" As of %s, %.1fM doses have been given. The last %d reports\n indicate %.2fM doses/day (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %s.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
                          LOOK,
                          coef(m1)[[2]]/100*dd$population[1]/1e6,
                          round(coef(m1)[2],3),
-                         yearsToAll1),
+                         timeFormat(yearsToAll1)),
                   adj=0, line=-3, cex=par("cex"))
         }
         if (debug) {

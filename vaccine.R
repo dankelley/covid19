@@ -77,7 +77,7 @@ for (ilocation in seq_along(locations)) {
 
         if (!is.null(m1)) {
             P1 <- predict(m1, newdata=newdata)
-            lines((dd$time[1]+newdata[[1]]*86400), P1, col=rgb(0,0,0,0.2), lwd=lwd)
+            lines((dd$time[1]+newdata[[1]]*86400), P1, col=rgb(1,0,0,0.4), lwd=lwd)
         }
         points(dd$time, dd$total_vaccinations_per_hundred,
                cex=ifelse(focus, 1, 0.5),

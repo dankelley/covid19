@@ -63,10 +63,9 @@ if (!exists("d")) {
 } else {
     message("using downloaded data")
 }
-regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswick",
+regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
              "Newfoundland and Labrador", "Nova Scotia", "Ontario",
-             "Prince Edward Island", "Quebec", "Saskatchewan",
-             "Repatriated travellers")
+             "Prince Edward Island", "Quebec", "Saskatchewan")
 
 width <- 8
 height <- 5.5
@@ -107,6 +106,11 @@ for (region in regions) {
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
+# Final panel: percent of cases that are active
+sub <- subset(d, prname=="Canada")
+oce.plot.ts(sub$time, sub$percentactive, drawTimeRange=FALSE, ylab="Percent Active Cases", type="o",
+            mar=c(2, 3, 1, 1),
+            xlim=tlim, col="darkblue", pch=20, cex=0.8*par("cex"))
 if (!interactive())
     dev.off()
 if (!interactive())
@@ -195,6 +199,12 @@ for (region in regions) {
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
+# Final panel: percent of cases that are active
+sub <- subset(d, prname=="Canada")
+oce.plot.ts(sub$time, sub$percentactive, drawTimeRange=FALSE, ylab="Percent Active Cases", type="o",
+            mar=c(2, 3, 1, 1),
+            log="y", logStyle="decade",
+            xlim=tlim, col="darkblue", pch=20, cex=0.8*par("cex"))
 if (!interactive())
     dev.off()
 if (!interactive())
@@ -224,6 +234,7 @@ for (region in regions) {
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
+
 
 if (!interactive())
     dev.off()

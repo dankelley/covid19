@@ -106,13 +106,38 @@ for (region in regions) {
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
-# Final panel: percent of cases that are active
-sub <- subset(d, prname=="Canada")
-oce.plot.ts(sub$time, sub$percentactive, drawTimeRange=FALSE, ylab="Percent Active Cases", type="o",
-            mar=c(2, 3, 1, 1),
-            xlim=tlim, col="darkblue", pch=20, cex=0.8*par("cex"))
 if (!interactive())
     dev.off()
+
+if (!interactive())
+    png("canada_linear_active.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
+par(mfrow=c(4, 3))
+tlim <- range(d$time)
+message("linear plots of active cases")
+for (region in regions) {
+    message("Handling ", region)
+    sub <- subset(d, tolower(prname)==tolower(region))
+    sub <- fixLastDuplicated(sub)
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    y <- sub$numactive
+    oce.plot.ts(sub$time, y,
+                mar=c(2, 3, 1, 1),
+                ylab="Active Cases", xlim=tlim,
+                type="p", pch=20, col=ifelse(recent, "black", "gray"),
+                drawTimeRange=FALSE)
+    ok <- is.finite(y)
+    lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+}
+if (!interactive())
+    dev.off()
+
 if (!interactive())
     png("canada_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
@@ -199,12 +224,6 @@ for (region in regions) {
     mtext(region, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
-# Final panel: percent of cases that are active
-sub <- subset(d, prname=="Canada")
-oce.plot.ts(sub$time, sub$percentactive, drawTimeRange=FALSE, ylab="Percent Active Cases", type="o",
-            mar=c(2, 3, 1, 1),
-            log="y", logStyle="decade",
-            xlim=tlim, col="darkblue", pch=20, cex=0.8*par("cex"))
 if (!interactive())
     dev.off()
 if (!interactive())

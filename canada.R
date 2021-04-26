@@ -3,6 +3,8 @@ library(oce)
 ## April, from the commented-out line to the line after it.
 #url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
 url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
+mar <- c(2, 3, 1, 1)
+mgp <- c(1.8,0.7,0)
 
 fixLastDuplicated <- function(x)
 {
@@ -63,7 +65,7 @@ if (!exists("d")) {
 } else {
     message("using downloaded data")
 }
-regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
+regions <- c("Canada", "Alberta", "British Columbia" , "Manitoba", "New Brunswick",
              "Newfoundland and Labrador", "Nova Scotia", "Ontario",
              "Prince Edward Island", "Quebec", "Saskatchewan")
 
@@ -92,7 +94,7 @@ for (region in regions) {
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,
-                mar=c(2, 3, 1, 1),
+                mar=mar, mgp=mgp,
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
@@ -126,7 +128,7 @@ for (region in regions) {
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     y <- sub$numactive
     oce.plot.ts(sub$time, y,
-                mar=c(2, 3, 1, 1),
+                mar=mar, mgp=mgp,
                 ylab="Active Cases", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
@@ -159,7 +161,8 @@ for (region in regions) {
     if (any(sub$numconf + sub$numprob > 0)) {
         positive <- sub$num > 0
         oce.plot.ts(sub$time[positive], sub$num[positive],
-                    mar=c(2, 3, 1, 1),
+                    #mar=c(2, 3, 1, 1),
+                    mar=mar, mgp=mgp,
                     ylab="Cases & Deaths", xlim=tlim,
                     type="p", pch=20, col=ifelse(recent, "black", "gray"),
                     cex=ifelse(recent, 1, 0.7),
@@ -236,8 +239,9 @@ for (region in regions) {
     y <- diff(sub$num)
     ys <- smooth(y)
     bad <- abs(y-ys) > 8 * sd(y-ys)
-    oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="Daily Cases", type="p",
-                mar=c(2, 3, 1, 1),
+    oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases", type="p",
+                #mar=c(2, 3, 1, 1),
+                mar=mar, mgp=mgp,
                 xlim=tlim, col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     nbad <- sum(bad)
     if (nbad == 1)

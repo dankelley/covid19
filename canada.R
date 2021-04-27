@@ -244,17 +244,16 @@ for (region in regions) {
                 mar=mar, mgp=mgp,
                 xlim=tlim, col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     nbad <- sum(bad)
-    if (nbad == 1)
-        mtext(sprintf("Skipping %d outlier ", sum(bad)), cex=0.7, line=-1, adj=1)
-    else if (nbad > 1)
-        mtext(sprintf("Skipping %d outliers ", sum(bad)), cex=0.7, line=-1, adj=1)
+    label <- if (nbad == 1) sprintf("%s (skipping %d outlier)", region, sum(bad))
+        else if (nbad > 1) sprintf("%s (skipping %d outliers)", region, sum(bad))
+        else region
 
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- !bad & is.finite(y)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(region, cex=par("cex"), adj=0)
+    mtext(label, cex=par("cex"), adj=0)
     mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
 }
 

@@ -31,7 +31,7 @@ if (debug)
 
 locations <- c("Canada", "France", "Germany", "Italy", "United Kingdom", "United States")
 width <- 7
-height <- 7
+height <- 5
 res <- 120
 pointsize <- 10
 if (!interactive())

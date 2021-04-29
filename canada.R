@@ -111,6 +111,37 @@ for (region in regions) {
 if (!interactive())
     dev.off()
 
+message("linear plots of positivity percent")
+if (!interactive())
+    png("canada_positivity.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
+par(mfrow=c(4, 3))
+tlim <- range(d$time)
+for (region in regions) {
+    message("Handling ", region)
+    sub <- subset(d, tolower(prname)==tolower(region))
+    sub <- fixLastDuplicated(sub)
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    y <- 100 * sub$numtoday / sub$numteststoday
+    ok <- is.finite(y)
+    oce.plot.ts(sub$time[ok], y[ok],
+                mar=mar, mgp=mgp,
+                ylab="Test Positivity [percent]", xlim=tlim,
+                type="p", pch=20, col=ifelse(recent, "black", "gray"),
+                drawTimeRange=FALSE)
+    lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
+    mtext(region, cex=par("cex"), adj=0)
+    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+}
+if (!interactive())
+    dev.off()
+
+
+
 if (!interactive())
     png("canada_linear_active.png",
         width=width,

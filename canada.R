@@ -1,4 +1,5 @@
 library(oce)
+removeOutliers <- FALSE                # remove points that differ from smoothed curve by 8 std-devs
 ## The name of the Canadian data file changed sometime near the start of
 ## April, from the commented-out line to the line after it.
 #url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
@@ -8,7 +9,8 @@ mgp <- c(1.8,0.7,0)
 
 fixLastDuplicated <- function(x)
 {
-    if (0 == diff(tail(x$num, 2))) {
+    lastTwo <- tail(x$num, 2)
+    if (all(is.finite(lastTwo)) && 0 == diff(tail(x$num, 2))) {
         x <- head(x, -1)
         message("NB. removed final point, because it duplicated its predecessor")
     }
@@ -59,7 +61,7 @@ now <- Sys.time()
 if (!exists("d")) {
     message("downloading from ", url)
     d <- read.csv(url)
-    d$time <- as.POSIXct(d$date, format="%d-%m-%Y")
+    d$time <- as.POSIXct(d$date, format="%d-%m-%Y", tz="UTC")
     d$num <- d$numconf + d$numprob
     d$deaths <- d$numdeaths
 } else {
@@ -83,7 +85,7 @@ if (!interactive())
         pointsize=pointsize)
 par(mfrow=c(4, 3))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
-tlim <- range(d$time)
+tlim <- range(d$time, na.rm=TRUE)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
@@ -128,9 +130,10 @@ for (region in regions) {
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     y <- 100 * sub$numtoday / sub$numteststoday
     ok <- is.finite(y)
+    ylim <- c(0, max(y[ok]))
     oce.plot.ts(sub$time[ok], y[ok],
                 mar=mar, mgp=mgp,
-                ylab="Test Positivity [percent]", xlim=tlim,
+                ylab="Test Positivity [percent]", xlim=tlim, ylim=ylim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
@@ -184,7 +187,8 @@ for (region in regions) {
     sub <- fixLastDuplicated(sub)
     sub <- sub[sub$num > 0, ]
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    lastDuplicated <- 0 == diff(tail(sub$num, 2))
+    lastTwo <- tail(sub$num, 2)
+    lastDuplicated <- all(is.finite(lastTwo)) && 0 == diff(lastTwo)
     if (lastDuplicated) {
         sub <- head(sub, -1)
         message("NB. removed final point, because it duplicated its predecessor")
@@ -266,14 +270,16 @@ par(mfrow=c(4, 3))
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
+    sub <- subset(sub, is.finite(sub$num))
     sub <- fixLastDuplicated(sub)
     y <- diff(sub$num)
     ys <- smooth(y)
-    bad <- abs(y-ys) > 8 * sd(y-ys)
+    bad <- if (removeOutliers) abs(y-ys) > 8 * sd(y-ys) else rep(FALSE, length(y))
+    ylim <- c(0, max(c(y, ys)))
     oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases", type="p",
                 #mar=c(2, 3, 1, 1),
-                mar=mar, mgp=mgp,
-                xlim=tlim, col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
+                mar=mar, mgp=mgp, xlim=tlim, ylim=ylim,
+                col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     nbad <- sum(bad)
     label <- if (nbad == 1) sprintf("%s (skipping %d outlier)", region, sum(bad))
         else if (nbad > 1) sprintf("%s (skipping %d outliers)", region, sum(bad))

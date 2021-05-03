@@ -93,6 +93,7 @@ message("linear plots")
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
+    sub <- subset(sub, is.finite(sub$num))
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     oce.plot.ts(sub$time, sub$num,

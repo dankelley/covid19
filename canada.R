@@ -93,17 +93,17 @@ message("linear plots")
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
-    sub <- subset(sub, is.finite(sub$num))
+    sub <- subset(sub, is.finite(sub$numconf))
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    oce.plot.ts(sub$time, sub$num,
+    oce.plot.ts(sub$time, sub$numconf,
                 mar=mar, mgp=mgp,
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
     mtext(sprintf(" Cases: %d (%.3f%%)",
-                  tail(sub$num,1), 100*tail(sub$num,1)/population(region)),
+                  tail(sub$num,1), 100*tail(sub$numconf,1)/population(region)),
           line=-1, cex=par("cex"), adj=0)
     mtext(sprintf(" Deaths: %d (%.3f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
@@ -144,8 +144,6 @@ for (region in regions) {
 if (!interactive())
     dev.off()
 
-
-
 if (!interactive())
     png("canada_linear_active.png",
         width=width,
@@ -159,7 +157,7 @@ message("linear plots of active cases")
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
-    sub <- fixLastDuplicated(sub)
+    sub <- subset(sub, is.finite(sub$numactive))
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     y <- sub$numactive
     oce.plot.ts(sub$time, y,
@@ -185,18 +183,17 @@ ylim <- c(1, 2*max(d$num, na.rm=TRUE))
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
-    sub <- fixLastDuplicated(sub)
-    sub <- sub[sub$num > 0, ]
+    sub <- subset(sub, is.finite(sub$numconf) & sub$numconf > 0)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    lastTwo <- tail(sub$num, 2)
+    lastTwo <- tail(sub$numconf, 2)
     lastDuplicated <- all(is.finite(lastTwo)) && 0 == diff(lastTwo)
     if (lastDuplicated) {
         sub <- head(sub, -1)
         message("NB. removed final point, because it duplicated its predecessor")
     }
-    if (any(sub$numconf + sub$numprob > 0)) {
-        positive <- sub$num > 0
-        oce.plot.ts(sub$time[positive], sub$num[positive],
+    if (length(sub$numconf) > 0) {
+        positive <- sub$numconf > 0
+        oce.plot.ts(sub$time[positive], sub$numconf[positive],
                     #mar=c(2, 3, 1, 1),
                     mar=mar, mgp=mgp,
                     ylab="Cases & Deaths", xlim=tlim,
@@ -204,10 +201,9 @@ for (region in regions) {
                     cex=ifelse(recent, 1, 0.7),
                     ylim=ylim, log="y", logStyle="decade",
                     drawTimeRange=FALSE)
-        if (any(sub$numdeaths[is.finite(sub$numdeaths)]) > 0)
-            points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+        points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
         ## Case doubling time
-        y <- (sub$numconf + sub$numprob)[recent]
+        y <- sub$numconf[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
@@ -253,7 +249,7 @@ for (region in regions) {
         } else {
             if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
                 mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                              100 * lastDeaths / tail(sub$num, 1)),
+                              100 * lastDeaths / tail(sub$numconf, 1)),
                       side=3, line=-2, cex=par("cex"), adj=0)
         }
     } else {
@@ -265,15 +261,17 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+
+
 if (!interactive())
     png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
-    sub <- subset(sub, is.finite(sub$num))
+    sub <- subset(sub, is.finite(sub$numconf))
     sub <- fixLastDuplicated(sub)
-    y <- diff(sub$num)
+    y <- diff(sub$numconf)
     ys <- smooth(y)
     bad <- if (removeOutliers) abs(y-ys) > 8 * sd(y-ys) else rep(FALSE, length(y))
     ylim <- c(0, max(c(y, ys)))

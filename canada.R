@@ -103,7 +103,7 @@ for (region in regions) {
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
     mtext(sprintf(" Cases: %d (%.3f%%)",
-                  tail(sub$num,1), 100*tail(sub$numconf,1)/population(region)),
+                  tail(sub$numconf,1), 100*tail(sub$numconf,1)/population(region)),
           line=-1, cex=par("cex"), adj=0)
     mtext(sprintf(" Deaths: %d (%.3f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),

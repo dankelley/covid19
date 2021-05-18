@@ -32,7 +32,7 @@ if (debug)
 locations <- c("Canada", "France", "Germany", "Italy", "United Kingdom", "United States")
 width <- 7
 height <- 5
-res <- 120
+res <- 200
 pointsize <- 10
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)

@@ -135,13 +135,13 @@ for (region in regions) {
     ok <- is.finite(y)
     ylim <- c(0, max(y[ok]))
     oce.plot.ts(sub$time[ok], y[ok],
-                mar=mar, mgp=mgp,
+                mar=mar2, mgp=mgp2,
                 ylab="Test Positivity [percent]", xlim=tlim, ylim=ylim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
+    abline(h=0, col=4, lwd=0.5*par("lwd"))
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(region, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(paste0(" ", region, format(tail(sub$time[ok],1), " (%b %d: "), round(tail(y[ok],1), 1), "%)"), adj=0, cex=par("cex"), line=-1)
 }
 if (!interactive())
     dev.off()

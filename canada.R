@@ -6,6 +6,8 @@ removeOutliers <- FALSE                # remove points that differ from smoothed
 url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
 mar <- c(2, 3, 1, 1)
 mgp <- c(1.8,0.7,0)
+mar2 <- c(1.75, 2.5, 0.25, 1)          # tighter
+mgp2 <- c(1.4,0.5,0)                   # tighter
 
 fixLastDuplicated <- function(x)
 {
@@ -161,14 +163,15 @@ for (region in regions) {
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     y <- sub$numactive
     oce.plot.ts(sub$time, y,
-                mar=mar, mgp=mgp,
+                mar=mar2, mgp=mgp2,
                 ylab="Active Cases", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
+    abline(h=0, col=4, lwd=0.5*par("lwd"))
     ok <- is.finite(y)
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(region, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
+    mtext(paste0(format(tail(sub$time,1), " %b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
 }
 if (!interactive())
     dev.off()
@@ -277,20 +280,21 @@ for (region in regions) {
     ylim <- c(0, max(c(y, ys)))
     oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases", type="p",
                 #mar=c(2, 3, 1, 1),
-                mar=mar, mgp=mgp, xlim=tlim, ylim=ylim,
+                mar=mar2, mgp=mgp2, xlim=tlim, ylim=ylim,
                 col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
+    abline(h=0, col=4, lwd=0.5*par("lwd"))
     nbad <- sum(bad)
-    label <- if (nbad == 1) sprintf("%s (skipping %d outlier)", region, sum(bad))
-        else if (nbad > 1) sprintf("%s (skipping %d outliers)", region, sum(bad))
-        else region
+    label <- if (nbad == 1) sprintf(" %s (skipping %d outlier)", region, sum(bad))
+        else if (nbad > 1) sprintf(" %s (skipping %d outliers)", region, sum(bad))
+        else paste0(" ", region)
 
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- !bad & is.finite(y)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(label, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+    mtext(label, cex=par("cex"), adj=0, line=-1)
+    mtext(paste0(format(tail(sub$time,1), "%b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
 }
 
 

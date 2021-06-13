@@ -33,7 +33,7 @@ locations <- c("Canada", "France", "Germany", "Italy", "United Kingdom", "United
 width <- 7
 height <- 5
 res <- 200
-pointsize <- 10
+pointsize <- 11
 if (!interactive())
     png("vaccine.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mar=c(2,3,1,1), mgp=c(2,0.7,0))
@@ -56,11 +56,12 @@ for (ilocation in seq_along(locations)) {
         v100 <- dd$total_vaccinations_per_hundred
         focus <- c(rep(FALSE,ndata-LOOK),rep(TRUE,LOOK))
         oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred,
-            drawTimeRange=FALSE,
-            xlab="", ylab="Vaccinations / 100 Persons",
-            xlim=xlim, type="p",
-            cex=ifelse(focus, 1, 0.5),
-            col=ifelse(focus, "black", "gray"))
+                    mar=c(2,3,1.5,1),
+                    drawTimeRange=FALSE,
+                    xlab="", ylab="Vaccinations / 100 Persons",
+                    xlim=xlim, type="p",
+                    cex=ifelse(focus, 1, 0.5),
+                    col=ifelse(focus, "black", "gray"))
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             weights <- ifelse(day > max(day) - 10, 1, 0)
@@ -84,14 +85,15 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" As of %s, %.1fM doses have been given. The last %d reports\n indicate %.2fM doses/day (%.2f doses/100 persons/day),\n suggesting full (2-dose) coverage in %s.",
+            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2fM doses/100 person/day,\n suggesting full (2-dose) coverage in %s.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
+                         tail(dd$total_vaccinations,1)*100/dd$population[1],
                          LOOK,
-                         coef(m1)[[2]]/100*dd$population[1]/1e6,
-                         round(coef(m1)[2],3),
+                         coef(m1)[[2]],
+                         #round(coef(m1)[2],3),
                          timeFormat(yearsToAll1)),
-                  adj=0, line=-3, cex=par("cex"))
+                  adj=0, line=-3, cex=0.9*par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

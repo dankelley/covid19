@@ -104,14 +104,13 @@ for (region in regions) {
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+    mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
     mtext(sprintf(" Cases: %d (%.3f%%)",
                   tail(sub$numconf,1), 100*tail(sub$numconf,1)/population(region)),
-          line=-1, cex=par("cex"), adj=0)
+          cex=par("cex"), adj=0, line=-2)
     mtext(sprintf(" Deaths: %d (%.3f%%)",
                   tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
-          line=-2, cex=par("cex"), adj=0)
-    mtext(region, cex=par("cex"), adj=0)
-    mtext(paste(format(tail(sub$time,1), "%b %d")), adj=1, cex=par("cex"))
+          cex=par("cex"), adj=0, line=-3)
 }
 if (!interactive())
     dev.off()
@@ -141,7 +140,7 @@ for (region in regions) {
                 drawTimeRange=FALSE)
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(paste0(" ", region, format(tail(sub$time[ok],1), " (%b %d: "), round(tail(y[ok],1), 1), "%)"), adj=0, cex=par("cex"), line=-1)
+    mtext(paste0(" ", region, format(tail(sub$time[ok],1), "\n %b %d: "), round(tail(y[ok],1), 1), "%"), adj=0, cex=par("cex"), line=-2)
 }
 if (!interactive())
     dev.off()
@@ -294,7 +293,7 @@ for (region in regions) {
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
     mtext(label, cex=par("cex"), adj=0, line=-1)
-    mtext(paste0(format(tail(sub$time,1), "%b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
+    mtext(paste0(format(tail(sub$time,1), " %b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
 }
 
 

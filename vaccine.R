@@ -5,9 +5,16 @@ lwd <- 6
 spd <- 86400                           # seconds/day
 LOOK <- 10                             # points at end for linear fit
 
-timeFormat <- function(t)
+timeFormat <- function(y)
 {
-    if (t > 1.5) paste(round(t, 1), "years") else paste(round(12*t, 0), "months")
+    if (y > 1.5) 
+        paste(round(y, 1), "years")
+    else if (y > 3/12)
+        paste(round(12*y, 0), "months")
+    else if (y > 0.5/12)
+        paste(round(4*12*y, 0), "weeks")
+    else
+        paste(round(7*4*12*y, 0), "days")
 }
 
 if (!exists("d0")) {
@@ -70,7 +77,7 @@ for (ilocation in seq_along(locations)) {
 
             x <- seq(min(day), min(day) + 20*365, 1)
             criterion <- 200           # 2 shots/person
-            yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365
+            yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365 - max(day) / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }

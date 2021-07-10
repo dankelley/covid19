@@ -74,8 +74,8 @@ for (ilocation in seq_along(locations)) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             weights <- ifelse(day > max(day) - 10, 1, 0)
             m1 <- lm(v100 ~ day, w=ifelse(focus, 1, 0))
+            abline(m1, col="magenta")
             print(summary(m1))
-
             x <- seq(min(day), min(day) + 20*365, 1)
             yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365 - max(day) / 365
         } else {

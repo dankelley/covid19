@@ -1,0 +1,18 @@
+---
+title: Notes
+author: Dan Kelley
+date: "`r Sys.Date()`"
+---
+
+# Canada population under 12
+
+```{r}
+
+# https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000501
+pop<-38.00e6
+pop0_4<-1.92e6
+pop5_9<-2.04e6
+pop10_14<-2.04e6
+pop0_4+pop5_9+0.5*pop10_14
+(pop0_4+pop5_9+0.5*pop10_14) / pop # 13%
+```

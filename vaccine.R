@@ -4,6 +4,7 @@ debug <- FALSE
 lwd <- 6
 spd <- 86400                           # seconds/day
 LOOK <- 10                             # points at end for linear fit
+criterion <- 0.87*200                  # 2 shots/person for 87% of pop (assume 13% under 12y)
 
 timeFormat <- function(y)
 {
@@ -76,7 +77,6 @@ for (ilocation in seq_along(locations)) {
             print(summary(m1))
 
             x <- seq(min(day), min(day) + 20*365, 1)
-            criterion <- 200           # 2 shots/person
             yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365 - max(day) / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
@@ -92,7 +92,7 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n suggesting full (2-dose) coverage in %s.",
+            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Expect 2-dose for 87%% of pop. in %s.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
                          tail(dd$total_vaccinations,1)*100/dd$population[1],

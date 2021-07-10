@@ -39,8 +39,17 @@
 
 library(oce)
 source("get_data.R")
+numberSimplify <- function(x)
+{
+    if (is.na(x)) "NA"
+    else if (x < 10) sprintf("%.1f", x)
+    else if (x < 1000) sprintf("%.0f", x)
+    else if (x < 1e6) sprintf("%.1fK", x/1e3)
+    else sprintf("%.1fM", x/1e6)
+}
+
 width <- 7
-height <- 5
+height <- 5.5
 res <- 110
 pointsize <- 11
 
@@ -54,6 +63,7 @@ args <- commandArgs(trailingOnly=TRUE)
 ## regions <- if (length(args)) args else "China"
 ## regions <- if (length(args)) args else "Botswana"
 regions <- if (length(args)) args else "Canada"
+regions <- if (length(args)) args else "France"
 
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
@@ -136,10 +146,10 @@ for (region in regions) {
         col=c("black", "red"),
         legend=c("Cases", "Deaths"),
         title=paste(region, " (", format(tail(sub$time,1), "%b %d"), ")", sep=""))
-    mtext(sprintf("Cases: %d (%.3f%%); deaths: %d (%.3f%%)",
-            tail(sub$cases, 1),
+    mtext(sprintf("Cases: %s (%.3f%%); deaths: %s (%.3f%%)",
+            numberSimplify(tail(sub$cases, 1)),
             100*tail(sub$cases,1)/sub$population[1],
-            tail(sub$deaths, 1),
+            numberSimplify(tail(sub$deaths, 1)),
             100*tail(sub$deaths, 1)/sub$population[1]),
         side=3,
         cex=0.9*par("cex"))
@@ -210,16 +220,13 @@ for (region in regions) {
         if (is.finite(t2c) && t2c < 100 && t2c > 0) round(t2c,0) else ">100",
         "d, deaths in ",
         if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
-    mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-    if (tail(sub$deaths,1) == 0) {
-        mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
-    } else {
-        if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30))
-            mtext(sprintf(" Case Fatality Rate: %.1f%%",
-                    100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
-                side=3, line=-2, cex=par("cex"), adj=0)
+    if (is.finite(t2c) && is.finite(t2d) && (t2c < 0 || t2c > 30) && (t2d < 0 || t2d > 30)) {
+        CFR <- if (tail(sub$deaths,1) <= 0.0) 0.0
+            else 100 * tail(sub$deaths, 1) / tail(sub$cases, 1)
+        lab <- paste0(lab, sprintf(" (CFR %.1f%%)", CFR))
     }
-    ## Daily change
+    mtext(lab, side=3, cex=par("cex"))
+    # Daily change
     y <- sub$cases_new
     ylim <- c(0, max(y))
     oce::oce.plot.ts(sub$time,
@@ -240,6 +247,11 @@ for (region in regions) {
     splineModel <- smooth.spline(sub$time[canSpline], y[canSpline], df=length(y[canSpline])/14)
     lines(splineModel, col="magenta")
     positive <- y > 0
+    mtext(sprintf("Medians: last 10 days: %s /day, worst 10 days: %s /day",
+                  numberSimplify(median(y[recent], na.rm=TRUE)),
+                  numberSimplify(median(tail(y[order(y, na.last="NA")], 10), na.rm=TRUE))),
+          side=3, cex=0.9*par("cex"))
+    # Daily (log)
     oce::oce.plot.ts(sub$time[positive],
         y[positive],
         xaxs="i",

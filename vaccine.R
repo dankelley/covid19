@@ -12,7 +12,7 @@ timeFormat <- function(y)
         paste(round(y, 1), "years")
     else if (y > 3/12)
         paste(round(12*y, 0), "months")
-    else if (y > 0.5/12)
+    else if (y > 8/52)
         paste(round(4*12*y, 0), "weeks")
     else
         paste(round(7*4*12*y, 0), "days")
@@ -92,7 +92,7 @@ for (ilocation in seq_along(locations)) {
                col=ifelse(focus, "black", "gray"))
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Expect 2-dose for 87%% of population in %s.",
+            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Expect 2-dose for 87%% of population\n in %s.",
                          format(tail(dd$time,1), "%b %d"),
                          round(tail(dd$total_vaccinations,1)/1e6, 1),
                          tail(dd$total_vaccinations,1)*100/dd$population[1],

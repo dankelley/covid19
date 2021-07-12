@@ -100,7 +100,7 @@ for (ilocation in seq_along(locations)) {
                          coef(m1)[[2]],
                          #round(coef(m1)[2],3),
                          timeFormat(yearsToAll1)),
-                  adj=0, line=-3, cex=0.9*par("cex"))
+                  adj=0, line=-4, cex=0.9*par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

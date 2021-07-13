@@ -140,7 +140,7 @@ for (region in regions) {
                 drawTimeRange=FALSE)
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(paste0(" ", region, format(tail(sub$time[ok],1), "\n %b %d: "), round(tail(y[ok],1), 1), "%"), adj=0, cex=par("cex"), line=-2)
+    mtext(paste0(" ", region, format(tail(sub$time[ok],1), "\n %b %d: "), round(tail(y[ok],1), 2), "%"), adj=0, cex=par("cex"), line=-2)
 }
 if (!interactive())
     dev.off()

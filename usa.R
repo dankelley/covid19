@@ -150,7 +150,6 @@ for (region in regions) {
                               100 * tail(sub$deaths, 1) / tail(sub$cases, 1)),
                       side=3, line=-2, cex=par("cex"), adj=0)
         }
- 
      } else {
         plot(0:1, 0:1, xlab="", ylab="", type="n")
         text(0.5, 0.5, "No counts")
@@ -193,11 +192,11 @@ for (region in regions) {
     ## interval mean (Tc) and std-dev (sigma) from Du et al. 2002.
     day <- as.numeric(sub$time[recent]) / 86400
     count <- diff(sub$cases)[recent]
-    M <- lm(count ~ day)
-    r <- coef(M)[[2]] / sub$population
-    Tc <- 3.96                         # mean generation interval (Du et al 2020)
-    sigma <- 4.75                      # std dev generation intvl (Du et al 2020)
-    R <- exp(r*Tc - 0.5*r^2*sigma^2)   # rep number (Wallinga and Lipsitch 2007, eqn 3.4)
+    #M <- lm(count ~ day)
+    #r <- coef(M)[[2]] / sub$population
+    #Tc <- 3.96                         # mean generation interval (Du et al 2020)
+    #sigma <- 4.75                      # std dev generation intvl (Du et al 2020)
+    #R <- exp(r*Tc - 0.5*r^2*sigma^2)   # rep number (Wallinga and Lipsitch 2007, eqn 3.4)
     ##cat("coef(M)[2]=", coef(M)[2], ", r=", r, ", pop=", sub$population, "; using Tc=", Tc, ", sigma=", sigma, ", infer R=", R, "\n", sep="")
     ##mtext(sprintf(" R=%.5f", R), adj=0, side=3, line=-1, cex=par("cex"))
 }

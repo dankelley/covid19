@@ -129,18 +129,29 @@ for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- fixLastDuplicated(sub)
-    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     y <- 100 * sub$numtoday / sub$numteststoday
     ok <- is.finite(y)
-    ylim <- c(0, max(y[ok]))
-    oce.plot.ts(sub$time[ok], y[ok],
+    t <- sub$time[ok]
+    recent <- abs(as.numeric(now) - as.numeric(t)) <= recentNumberOfDays * 86400
+    y <- y[ok]
+    ylim <- c(0, max(y))
+    oce.plot.ts(t, y,
                 mar=mar2, mgp=mgp2,
                 ylab="Test Positivity [percent]", xlim=tlim, ylim=ylim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     abline(h=0, col=4, lwd=0.5*par("lwd"))
-    lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(paste0(" ", region, format(tail(sub$time[ok],1), "\n %b %d: "), round(tail(y[ok],1), 2), "%"), adj=0, cex=par("cex"), line=-2)
+    lines(smooth.spline(t, y, df=length(y)/7), col="magenta", lwd=1)
+    nt <- length(t)
+    if (tolower(region) == "canada") {
+        mtext(region, side=3, adj=1, line=-1, cex=par("cex"))
+    } else {
+        mtext(paste0(region, " \n",
+                     format(t[nt-10L], "%b %d"),
+                     " to ",
+                     format(t[nt], "%b %d \n"),
+                     round(mean(tail(y, recentNumberOfDays)), 2), "% "), adj=1, cex=par("cex"), line=-3)
+    }
 }
 if (!interactive())
     dev.off()

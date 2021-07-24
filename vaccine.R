@@ -68,13 +68,16 @@ for (ilocation in seq_along(locations)) {
                     drawTimeRange=FALSE,
                     xlab="", ylab="Vaccinations / 100 Persons",
                     xlim=xlim, type="p",
-                    cex=ifelse(focus, 1, 0.5),
+                    pch=20,
+                    cex=ifelse(focus, 0.7, 0.3),
                     col=ifelse(focus, "black", "gray"))
         if (nrow(dd) > 3) {
             day <- as.numeric((dd$time - dd$time[1]) / 86400)
             weights <- ifelse(day > max(day) - 10, 1, 0)
             m1 <- lm(v100 ~ day, w=ifelse(focus, 1, 0))
-            abline(m1, col="magenta")
+            if (FALSE) {               # dots suffice, since curve is smooth
+                abline(m1, col="magenta")
+            }
             print(summary(m1))
             x <- seq(min(day), min(day) + 20*365, 1)
             yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) > criterion)[1] / 365 - max(day) / 365
@@ -82,14 +85,18 @@ for (ilocation in seq_along(locations)) {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
         newdata <- list(day=sort(tail(day, LOOK)))
+        newdata$day <- c(newdata$day, tail(newdata$day, 1) + 30) # tack on 30d hence, for extrapolation
 
         if (!is.null(m1)) {
             P1 <- predict(m1, newdata=newdata)
-            lines((dd$time[1]+newdata[[1]]*86400), P1, col=rgb(1,0,0,0.4), lwd=lwd)
+            lines((dd$time[1]+newdata[[1]]*86400), P1, col=rgb(1,0,0,0.6), lwd=2*par("lwd"))
         }
-        points(dd$time, dd$total_vaccinations_per_hundred,
-               cex=ifelse(focus, 1, 0.5),
-               col=ifelse(focus, "black", "gray"))
+        if (FALSE) { # no need to redraw since no lines shown now
+            points(dd$time, dd$total_vaccinations_per_hundred,
+                   pch=20,
+                   cex=ifelse(focus, 0.7, 0.3),
+                   col=ifelse(focus, "black", "gray"))
+        }
         mtext(locations[ilocation], side=3, cex=par("cex"))
         if (!is.null(m1) && is.finite(yearsToAll1)) {
             mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Expect 2-dose for 87%% of population\n in %s.",

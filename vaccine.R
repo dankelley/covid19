@@ -10,9 +10,9 @@ timeFormat <- function(y)
 {
     if (y > 1.5) 
         paste(round(y, 1), "years")
-    else if (y > 3/12)
+    else if (y > 2/12)
         paste(round(12*y, 0), "months")
-    else if (y > 8/52)
+    else if (y > 2/52)
         paste(round(4*12*y, 0), "weeks")
     else
         paste(round(7*4*12*y, 0), "days")

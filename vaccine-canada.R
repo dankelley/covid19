@@ -1,18 +1,21 @@
-message("ONT is broken. It jumps from 50-ish% to 100-ish% in an instant")
+message("ONT seems to have a 2X shift in mid July, 2021")
+
+base <- "https://api.covid19tracker.ca/vaccines/age-groups/province/"
+
+DESPIKE <- FALSE # useless, since the ONT problem is not a spike
 
 max <- 65
-days <- 600
+days <- 90
 library(oce)
 library(jsonlite)
-par(mfrow=c(2,1))
 
 despike <- function(ty)
 {
     m <- median(abs(diff(ty$y)))
     bad <- c(0,abs(diff(ty$y))) > 20 * m
     cat("sum(bad)=", sum(bad), " or ", sum(bad)/length(bad)*100, "percent\n")
-    plot(ty$t, ty$y, col=bad)
-    stop()
+    #plot(ty$t, ty$y, col=bad)
+    #stop()
     ty[!bad,]
 }
 
@@ -46,15 +49,16 @@ abbreviation <- function(region)
         "Saskatchewan"="sk",
         "Nova Scotia"="ns",
         "New Brunswick"="nb",
-        "Newfoundland and Labrador"="nt",
+        "Newfoundland and Labrador"="nl",
         "Prince Edward Island"="pe",
         "Repatriated travellers"=NA)
 }
 
-p <- function(province, first, col=1, xlim=NULL)
+pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=3,
+    base="https://api.covid19tracker.ca/vaccines/age-groups/province/")
 {
+    message("in p")
     pr <- abbreviation(province)
-    base <- "https://api.covid19tracker.ca/vaccines/age-groups/province/"
     url <- paste0(base, pr)
     message(url)
     d <- fromJSON(paste(readLines(url)))$data
@@ -69,12 +73,14 @@ p <- function(province, first, col=1, xlim=NULL)
         }
         )
     y <- 100 * full / population(province)
-    ty <- despike(data.frame(t=t, y=y))
-    t <- ty$t
-    y <- ty$y
+    if (DESPIKE) {
+        ty <- despike(data.frame(t=t, y=y))
+        t <- ty$t
+        y <- ty$y
+    }
     if (first) {
         oce.plot.ts(t, y, drawTimeRange=FALSE,
-            xlim=if (!is.null(xlim)) xlim,
+            xlim=if (!is.null(xlim)) xlim, lwd=lwd, lty=lty,
             ylab="Fully Vaccinated (% of Population)", ylim=c(0, max),
             xaxs="i", type="l", col=col)
         y2021 <- as.POSIXct("2021-01-01")
@@ -82,7 +88,7 @@ p <- function(province, first, col=1, xlim=NULL)
         abline(v=y2021)
         mtext("2021", side=3, at=y2021+10*day, line=-1, cex=par("cex"))
     } else {
-        lines(t, y, col=col, lwd=if(pr=="ns") 3 else 1)
+        lines(t, y, col=col, lwd=lwd, lty=lty)
     }
     #mtext(side=4, at=tail(y,1), pr, col=col)
     invisible(data.frame(t=t,y=y))
@@ -94,10 +100,30 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
 first <- TRUE
 day <- 86400
 tlook <- as.POSIXct(Sys.Date()) + c(-days*day, 0)
-#for (i in seq_along(regions)) {
-for (i in which(regions=="Ontario")) {
-    DAN<-p(regions[i], first, col=i, xlim=tlook)
+
+width <- 7
+height <- 5
+res <- 200
+pointsize <- 11
+
+if (!interactive())
+    png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+#for (i in which(regions=="Ontario")) {
+for (i in seq_along(regions)) {
+    test <- pl(regions[i], first, col=i, xlim=tlook, lty=ifelse(i<=5, 1, 3))
     first <- FALSE
 }
 
-legend("topleft", lwd=par("lwd"), col=1:10, legend=sapply(regions, abbreviation))
+legend("topleft", lwd=3, col=1:10, lty=c(rep(1,5), rep(3,5)),
+    title="Province",
+    seg.len=3, legend=sapply(regions, abbreviation))
+mtext("Note: Ontario goes offscale because of a 2X shift")
+
+if (!interactive())
+    dev.off()
+
+# debugging ONT (alter the for loop to focus on "on")
+if (FALSE) {
+    plot(dan$t, dan$y)
+    points(dan$t, dan$y/2, col=2)
+}

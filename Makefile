@@ -22,6 +22,7 @@ all: force
 	Rscript usa.R > usa.out
 	#/usr/local/bin/Rscript tests_per_pop.R # uses COVID19 package
 	Rscript vaccine.R > vaccine.out
+	Rscript vaccine-canada.R > vaccine-canada.out
 	date > last_updated.html
 	#chmod a+r last_updated.html
 force:

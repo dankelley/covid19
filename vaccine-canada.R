@@ -108,7 +108,7 @@ pointsize <- 11
 
 if (!interactive())
     png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-#for (i in which(regions=="Ontario")) {
+palette("Okabe-Ito")                   # the host machine has an old R wth a poor yellow
 for (i in seq_along(regions)) {
     test <- pl(regions[i], first, col=i, xlim=tlook, lty=ifelse(i<=5, 1, 3))
     first <- FALSE

@@ -5,7 +5,7 @@ base <- "https://api.covid19tracker.ca/vaccines/age-groups/province/"
 DESPIKE <- FALSE # useless, since the ONT problem is not a spike
 
 max <- 65
-days <- 90
+lwd <- 2.5
 library(oce)
 library(jsonlite)
 
@@ -54,10 +54,9 @@ abbreviation <- function(region)
         "Repatriated travellers"=NA)
 }
 
-pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=3,
+pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=2.5,
     base="https://api.covid19tracker.ca/vaccines/age-groups/province/")
 {
-    message("in p")
     pr <- abbreviation(province)
     url <- paste0(base, pr)
     message(url)
@@ -82,7 +81,7 @@ pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=3,
         oce.plot.ts(t, y, drawTimeRange=FALSE,
             xlim=if (!is.null(xlim)) xlim, lwd=lwd, lty=lty,
             ylab="Fully Vaccinated (% of Population)", ylim=c(0, max),
-            xaxs="i", type="l", col=col)
+            xaxs="i", type="l", col=col, grid=TRUE)
         y2021 <- as.POSIXct("2021-01-01")
         day <- 86400
         abline(v=y2021)
@@ -99,7 +98,7 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
     "Prince Edward Island", "Quebec", "Saskatchewan")
 first <- TRUE
 day <- 86400
-tlook <- as.POSIXct(Sys.Date()) + c(-days*day, 0)
+tlook <- as.POSIXct(c("2021-04-01", format(Sys.Date())), tz="UTC")
 
 width <- 7
 height <- 5
@@ -110,13 +109,16 @@ if (!interactive())
     png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 palette("Okabe-Ito")                   # the host machine has an old R wth a poor yellow
 for (i in seq_along(regions)) {
-    test <- pl(regions[i], first, col=i, xlim=tlook, lty=ifelse(i<=5, 1, 3))
+    test <- pl(regions[i], first, xlim=tlook,
+        col=1+(i-1)%%5, lwd=lwd, lty=ifelse(i<=5, 1, 3))
     first <- FALSE
 }
 
-legend("topleft", lwd=3, col=1:10, lty=c(rep(1,5), rep(3,5)),
+legend("topleft", lwd=lwd, col=1+(1:10-1)%%5,
+    lty=c(rep(1,5), rep(3,5)), bg="white",
     title="Province",
-    seg.len=3, legend=sapply(regions, abbreviation))
+    seg.len=3,
+    legend=toupper(sapply(regions, abbreviation)))
 mtext("Note: Ontario goes offscale because of a 2X shift")
 
 if (!interactive())

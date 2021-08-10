@@ -1,24 +1,12 @@
-message("ONT seems to have a 2X shift in mid July, 2021")
-
 base <- "https://api.covid19tracker.ca/vaccines/age-groups/province/"
 
-DESPIKE <- FALSE # useless, since the ONT problem is not a spike
-
-max <- 65
-lwd <- 2.5
+max <- 100
+lwd <- 3
 library(oce)
 library(jsonlite)
 
-despike <- function(ty)
-{
-    m <- median(abs(diff(ty$y)))
-    bad <- c(0,abs(diff(ty$y))) > 20 * m
-    cat("sum(bad)=", sum(bad), " or ", sum(bad)/length(bad)*100, "percent\n")
-    #plot(ty$t, ty$y, col=bad)
-    #stop()
-    ty[!bad,]
-}
-
+# Set up R4 colours (not avail on this webserver)
+col <- c("black", "#E69F00", "#56B4E9", "#009E73", "#F0E442")
 
 population <- function(region)
 {
@@ -72,13 +60,9 @@ pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=2.5,
         }
         )
     y <- 100 * full / population(province)
-    if (DESPIKE) {
-        ty <- despike(data.frame(t=t, y=y))
-        t <- ty$t
-        y <- ty$y
-    }
     if (first) {
         oce.plot.ts(t, y, drawTimeRange=FALSE,
+            yaxs="i",
             xlim=if (!is.null(xlim)) xlim, lwd=lwd, lty=lty,
             ylab="Fully Vaccinated (% of Population)", ylim=c(0, max),
             xaxs="i", type="l", col=col, grid=TRUE)
@@ -98,24 +82,30 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
     "Prince Edward Island", "Quebec", "Saskatchewan")
 first <- TRUE
 day <- 86400
-tlook <- as.POSIXct(c("2021-04-01", format(Sys.Date())), tz="UTC")
+tlook <- as.POSIXct(c("2021-05-01", format(Sys.Date())), tz="UTC")
 
 width <- 7
 height <- 5
-res <- 200
-pointsize <- 11
+res <- 150
+pointsize <- 10
 
 if (!interactive())
     png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
-palette("Okabe-Ito")                   # the host machine has an old R wth a poor yellow
 for (i in seq_along(regions)) {
     test <- pl(regions[i], first, xlim=tlook,
-        col=1+(i-1)%%5, lwd=lwd, lty=ifelse(i<=5, 1, 3))
+        col=col[1+(i-1)%%5],
+        lwd=2,
+        lty=ifelse(i<=5, 1, 2))
     first <- FALSE
 }
 
-legend("topleft", lwd=lwd, col=1+(1:10-1)%%5,
-    lty=c(rep(1,5), rep(3,5)), bg="white",
+i <-1 + ((1:10)-1)%%5
+
+legend("topleft",
+    col=col[i],
+    lwd=2,
+    lty=ifelse((1:10)<=5, 1, 2),
+    bg="white",
     title="Province",
     seg.len=3,
     legend=toupper(sapply(regions, abbreviation)))
@@ -125,7 +115,11 @@ if (!interactive())
     dev.off()
 
 # debugging ONT (alter the for loop to focus on "on")
-if (FALSE) {
-    plot(dan$t, dan$y)
-    points(dan$t, dan$y/2, col=2)
-}
+#<old> if (!interactive())
+#<old>     png("vaccine-canada-ontario.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
+#<old>     plot(dan$t, dan$y)
+#<old>     points(dan$t, dan$y/2, col=2)
+#<old> if (!interactive())
+#<old>     dev.off()
+#<old> }
+

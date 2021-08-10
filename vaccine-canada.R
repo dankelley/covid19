@@ -8,6 +8,16 @@ library(jsonlite)
 # Set up R4 colours (not avail on this webserver)
 col <- c("black", "#E69F00", "#56B4E9", "#009E73", "#F0E442")
 
+repair <- function(y, criterion=10)
+{
+    bad <- which(diff(y) > criterion)[1]
+    if (length(bad)) {
+        i <- seq_along(y)
+        y <- ifelse(i > bad, 0.5*y, y)
+    }
+    y
+}
+
 population <- function(region)
 {
     switch(region,
@@ -60,6 +70,8 @@ pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=2.5,
         }
         )
     y <- 100 * full / population(province)
+    if (province == "Ontario")
+        y <- repair(y)
     if (first) {
         oce.plot.ts(t, y, drawTimeRange=FALSE,
             yaxs="i",
@@ -89,6 +101,8 @@ height <- 5
 res <- 150
 pointsize <- 10
 
+# regions <- regions[regions=="Ontario"]
+
 if (!interactive())
     png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 for (i in seq_along(regions)) {
@@ -99,8 +113,11 @@ for (i in seq_along(regions)) {
     first <- FALSE
 }
 
-i <-1 + ((1:10)-1)%%5
+target <- 85
+abline(h=target, col="red")
+mtext(target, side=4, at=target, col="red")
 
+i <-1 + ((1:10)-1)%%5
 legend("topleft",
     col=col[i],
     lwd=2,
@@ -109,7 +126,6 @@ legend("topleft",
     title="Province",
     seg.len=3,
     legend=toupper(sapply(regions, abbreviation)))
-mtext("Note: Ontario goes offscale because of a 2X shift")
 
 if (!interactive())
     dev.off()

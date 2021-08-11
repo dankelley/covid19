@@ -56,14 +56,14 @@ pointsize <- 11
 recentNumberOfDays <- 14
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-## regions <- if (length(args)) args else "World"
-## regions <- if (length(args)) args else "United States"
-## regions <- if (length(args)) args else "Congo (Kinshasa)"
-## regions <- if (length(args)) args else "US"
-## regions <- if (length(args)) args else "China"
-## regions <- if (length(args)) args else "Botswana"
-regions <- if (length(args)) args else "Canada"
-regions <- if (length(args)) args else "France"
+regions <- if (length(args)) args else "World"
+# regions <- if (length(args)) args else "United States"
+# regions <- if (length(args)) args else "Congo (Kinshasa)"
+# regions <- if (length(args)) args else "US"
+# regions <- if (length(args)) args else "China"
+# regions <- if (length(args)) args else "Botswana"
+# regions <- if (length(args)) args else "Canada"
+# regions <- if (length(args)) args else "France"
 
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)

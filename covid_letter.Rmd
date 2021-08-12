@@ -2,6 +2,12 @@
 title: Dalhousie Vaccine Policy in the Context of Classroom Infection
 author: Dan Kelley, Professor, Department of Oceanography (dan.kelley@dal.ca)
 date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{graphicx}
+   - \usepackage{marginnote}
+   - \usepackage{times}
+   - \usepackage{amsmath}
+   - \usepackage{microtype}
 ---
 
 ```{r echo=FALSE}
@@ -11,7 +17,7 @@ n <- 10
 Pi <- function(P, n)
 {
     rval <- 100*(1-(1-P)^n)
-    if (rval < 10) round(rval) else round(rval)
+    paste0(if (rval < 10) round(rval) else round(rval), "%")
 }
 ```
 
@@ -25,8 +31,16 @@ Anyone with access to the news knows that many prominent business are similarly
 enacting vaccine requirements, and the reason, clear evidence of a fourth wave,
 should be a mystery to no-one.  As was reported today, the chief medical
 officer of Canada judges the nation to be in the midst of a fourth wave, and
-notes that mandatory vaccinations are "on the table" [3]; Figure 1 shows data
-broken down by province.
+notes that mandatory vaccinations are "on the table" [3]. For any readers that
+might need a reminder, Figure 1 on the next page paints an alarming picture.
+
+
+\begin{figure}[t]
+\begin{center}
+\end{center}
+\includegraphics[width=\hsize]{covid_20210812.png}
+\caption{New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows observations ranging up to the previous day.}
+\end{figure}
 
 Why is Dalhousie lacking behind?  In the virtual Q&A sessions on the topic [4],
 the reason for not requiring vaccination was patient privacy.  But, surely,
@@ -47,22 +61,23 @@ Although there are many subtle issues involved in this problem, the basic
 elements are straightforward enough to be explained using middle-school
 mathematics, as shown in the next section.
 
-# A simple theory of transmission in a classroom setting
+# A simple model of classroom disease transmission
 
 Let $n$ be the number of persons that a student encounters during a class.
 With good ventilation, this will be a fraction of the class, perhaps just the
 students in nearby seats, plus a few others who were close during entry to the
 class.  A reasonable lower limit might be $n=10$, for the 8 students within one
-seat, plus 2 more who were close during class entry^[Note that the $n$ values
+seat, plus 2 more who were close during class entry^[The $n$ values
 are for class encounters only; there is also risk of exposure at home, etc.,
-and this will increase the probabilities inferred here.]
+and this will increase the probabilities inferred here.].
 
 Let $P$ be the probability that a given person is infections, and consider the
 contact between two individuals, one of whom is not infected. Supposing
 sufficient exchange of virus load the probability that the uninfected
-individual pickup up infection is $1-P$ per encounter. Assuming independence of
-encounter events, the probability of not being exposed if $n$ people interact
-is given $(1-P)^n$.
+individual pickup up infection is $1-P$ per encounter.
+
+Assuming independence of encounter events, the probability of not being exposed
+if $n$ people interact is given $(1-P)^n$.
 
 It follows that the probability of being infected during an $n$-person
 interaction is $1-(1-P)^n$. This simple formula is the key to inferring
@@ -82,20 +97,27 @@ will be like anywhere in a month, although the British Columbia infection curve
 may be a relevant predictor, given that it has a similar health system to that
 in Nova Scotia.
 
-**Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests
-that the probability of infection *in a given day* lies between `r Pi(Pa,n)`
-and `r Pi(Pp,n)` percent.
+**Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests an
+infection probability between `r Pi(Pa,n)` and `r Pi(Pp,n)`.
 
 ```{r echo=FALSE}
 n <- 40
 ```
 
-**Example 2.** As example 1, but with $n=40$ to represent four classes (with
-different neighbors), yields probabilities of being infected in a given day
-from `r Pi(Pa,n)` to `r Pi(Pp,n)`%.
+**Example 2.** A similar calculation, but with $n=40$ to represent four classes
+(with different neighbors), yields infection probabilities between `r Pi(Pa,n)`
+and `r Pi(Pp,n)`.
 
-The second example is most relevant to the situation of a University student
-taking a reasonable course load.
+The first example might apply to a part-time student who takes just one class,
+while the second is more relevant to a full-time student.
+
+Whether even the lower estimates are acceptable is an open question, given that
+these are computations just for a single encounter, and probabilities would be
+higher if multiple encounters are assumed, with differing classroom neighbors.
+I have noticed that it a few weeks before students settle in to a spot where
+they habitually sit.  Extending this model to such situations would not be
+difficult, and I do hope that Dalhousie's administraters have undertaken such
+calculations.
 
 # Discussion
 
@@ -105,16 +127,16 @@ on the rise lately in Canada (and much worse so in the USA), in-person teaching
 seems likely to ignite a firestorm not just within Dalhousie, but in Nova
 Scotia generally.
 
-Of course, the model used here is very crude.  The province must have available
-much more sophisticated models. It seems that Dalhousie is relying on models
-calibrated to the Springtime conditions, but evidence around the world has
-revealed that the parameters need adjustment for the "Delta" variant, and so a
-Dalhousie decision made months ago might need to be revisited now.  Besides,
-one might ask whether those models apply to a university environment, with its
-close and repeated interactions between multiple groups.
+It should be noted that the model used here is crude.  The province must have
+available much more sophisticated models. It seems that Dalhousie is relying on
+models calibrated to the Springtime conditions, but evidence around the world
+has revealed that the parameters need adjustment for the "Delta" variant, and
+so a Dalhousie decision made months ago might need to be revisited now.
+Besides, one might ask whether those models apply to a university environment,
+with its close and repeated interactions between multiple groups.
 
 If in-person teaching is to be the decision for Autumn 2021, what am I to tell
-my students who ask me why vaccination is not required? There seem to be two
+my students who ask me why vaccination is not required? There seem to be three
 choices.
 
 * If I say it's to respect privacy, they may ask me why this moral imperative
@@ -126,17 +148,23 @@ choices.
   explain that mathematically, I will fail, because, as explained above, I
   believe the reverse.
 
-\bigskip
-\bigskip
-\bigskip
+* If I say it's because of technical difficulties, they will respond that the
+  nation has set up a system [5].
+
+If I am to be honest, my answer will be that I do not understand --- and
+cannot defend --- the Administration's choice not to mandate vaccination.
+
+# Conclusion
 
 Dalhousie has long taken pride in its contributions to the community. Will it
-be proud to be the cause of suffering in the province that has supported it for
-two centuries?  Demanding that students, staff and faculty be vaccinated is not
-just a moral duty, it is also a politically sensible decision.
+be proud to be the cause of unnecessary suffering in the province that has
+supported it for two centuries?
+
+Demanding that students, staff and faculty be vaccinated is not just a moral
+duty, it is a practical one, for an institution reliant on the community
+support.
 
 
-![New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows observations ranging up to the previous day.](covid_20210812.png)
 
 # References
 
@@ -155,3 +183,8 @@ just a moral duty, it is also a politically sensible decision.
 
 4. Dalhousie University. “Virtual Q&A Discussion Videos,” July 20, 2021.
    https://www.dal.ca/covid-19-information-and-updates/our-approach/virtual-q-a-discussion-videos.html.
+
+5. Tunney, Catharine. “Ottawa Promises Vaccine Passport for International
+   Travel This Fall | CBC News.” CBC, August 11, 2021.
+   https://www.cbc.ca/news/politics/vaccine-passport-1.6137763.
+

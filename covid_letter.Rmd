@@ -18,14 +18,15 @@ Pi <- function(P, n)
 # Introduction
 
 In recent weeks, major universities in both Canada [1] and the United States of
-America [2] have policies mandating that students, faculty and staff have
-COVID-19 vaccinations before entering campus.
+America [2] have enacted policies requiring that students, faculty and staff
+have COVID-19 vaccinations before entering campus.
 
 Anyone with access to the news knows that many prominent business are similarly
-enacting vaccine requirements, and the reason is a mystery to no-one (see
-Figure 1, for example).  As was reported today, the chief medical officer of
-Canada judges the nation to be in the midst of a fourth wave, and notes that
-mandatory vaccinations are "on the table" [3].
+enacting vaccine requirements, and the reason, clear evidence of a fourth wave,
+should be a mystery to no-one.  As was reported today, the chief medical
+officer of Canada judges the nation to be in the midst of a fourth wave, and
+notes that mandatory vaccinations are "on the table" [3]; Figure 1 shows data
+broken down by province.
 
 Why is Dalhousie lacking behind?  In the virtual Q&A sessions on the topic [4],
 the reason for not requiring vaccination was patient privacy.  But, surely,
@@ -33,18 +34,18 @@ this ought to be weighed against the risk of subjecting the people of Nova
 Scotia to a new wave of COVID-19 infections, after so many months of sacrifice.
 
 Or perhaps the idea is that the low infection rates in Nova Scotia imply a
-lower risk here than elsewhere.  This is an argument that is difficult to make,
-given recent infection trends through Canada and the rest of the world.  Nova
-Scotia has low infection rates -- at this moment -- because of lockdown.
+lower risk here than elsewhere.  This is a flimsy argument, given recent
+infection trends through Canada and the rest of the world.  Nova Scotia has low
+infection rates at this moment, but anyone living here knows why: lock-down.
 
 The consequence of opening up to thousands of outsiders seems to be a recipe
 for disaster, based not just on tends seen elsewhere, but also based on the
-wave of infections we experienced a few months ago, evidently sparked by just a
+wave of infections we experienced a few months ago, perhaps sparked by just a
 few individuals failing to practice quarantine.
 
 Although there are many subtle issues involved in this problem, the basic
-elements are straightforward enough for middle-school mathematics, as is
-explained in the next section.
+elements are straightforward enough to be explained using middle-school
+mathematics, as shown in the next section.
 
 # A simple theory of transmission in a classroom setting
 
@@ -54,24 +55,32 @@ students in nearby seats, plus a few others who were close during entry to the
 class.  A reasonable lower limit might be $n=10$, for the 8 students within one
 seat, plus 2 more who were close during class entry^[Note that the $n$ values
 are for class encounters only; there is also risk of exposure at home, etc.,
-increasing the probabilities inferred here.]
+and this will increase the probabilities inferred here.]
 
-The probability of not being exposed when two individuals meet is $1-P$, where
-$P$ is the probability that a given person is infectious. Assuming independence
-of encounter events, the probability of not being exposed if $n$ people
-interact is $(1-P)^n$, and thus the probability of being exposed is
-$1-(1-P)^n$.  This is the key formula for simple calculation of the probability
-of being infected during an encounter.
+Let $P$ be the probability that a given person is infections, and consider the
+contact between two individuals, one of whom is not infected. Supposing
+sufficient exchange of virus load the probability that the uninfected
+individual pickup up infection is $1-P$ per encounter. Assuming independence of
+encounter events, the probability of not being exposed if $n$ people interact
+is given $(1-P)^n$.
+
+It follows that the probability of being infected during an $n$-person
+interaction is $1-(1-P)^n$. This simple formula is the key to inferring
+infection probability during a lecture.
 
 Determining $P$ is difficult in the absence of extensive testing, knowledge of
 whether infected individuals will attend classes, the time interval of
 infectiousness, and other factors.  However, crude bounding values might be
 provided by $P_a$, the ratio of active cases to population, and $P_p$, the
-ratio of positive tests to total tests^[In the examples, $P_a$ and $P_p$
-values are inferred from reported data for British Columbia on 2021-08-12.
-These numbers appeared to be on the rise throughout North America, on this
-date. Using present-day numbers for Nova Scotia is problematic, because so many
-students come from out of province.].
+ratio of positive tests to total tests. In the examples below, $P_a$ and $P_p$
+are inferred from reported data for British Columbia on 2021-08-12, and there
+is no reason to think they are underestimates of where Nova Scotia might be a
+few weeks into classes. A refinement to the present calculation should break
+down Dalhousie students by point of origin, but this is not information
+available to the author.  There is also no firm way to guess what conditions
+will be like anywhere in a month, although the British Columbia infection curve
+may be a relevant predictor, given that it has a similar health system to that
+in Nova Scotia.
 
 **Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests
 that the probability of infection *in a given day* lies between `r Pi(Pa,n)`
@@ -97,32 +106,34 @@ seems likely to ignite a firestorm not just within Dalhousie, but in Nova
 Scotia generally.
 
 Of course, the model used here is very crude.  The province must have available
-much more sophisticated models. But, do they take into account the "Delta"
-variant?  And do they apply to a university environment, in which about a
-quarter of the individuals are not from Canada, meaning that they tend to
-arrive from places with higher infection rates?
-
-The Dalhousie administrators who are tasked with making policy decisions about
-going to in-class teaching ought to be asked for the results of their more
-detailed and sophisticated models of this situation. If, as seems to be the
-case, they are simply reusing calculations done by the province for encounters
-in retail establishments, then there is a danger of poor prediction.  After
-all, people do not shop for many hours each day, and they are not separated by
-sub-metre distances when they do so.  And most of those shoppers are not as
-socially active as university students tend to be.
+much more sophisticated models. It seems that Dalhousie is relying on models
+calibrated to the Springtime conditions, but evidence around the world has
+revealed that the parameters need adjustment for the "Delta" variant, and so a
+Dalhousie decision made months ago might need to be revisited now.  Besides,
+one might ask whether those models apply to a university environment, with its
+close and repeated interactions between multiple groups.
 
 If in-person teaching is to be the decision for Autumn 2021, what am I to tell
-my students who ask me why vaccination is not required?  If I say it's to
-respect privacy, they will ask why that does not apply to other major
-universities and institutions.  And if I say it's because the chance of
-infection is low in Nova Scotia, then either (a) they will ask me to explain
-that mathematically, which I cannot do based on the previous section or (b)
-worse, and a real possibility early in the term, they may point out that Nova
-Scotia is already in a COVID-19 surge.
+my students who ask me why vaccination is not required? There seem to be two
+choices.
 
-Dalhousie takes pride in its contributions to the community. Will it be proud
-to be the cause of suffering in the province that has supported it for two
-centuries?
+* If I say it's to respect privacy, they may ask me why this moral imperative
+  does not apply to other universities, institutions, and even nations.  I have
+  no answer to that.
+
+* If I say it's because the chance of infection is low in Nova Scotia, then
+  I fear my students might respond in either of two ways. If they ask me to
+  explain that mathematically, I will fail, because, as explained above, I
+  believe the reverse.
+
+\bigskip
+\bigskip
+\bigskip
+
+Dalhousie has long taken pride in its contributions to the community. Will it
+be proud to be the cause of suffering in the province that has supported it for
+two centuries?  Demanding that students, staff and faculty be vaccinated is not
+just a moral duty, it is also a politically sensible decision.
 
 
 ![New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows observations ranging up to the previous day.](covid_20210812.png)

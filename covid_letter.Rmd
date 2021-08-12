@@ -1,0 +1,146 @@
+---
+title: Classroom infection likelihood
+author: Dan Kelley
+date: "`r Sys.Date()`"
+---
+
+```{r echo=FALSE}
+Pp <- 0.0345                           # BC 2021-08-12 positive/test
+Pa <- 3625 / 5020302                   # BC 2021-08-12 cases/pop
+n <- 10
+Pi <- function(P, n)
+{
+    rval <- 100*(1-(1-P)^n)
+    if (rval < 10) round(rval) else round(rval)
+}
+```
+
+# Introduction
+
+In recent weeks, major universities in both Canada [1] and the United States of
+America [2] have policies mandating that students, faculty and staff have
+COVID-19 vaccinations before entering campus.
+
+Anyone with access to the news knows that many prominent business are similarly
+enacting vaccine requirements, and the reason is a mystery to no-one (see
+Figure 1, for example).  As was reported today, the chief medical officer of
+Canada judges the nation to be in the midst of a fourth wave, and notes that
+mandatory vaccinations are "on the table" [3].
+
+Why is Dalhousie lacking behind?  In the virtual Q&A sessions on the topic [4],
+the reason for not requiring vaccination was patient privacy.  But, surely,
+this ought to be weighed against the risk of subjecting the people of Nova
+Scotia to a new wave of COVID-19 infections, after so many months of sacrifice.
+
+Or perhaps the idea is that the low infection rates in Nova Scotia imply a
+lower risk here than elsewhere.  This is an argument that is difficult to make,
+given recent infection trends through Canada and the rest of the world.  Nova
+Scotia has low infection rates -- at this moment -- because of lockdown.
+
+The consequence of opening up to thousands of outsiders seems to be a recipe
+for disaster, based not just on tends seen elsewhere, but also based on the
+wave of infections we experienced a few months ago, evidently sparked by just a
+few individuals failing to practice quarantine.
+
+Although there are many subtle issues involved in this problem, the basic
+elements are straightforward enough for middle-school mathematics, as is
+explained in the next section.
+
+# A simple theory of transmission in a classroom setting
+
+Let $n$ be the number of persons that a student encounters during a class.
+With good ventilation, this will be a fraction of the class, perhaps just the
+students in nearby seats, plus a few others who were close during entry to the
+class.  A reasonable lower limit might be $n=10$, for the 8 students within one
+seat, plus 2 more who were close during class entry^[Note that the $n$ values
+are for class encounters only; there is also risk of exposure at home, etc.,
+increasing the probabilities inferred here.]
+
+The probability of not being exposed when two individuals meet is $1-P$, where
+$P$ is the probability that a given person is infectious. Assuming independence
+of encounter events, the probability of not being exposed if $n$ people
+interact is $(1-P)^n$, and thus the probability of being exposed is
+$1-(1-P)^n$.  This is the key formula for simple calculation of the probability
+of being infected during an encounter.
+
+Determining $P$ is difficult in the absence of extensive testing, knowledge of
+whether infected individuals will attend classes, the time interval of
+infectiousness, and other factors.  However, crude bounding values might be
+provided by $P_a$, the ratio of active cases to population, and $P_p$, the
+ratio of positive tests to total tests^[In the examples, $P_a$ and $P_p$
+values are inferred from reported data for British Columbia on 2021-08-12.
+These numbers appeared to be on the rise throughout North America, on this
+date. Using present-day numbers for Nova Scotia is problematic, because so many
+students come from out of province.].
+
+**Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests
+that the probability of infection *in a given day* lies between `r Pi(Pa,n)`
+and `r Pi(Pp,n)` percent.
+
+```{r echo=FALSE}
+n <- 40
+```
+
+**Example 2.** As example 1, but with $n=40$ to represent four classes (with
+different neighbors), yields probabilities of being infected in a given day
+from `r Pi(Pa,n)` to `r Pi(Pp,n)`%.
+
+The second example is most relevant to the situation of a University student
+taking a reasonable course load.
+
+# Discussion
+
+The calculations of the previous section suggest serious danger of infection,
+using numbers appropriate in the middle of August, 2021. Infection rates being
+on the rise lately in Canada (and much worse so in the USA), in-person teaching
+seems likely to ignite a firestorm not just within Dalhousie, but in Nova
+Scotia generally.
+
+Of course, the model used here is very crude.  The province must have available
+much more sophisticated models. But, do they take into account the $\Delta$
+variant?  And do they even apply to a university environment, in which about a
+quarter of the individuals are not from Canada, meaning that they tend to
+arrive from places with higher infection rates.
+
+The Dalhousie administrators who are tasked with making policy decisions about
+going to in-class teaching ought to be asked for the results of their more
+detailed and sophisticated models of this situation. If, as seems to be the
+case, they are simply reusing calculations done by the province for encounters
+in retail establishments, then there is a danger of poor prediction.  After
+all, people do not shop for many hours each day, and they are not separated by
+sub-metre distances when they do so.  And most of those shoppers are not as
+socially active as university students tend to be.
+
+If in-person teaching is to be the decision for Autumn 2021, what am I to tell
+my students who ask me why vaccination is not required?  If I say it's to
+respect privacy, they will ask why that does not apply to other major
+universities and institutions.  And if I say it's because the chance of
+infection is low in Nova Scotia, then either (a) they will ask me to explain
+that mathematically, which I cannot do based on the previous section or (b)
+worse, and a real possibility early in the term, they may point out that Nova
+Scotia is already in a COVID-19 surge.
+
+Dalhousie takes pride in its contributions to the community. Will it be proud
+to be the cause of suffering in the province that has supported it for two
+centuries?
+
+
+![New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows data up to the previous day.](covid_20210812.png)
+
+# References
+
+1. News Staff. “Western University, U of T to Mandate COVID-19 Vaccines for All
+   Students, Staff - CityNews Toronto,” August 11, 2021.
+   https://toronto.citynews.ca/2021/08/11/western-university-covid-19-vaccine-students-staff/.
+
+2. University of California (Cnet). “UC Issues Final COVID-19 Vaccination
+   Policy | UCnet,” July 15, 2021.
+   https://ucnet.universityofcalifornia.edu/news/2021/07/ucs-covid-19-vaccine-policy.html.
+
+3. Tasker, John Paul. “As Delta Variant Spreads, Canada’s Top Doctors Say
+   Mandatory Vaccination for Some Workers Is on the Table | CBC News.” CBC,
+   August 12, 2021.
+   https://www.cbc.ca/news/politics/delta-variant-spreads-mandatory-vaccination-1.6139102.
+
+4. Dalhousie University. “Virtual Q&A Discussion Videos,” July 20, 2021.
+   https://www.dal.ca/covid-19-information-and-updates/our-approach/virtual-q-a-discussion-videos.html.

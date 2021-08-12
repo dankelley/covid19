@@ -1,6 +1,6 @@
 ---
-title: Classroom infection likelihood
-author: Dan Kelley
+title: Dalhousie Vaccine Policy in the Context of Classroom Infection
+author: Dan Kelley, Professor, Department of Oceanography (dan.kelley@dal.ca)
 date: "`r Sys.Date()`"
 ---
 
@@ -97,10 +97,10 @@ seems likely to ignite a firestorm not just within Dalhousie, but in Nova
 Scotia generally.
 
 Of course, the model used here is very crude.  The province must have available
-much more sophisticated models. But, do they take into account the $\Delta$
-variant?  And do they even apply to a university environment, in which about a
+much more sophisticated models. But, do they take into account the "Delta"
+variant?  And do they apply to a university environment, in which about a
 quarter of the individuals are not from Canada, meaning that they tend to
-arrive from places with higher infection rates.
+arrive from places with higher infection rates?
 
 The Dalhousie administrators who are tasked with making policy decisions about
 going to in-class teaching ought to be asked for the results of their more

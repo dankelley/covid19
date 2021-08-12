@@ -125,7 +125,7 @@ to be the cause of suffering in the province that has supported it for two
 centuries?
 
 
-![New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows data up to the previous day.](covid_20210812.png)
+![New daily cases in Canada, as of 2021-08-11. The most recent daily rate is written after the date, and black dots are used for the 10 most recent observations. The magenta line results from the use of a smoothing cubic spline, and is included to guide the eye through the "noisy" data. This figure was created based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-12, and shows observations ranging up to the previous day.](covid_20210812.png)
 
 # References
 

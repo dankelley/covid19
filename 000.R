@@ -10,13 +10,13 @@ numberSimplify <- function(x)
             if (is.na(xx)) {
                 "NA"
             } else if (xx < 10) {
-                sprintf("%.1f", xx)
+                sprintf("%g", xx)
             } else if (xx < 1000) {
-                sprintf("%.0f", xx)
+                sprintf("%g", xx)
             } else if (xx < 1e6) {
                 sprintf("%gK", xx/1e3)
             } else {
-                sprintf("%.1fM", xx/1e6)
+                sprintf("%gM", xx/1e6)
             }
             )
     }
@@ -31,14 +31,14 @@ pointsize <- 11
 recentNumberOfDays <- 14
 ## can specify region in the commandline
 args <- commandArgs(trailingOnly=TRUE)
-regions <- if (length(args)) args else "World"
-# regions <- if (length(args)) args else "United States"
-# regions <- if (length(args)) args else "Congo (Kinshasa)"
-# regions <- if (length(args)) args else "US"
-# regions <- if (length(args)) args else "China"
-# regions <- if (length(args)) args else "Botswana"
-# regions <- if (length(args)) args else "Canada"
-# regions <- if (length(args)) args else "France"
+#regions <- if (length(args)) args else "World"
+#regions <- if (length(args)) args else "United Kingdom"
+#regions <- if (length(args)) args else "Congo (Kinshasa)"
+regions <- if (length(args)) args else "US"
+#regions <- if (length(args)) args else "China"
+#regions <- if (length(args)) args else "Botswana"
+#regions <- if (length(args)) args else "Canada"
+#regions <- if (length(args)) args else "France"
 
 now <- lubridate::with_tz(Sys.time(), "UTC")
 mar <- c(2, 3, 1.5, 1.5)
@@ -96,17 +96,23 @@ for (region in regions) {
         xaxs="i",
         xlim=tlim,
         col=cm$zcol,
-        type="p",
+        type="o",
         pch=20,
         cex=cex,
         xlab="Time",
         ylab="Daily Cases",
         mar=mar,
-        drawTimeRange=FALSE)
+        axes=FALSE)
+    box()
+    mtext(region, side=3)
+    oce.axis.POSIXct(1, drawTimeRange=FALSE)
     yaxp <- par("yaxp")
     yticks <- seq(yaxp[1], yaxp[2], length.out=1+yaxp[3])
+    axis(2, at=yticks, labels=numberSimplify(yticks))
     abline(h=yticks, col=colGrid)
     ymax <- par("usr")[4]
+
+    # Polar plot
     t0t <- as.POSIXct("2020-01-01", tz="UTC")
     t0 <- as.numeric(t0t)
     S <- sin(2*pi*(as.numeric(sub$time) - t0)/365/86400)
@@ -115,14 +121,14 @@ for (region in regions) {
     par(mar=rep(2,4))
     plot(y * C, y * S,
         axes=FALSE, xlab="", ylab="",
-        xlim=lim, asp=1, type="p", pch=20, cex=cex,
+        xlim=lim, asp=1, type="o", pch=20, cex=cex,
         col=cm$zcol)
     grid()
     for (month in 1:12) {
         tt <- ISOdatetime(2020, month, 1, 0, 0, 0, tz="UTC")
         S <- ymax*sin(2*pi*(as.numeric(tt) - t0)/365/86400)
         C <- ymax*cos(2*pi*(as.numeric(tt) - t0)/365/86400)
-        lines(c(0, C), c(0, S))
+        lines(c(0, C), c(0, S), col=colGrid)
         tt <- tt + 14 * 86400
         S <- ymax*sin(2*pi*(as.numeric(tt) - t0)/365/86400)
         C <- ymax*cos(2*pi*(as.numeric(tt) - t0)/365/86400)

@@ -1,0 +1,53 @@
+---
+title: Classroom infection likelihood
+author: Dan Kelley
+date: "`r Sys.Date()`"
+---
+
+```{r echo=FALSE}
+Pp <- 0.0345                           # BC 2021-08-12 positive/test
+Pa <- 3625 / 5020302                   # BC 2021-08-12 cases/pop
+n <- 10
+Pi <- function(P, n)
+{
+    rval <- 100*(1-(1-P)^n)
+    if (rval < 10) round(rval, 1) else round(rval)
+}
+```
+
+This document provides calculations for the probability that a student becomes
+infected by covid19 through classroom exposure *in a given day*.
+
+Let $n$ be the number of interacting individuals.  This is not likely the class
+size, given air flow and diffusion rates, but is more likely the number of
+nearby students in a given class, perhaps doubled to account for entering
+through a small doorway.
+
+The probability of *not* being exposed when two individuals meet is $1-P$,
+where $P$ is the probability that a given person is infectious. Assuming
+independence of encounter events, the probability of not being exposed if $n$
+people interact is $(1-P)^n$, and thus the probability of being exposed is
+$1-(1-P)^n$.
+
+Determining $P$ is difficult in the absence of extensive testing, knowledge of
+whether infected individuals will attend classes, and the time period of
+infectiousness.  However, crude bounds might be set by $P_a$, the ratio of
+active cases to population, and $P_p$, the ratio of positive tests to total
+tests^[In the examples, $P_a$ and $P_p$ represent British Columbia on
+2021-08-12. These numbers appeared to be on the rise throughout North America,
+on this date. Using present-day numbers for Nova Scotia is problematic, because
+so many students come from out of province.].
+
+**Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests
+that the probability of infection *in a given day* lies between `r Pi(Pa,n)`
+and `r Pi(Pp,n)` percent.
+
+```{r echo=FALSE}
+n <- 40
+```
+
+**Example 2.** As example 1, but with $n=40$ to represent four classes (with
+different neighbors), yields percentage probabilities of being infected in a
+given day from `r Pi(Pa,n)` to `r Pi(Pp,n)`.
+
+

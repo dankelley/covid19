@@ -4,13 +4,14 @@ debug <- FALSE
 lwd <- 6
 spd <- 86400                           # seconds/day
 LOOK <- 10                             # points at end for linear fit
-criterion <- 0.85*200                  # 2 shots/person for 85% of pop (assume 13% under 12y)
+criterion <- c(0.75, 0.85)*200         # 2 shots/person for 85% of pop (assume 13% under 12y)
+yearsToCriterion <- rep(NA, 2)
 
 timeFormat <- function(y)
 {
     if (y > 1.5)
         paste(round(y, 1), "years")
-    else if (y > 2/12)
+    else if (y > 3/12)
         paste(round(12*y, 0), "months")
     else if (y > 2/52)
         paste(round(4*12*y, 0), "weeks")
@@ -60,15 +61,14 @@ for (ilocation in seq_along(locations)) {
     m1 <- NULL # to avoid problem with too few data to fit for prediction
     ndata <- nrow(dd)
     if (ndata > 10) {
-        ## Linear plot
         v100 <- dd$total_vaccinations_per_hundred
         focus <- c(rep(FALSE,ndata-LOOK),rep(TRUE,LOOK))
         oce.plot.ts(dd$time, dd$total_vaccinations_per_hundred,
                     mar=c(2,3,1.5,1),
                     drawTimeRange=FALSE,
                     xlab="", ylab="Vaccinations / 100 Persons",
-                    xlim=xlim, type="p",
-                    pch=20,
+                    xlim=xlim, ylim=c(0, 0.8*200), yaxs="i",
+                    type="p", pch=20,
                     cex=ifelse(focus, 0.7, 0.3),
                     col=ifelse(focus, "black", "gray"))
         if (nrow(dd) > 3) {
@@ -80,7 +80,8 @@ for (ilocation in seq_along(locations)) {
             }
             print(summary(m1))
             x <- seq(min(day), min(day) + 20*365, 1)
-            yearsToAll1 <- which(as.vector(predict(m1, list(day=x))) >= criterion)[1] / 365 - max(day) / 365
+            yearsToCriterion[1] <- which(as.vector(predict(m1, list(day=x))) >= criterion[1])[1] / 365 - max(day) / 365
+            yearsToCriterion[2] <- which(as.vector(predict(m1, list(day=x))) >= criterion[2]) [1]/ 365 - max(day) / 365
         } else {
             cat("  too few rows (", nrow(dd), ") to fit curve\n", sep="")
         }
@@ -98,17 +99,17 @@ for (ilocation in seq_along(locations)) {
                    col=ifelse(focus, "black", "gray"))
         }
         mtext(locations[ilocation], side=3, cex=par("cex"))
-        if (!is.null(m1) && is.finite(yearsToAll1)) {
-            mtext(sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Expect 2-dose for %.0f%% of population\n in %s.",
-                         format(tail(dd$time,1), "%b %d"),
-                         round(tail(dd$total_vaccinations,1)/1e6, 1),
-                         tail(dd$total_vaccinations,1)*100/dd$population[1],
-                         LOOK,
-                         coef(m1)[[2]],
-                         #round(coef(m1)[2],3),
-                         criterion/2,
-                         timeFormat(yearsToAll1)),
-                  adj=0, line=-4, cex=0.9*par("cex"))
+        if (!is.null(m1) && all(is.finite(yearsToCriterion))) {
+            msg <- sprintf(" %s: %.1fM doses (%.1f per 100 persons) given.\n Last %d reports: %.2f doses/100 person/day,\n Predict 2-dose for %.0f%% of population\n in %s, %.0f%% in %s.",
+                format(tail(dd$time,1), "%b %d"),
+                round(tail(dd$total_vaccinations,1)/1e6, 1),
+                tail(dd$total_vaccinations,1)*100/dd$population[1],
+                LOOK,
+                coef(m1)[[2]],
+                #round(coef(m1)[2],3),
+                criterion[1]/2, timeFormat(yearsToCriterion[1]),
+                criterion[2]/2, timeFormat(yearsToCriterion[2]))
+            mtext(msg, adj=0, line=-4, cex=0.9*par("cex"))
         }
         if (debug) {
             cat(oce::vectorShow(dd$population_density[1]))

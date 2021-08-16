@@ -113,8 +113,8 @@ for (i in seq_along(regions)) {
     first <- FALSE
 }
 
-target <- 85
-abline(h=target, col="red")
+target <- c(75, 85)
+abline(h=target, lty=c(2,1), col="red")
 mtext(target, side=4, at=target, col="red")
 
 i <-1 + ((1:10)-1)%%5

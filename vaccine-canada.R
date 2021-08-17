@@ -94,7 +94,7 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
     "Prince Edward Island", "Quebec", "Saskatchewan")
 first <- TRUE
 day <- 86400
-tlook <- as.POSIXct(c("2021-05-01", format(Sys.Date())), tz="UTC")
+tlook <- as.POSIXct(c("2021-05-01", format(Sys.Date()+14)), tz="UTC")
 
 width <- 7
 height <- 5
@@ -108,7 +108,7 @@ if (!interactive())
 for (i in seq_along(regions)) {
     test <- pl(regions[i], first, xlim=tlook,
         col=col[1+(i-1)%%5],
-        lwd=2,
+        lwd=2.5,
         lty=ifelse(i<=5, 1, 2))
     first <- FALSE
 }

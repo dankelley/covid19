@@ -1,0 +1,183 @@
+---
+title: Dalhousie Vaccine Policy in the Context of Classroom Infection
+author: Dan Kelley, Professor, Department of Oceanography (dan.kelley@dal.ca)
+date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{graphicx}
+   - \usepackage{marginnote}
+   - \usepackage{times}
+   - \usepackage{amsmath}
+   - \usepackage{microtype}
+---
+
+```{r echo=FALSE}
+Pp <- 0.0345                           # BC 2021-08-12 positive/test
+Pa <- 3625 / 5020302                   # BC 2021-08-12 cases/pop
+n <- 10
+Pi <- function(P, n)
+{
+    rval <- 100*(1-(1-P)^n)
+    paste0(if (rval < 10) round(rval) else round(rval), "%")
+}
+```
+
+# Introduction
+
+In recent weeks, major universities in both Canada [1] and the United States of
+America [2] have enacted policies requiring that students, faculty and staff
+have COVID-19 vaccinations before entering campus.
+
+Anyone with access to the news knows that many prominent businesses are also
+enacting vaccine requirements. The reason is a mystery to no-one.  As was
+reported yesterday, the chief medical officer of Canada judges the nation to be
+in the midst of a fourth wave, and notes that mandatory vaccinations are "on
+the table" [3]. For any readers that might need a reminder, Figure 1 on the
+next page paints an sobering picture.
+
+
+Why is Dalhousie lagging behind?  In the virtual Q&A sessions on the topic [4],
+the reason stated for not requiring vaccination was patient privacy.  But,
+surely, privacy must be weighed against the risk of subjecting Nova Scotians to
+unnecessary misery, after so many months of sacrifice.
+
+Or perhaps the idea is that the low infection rates in Nova Scotia imply a
+lower risk here than elsewhere.  This is a flimsy argument, given recent
+infection trends through Canada and the rest of the world.
+
+Nova Scotia has low infection rates at this particular moment, but we all know
+why: travel restriction.  It is not a coincidence that so many cases are
+travel-related.
+
+The consequence of opening up to thousands of outsiders seems to be a recipe
+for disaster, based on trends seen elsewhere, and also on the frightening wave
+that occurred a few months ago, which may have been sparked by just a few
+individuals failing to practice quarantine.
+
+The university classroom is a special place, not quite the same as a mall or a
+museum.  Although there are many subtle issues involved in considering COVID-19
+spread in a lecture hall, the basic elements are simple enough to be explained
+with middle-school mathematics, as in the next section.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=\hsize]{covid_letter_figure.pdf}
+\end{center}
+\caption{\footnotesize New daily cases in Canada, as of 2021-08-12. The most recent daily rate is written after the date, and black dots indicate the 10 most recent observations. The magenta lines, shown to guide the eye through "noisy" data, are computed using a smoothing cubic spline. This figure is based on data downloaded from <https://health-infobase.canada.ca/src/data/covidLive/covid19.csv> on 2021-08-13, and shows observations ranging up to the previous day.}
+\end{figure}
+
+
+# A simple model of classroom disease transmission
+
+Let $n$ be the number of persons that a student encounters during a class.
+With good ventilation, this will not equal the total number of students in the
+class, so we can set aside the notion that $n$ is 400 or more in some classes.
+It is more reasonable to take $n$ to be the number of students in nearby seats,
+plus a few others who were close during class entry and exit.  A reasonable
+lower limit might be $n=10$, for the 8 students in neighbouring seats, plus 2
+more who were close at the door or in the hallway^[The $n$ values are for class
+encounters only; there is also risk of exposure at home, etc., and this will
+increase the probabilities inferred here.].
+
+Let $P$ be the probability that a given person is infectious, and consider the
+contact between two individuals, one of whom is not infected, the other
+possibly being infectious. Supposing sufficient exchange of virus load^[The
+rate of exchange involves disease properties, air flow, the extent of cleaning
+between classes, etc., and is beyond the present scope.], the probability that
+the uninfected individual becomes infected is $1-P$ per encounter.  Assuming
+independence of encounter events, the probability of not being exposed if $n$
+people interact is given $(1-P)^n$.  It follows that the probability of being
+infected during an $n$-person interaction is $1-(1-P)^n$. This simple
+formula^[If $P\ll 1$ and $n$ is small, the formula may be approximated as $nP$,
+which permits calculation by eye.] is the key to inferring infection
+probability during a lecture.
+
+Determining $P$ is difficult in the absence of extensive testing, knowledge of
+whether infected individuals will attend classes, the time interval of
+infectiousness, and other factors.  However, crude bounding values might be
+provided by $P_a$, the ratio of active cases to population, and $P_p$, the
+ratio of positive tests to total tests. In the examples below, $P_a$ and $P_p$
+are inferred from reported data for British Columbia on 2021-08-12, which may
+provide plausible estimates of the Nova Scotian situation a few weeks into
+classes, if past is prologue^[A refinement to the present calculation might
+break down Dalhousie students by point of origin, but this is not information
+available to the author.].
+
+**Example 1.** $n=`r n`$, $P_a=`r round(Pa,5)`$ and $P_p=`r Pp`$ suggests an
+infection probability between `r Pi(Pa,n)` and `r Pi(Pp,n)`.
+
+```{r echo=FALSE}
+n <- 40
+```
+
+**Example 2.** A similar calculation, but with $n=40$ to represent four classes
+(with different neighbors), yields infection probabilities between `r Pi(Pa,n)`
+and `r Pi(Pp,n)`.
+
+The first example might apply to a part-time student who takes just one class,
+while the second is more relevant to a full-time student.
+
+Whether even the lower estimates are acceptable is an open question, given that
+these are computations just for a single encounter, and probabilities would be
+higher if multiple encounters are assumed, with differing classroom
+neighbors^[In my own teaching, I have noticed that it takes a week or two for
+students to settle on a spot where they will habitually sit.].  Extending this
+model to such situations would not be difficult, and I do hope that Dalhousie's
+administrators have undertaken such calculations.
+
+# Discussion
+
+Dalhousie plans to return to in-person teaching in a few weeks, if Nova Scotia
+enters phase 5, and I certainly look forward to seeing my students in person
+again. My guess is that they will all be wearing masks, required or not. But
+what am I to say if they ask why vaccination is not required? I seem to have three
+choices.
+
+* If I say it's to respect privacy, they may ask me why this moral imperative
+  does not apply to other universities, institutions, and even nations.  I have
+  no answer to that.
+
+* If I say it's because the chance of infection is low in Nova Scotia, then
+  I fear my students might respond in either of two ways. They might ask me to
+  explain that mathematically, which is difficult because I think the reverse
+  is true.  Or they might simply point to the current case load, which we all
+  hope will be low, but fear may be high.
+
+* If I say it's because of technical difficulties, they will respond that
+  Canada has set up a system for vaccination passes [5], so very little effort
+  would be required on the part of Dalhousie.
+
+My honest response will be that I do not understand the Administration's
+choice, and cannot defend it.
+
+I grew up in Nova Scotia, and I know that Dalhousie has long taken pride in its
+contributions to the community. I wonder, will it be proud to be the cause of
+unnecessary suffering in a province that has supported it for two centuries?
+
+Demanding that students, staff and faculty be vaccinated is not just a moral
+duty; it is a practical one, for an institution that relies on community
+support to survive.
+
+
+
+# References
+
+1. News Staff. “Western University, U of T to Mandate COVID-19 Vaccines for All
+   Students, Staff - CityNews Toronto,” August 11, 2021.
+   https://toronto.citynews.ca/2021/08/11/western-university-covid-19-vaccine-students-staff/.
+
+2. University of California (Cnet). “UC Issues Final COVID-19 Vaccination
+   Policy | UCnet,” July 15, 2021.
+   https://ucnet.universityofcalifornia.edu/news/2021/07/ucs-covid-19-vaccine-policy.html.
+
+3. Tasker, John Paul. “As Delta Variant Spreads, Canada’s Top Doctors Say
+   Mandatory Vaccination for Some Workers Is on the Table | CBC News.” CBC,
+   August 12, 2021.
+   https://www.cbc.ca/news/politics/delta-variant-spreads-mandatory-vaccination-1.6139102.
+
+4. Dalhousie University. “Virtual Q&A Discussion Videos,” July 20, 2021.
+   https://www.dal.ca/covid-19-information-and-updates/our-approach/virtual-q-a-discussion-videos.html.
+
+5. Tunney, Catharine. “Ottawa Promises Vaccine Passport for International
+   Travel This Fall | CBC News.” CBC, August 11, 2021.
+   https://www.cbc.ca/news/politics/vaccine-passport-1.6137763.
+

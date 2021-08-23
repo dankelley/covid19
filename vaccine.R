@@ -14,7 +14,7 @@ timeFormat <- function(y)
     else if (y > 3/12) # report >3mo as mo
         paste(round(12*y, 0), "months")
     else if (y > 5/52) # report >5we as we
-        paste(round(52*y, 0), "weeks")
+        paste(round(4*12*y, 0), "weeks")
     else
         paste(round(365*y, 0), "days")
 }

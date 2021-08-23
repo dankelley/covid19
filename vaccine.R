@@ -9,15 +9,27 @@ yearsToCriterion <- rep(NA, 2)
 
 timeFormat <- function(y)
 {
-    if (y > 1.5)
-        paste(round(y, 1), "years")
-    else if (y > 3/12) # report >3mo as mo
-        paste(round(12*y, 0), "months")
-    else if (y > 5/52) # report >5we as we
-        paste(round(4*12*y, 0), "weeks")
-    else
-        paste(round(365*y, 0), "days")
+    d <- y * 365
+    if (y > 1.5) paste(round(y, 1), "years")
+    else paste(round(d, 0), "days")
 }
+timeFormatOLD <- function(y)
+{
+    d <- y * 365
+    cat("d=",d)
+    rval <- if (y > 1.5)
+        paste(round(y, 1), "years")
+    else if (d > 3*28) # report >3mo (approx) as mo
+        paste(round(d/28, 0), "months")
+    else if (d > 3*7) # report >3we as we
+        paste(round(d/7, 0), "weeks")
+    else
+        paste(round(d, 0), "days")
+    gsub("^1 (.*)s", "1 \\1", rval)
+}
+#.for (y in seq(0,4*28, 2)/365)
+#.    print(timeFormat(y))
+#.stop()
 
 if (!exists("d0")) {
     file <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"

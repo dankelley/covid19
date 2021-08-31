@@ -55,6 +55,27 @@ population <- function(region)
            "Repatriated travellers"=NA)
 }
 
+numberSimplify <- function(x)
+{
+    res <- NULL
+    for (xx in x) {
+        res <- c(res,
+            if (is.na(xx)) {
+                "NA"
+            } else if (xx < 10) {
+                sprintf("%g", xx)
+            } else if (xx < 9000) {
+                sprintf("%.0f", xx)
+            } else if (xx < 1e6) {
+                sprintf("%.1fK", xx/1e3)
+            } else {
+                sprintf("%.1fM", xx/1e6)
+            }
+            )
+    }
+    res
+}
+
 
 
 recentNumberOfDays <- 14
@@ -64,10 +85,13 @@ if (!exists("d")) {
     message("downloading from ", url)
     d <- read.csv(url)
     d$time <- as.POSIXct(d$date, format="%d-%m-%Y", tz="UTC")
+    d$numactive <- as.numeric(d$numactive)
     d$numconf <- as.numeric(d$numconf)
     d$numprob <- as.numeric(d$numprob)
+    d$numtoday <- as.numeric(d$numtoday)
+    d$numteststoday <- as.numeric(d$numteststoday)
+    d$numdeaths <- as.numeric(d$numdeaths)
     d$num <- d$numconf + d$numprob
-    d$deaths <- as.numeric(d$numdeaths)
 } else {
     message("using downloaded data")
 }
@@ -93,25 +117,28 @@ tlim <- range(d$time, na.rm=TRUE)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
-message("linear plots")
+message("canada_linear.png")
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- subset(sub, is.finite(sub$numconf))
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    oce.plot.ts(sub$time, sub$numconf,
+    oce.plot.ts(sub$time, sub$numconf/1e3,
                 mar=mar, mgp=mgp,
                 ylab="Cases & Deaths", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
-    points(sub$time, sub$numdeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+    points(sub$time, sub$numdeaths/1e3, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
     mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
-    mtext(sprintf(" Cases: %d (%.3f%%)",
-                  tail(sub$numconf,1), 100*tail(sub$numconf,1)/population(region)),
+    mtext(sprintf(" Cases: %s (%.3f%%)",
+                  numberSimplify(tail(sub$numconf,1)),
+                  100*tail(sub$numconf,1)/population(region)),
           cex=par("cex"), adj=0, line=-2)
-    mtext(sprintf(" Deaths: %d (%.3f%%)",
-                  tail(sub$deaths,1), 100*tail(sub$deaths,1)/population(region)),
+    print(tail(sub$numdeaths,1))
+    mtext(sprintf(" Deaths: %s (%.3f%%)",
+                  numberSimplify(tail(sub$numdeaths,1)),
+                  100*tail(sub$numdeaths,1)/population(region)),
           cex=par("cex"), adj=0, line=-3)
 }
 if (!interactive())
@@ -235,7 +262,7 @@ for (region in regions) {
             }
         }
         ## Death doubling time
-        y <- sub$deaths[recent]
+        y <- sub$numdeaths[recent]
         ok <- y > 0
         x <- (as.numeric(sub$time)[recent])[ok]
         y <- log10(y[ok])
@@ -258,7 +285,7 @@ for (region in regions) {
                       "d, deaths in ",
                       if (is.finite(t2d) && t2d < 100 && t2d > 0) round(t2d,0) else ">100", "d")
         mtext(lab, side=3, line=-1, cex=par("cex"), adj=0)
-        lastDeaths <- tail(sub$deaths[is.finite(sub$deaths)],1)
+        lastDeaths <- tail(sub$numdeaths[is.finite(sub$numdeaths)],1)
         if (lastDeaths == 0) {
             mtext(" Case Fatality Rate: 0%", side=3, line=-2, cex=par("cex"), adj=0)
         } else {

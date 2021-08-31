@@ -4,10 +4,10 @@ removeOutliers <- FALSE                # remove points that differ from smoothed
 ## April, from the commented-out line to the line after it.
 #url <- "https://health-infobase.canada.ca/src/data/summary_current.csv"
 url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
-mar <- c(2, 3, 1, 1)
-mgp <- c(1.8,0.7,0)
-mar2 <- c(1.75, 2.5, 0.25, 1)          # tighter
-mgp2 <- c(1.4,0.5,0)                   # tighter
+mar <- c(2, 3, 1.5, 1)
+mgp <- c(1.8, 0.7, 0)
+mar2 <- c(1.75, 2.5, 1, 1)
+mgp2 <- c(1.4, 0.5, 0)
 
 fixLastDuplicated <- function(x)
 {
@@ -64,8 +64,10 @@ if (!exists("d")) {
     message("downloading from ", url)
     d <- read.csv(url)
     d$time <- as.POSIXct(d$date, format="%d-%m-%Y", tz="UTC")
+    d$numconf <- as.numeric(d$numconf)
+    d$numprob <- as.numeric(d$numprob)
     d$num <- d$numconf + d$numprob
-    d$deaths <- d$numdeaths
+    d$deaths <- as.numeric(d$numdeaths)
 } else {
     message("using downloaded data")
 }

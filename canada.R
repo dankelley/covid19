@@ -83,7 +83,7 @@ now <- Sys.time()
 ## Cache for speed during code development
 if (!exists("d")) {
     message("downloading from ", url)
-    d <- read.csv(url)
+    d <- read.csv(url, stringsAsFactors=FALSE)
     d$time <- as.POSIXct(d$date, format="%d-%m-%Y", tz="UTC")
     d$numactive <- as.numeric(d$numactive)
     d$numconf <- as.numeric(d$numconf)

@@ -6,7 +6,7 @@ removeOutliers <- FALSE                # remove points that differ from smoothed
 url <- "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
 mar <- c(2, 3, 1.5, 1)
 mgp <- c(1.8, 0.7, 0)
-mar2 <- c(1.75, 2.5, 1, 1)
+mar2 <- c(1.75, 2.5, 1.25, 1)
 mgp2 <- c(1.4, 0.5, 0)
 
 fixLastDuplicated <- function(x)
@@ -214,6 +214,38 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+
+
+if (!interactive())
+    png("canada_linear_active_per_100K.png",
+        width=width,
+        height=height,
+        unit="in",
+        res=res,
+        pointsize=pointsize)
+par(mfrow=c(4, 3))
+tlim <- range(d$time)
+message("linear plots of active cases/100K")
+for (region in regions) {
+    message("Handling ", region)
+    sub <- subset(d, tolower(prname)==tolower(region))
+    sub <- subset(sub, is.finite(sub$numactive))
+    recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
+    y <- sub$numactive / population(region) * 100e3
+    oce.plot.ts(sub$time, y,
+                mar=mar2, mgp=mgp2,
+                ylab="Active Cases/100K", xlim=tlim,
+                type="p", pch=20, col=ifelse(recent, "black", "gray"),
+                drawTimeRange=FALSE)
+    abline(h=0, col=4, lwd=0.5*par("lwd"))
+    ok <- is.finite(y)
+    lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
+    #mtext(paste0(" ", region), cex=par("cex"), adj=0, line=0)
+    mtext(paste0(abbreviateRegion(region, FALSE), " ", format(tail(sub$time,1), " %b %d"), ": ", round(tail(y,1)), "/100K"), adj=0, cex=par("cex"), line=0)
+}
+if (!interactive())
+    dev.off()
+
 
 if (!interactive())
     png("canada_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)

@@ -404,8 +404,8 @@ axis for count, (c) the lower-left shows daily case count, with a magenta line
 for a smoothing spline set to have 1 degree of freedom per 14 days of time
 interval (NOTE: until 2020-Jan-24, this was 7 days, yielding more wiggly spline
 predictions), and (d) the bottom-right is like the bottom left, but with
-logarithmic axis (and the same spline shown).  The margin labels should be self
-explanatory, but note that the Case Fatality Rate is only shown if both
+logarithmic axis (and the same spline shown).  The margin labels should be
+self-explanatory. Note that the Case Fatality Rate is only shown if both
 doubling times exceed 30 days (meaning that the counts are relatively
 static).</p>
 
@@ -413,7 +413,7 @@ static).</p>
 <p>The test/population plot is created with <a href="https://raw.githubusercontent.com/dankelley/covid19/master/tests_per_pop.R">tests_per_pop.R</a>, with data being downloaded by the COVID19 R package.  All other
 -->
 
-<p>The plots access the source data directly, in R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selcted states, and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/vaccine.R">vaccine.R</a>, all but the last of which uses <a href="https://raw.githubusercontent.com/dankelley/covid19/master/get_data.R">get_data.R</a> to download the data.  The R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to produce results like those shown here.</p>
+<p>The plots access the source data directly, in R scripts named <a href="https://raw.githubusercontent.com/dankelley/covid19/master/covid19.R">covid19.R</a> for the world by country, <a href="https://raw.githubusercontent.com/dankelley/covid19/master/canada.R">canada.R</a> for Canada by province, <a href="https://raw.githubusercontent.com/dankelley/covid19/master/usa.R">usa.R</a> for the United States by some selected states, and <a href="https://raw.githubusercontent.com/dankelley/covid19/master/vaccine.R">vaccine.R</a>, all but the last of which uses <a href="https://raw.githubusercontent.com/dankelley/covid19/master/get_data.R">get_data.R</a> to download the data.  The R scripts are driven by a <a href="https://raw.githubusercontent.com/dankelley/covid19/master/Makefile">Makefile</a> that is called with a cronjob that repeats hourly.  The R scripts use the oce package, in the updated form that is provided at <a href="https://github.com/dankelley/oce">github.com/dankelley/oce</a>; you will need to build that package to produce results like those shown here.</p>
 
 <p>The per-province view for Canada is broken up into four plots with 12 panels
 each, and the per-state view for the United States of America follows the same

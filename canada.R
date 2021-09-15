@@ -105,7 +105,7 @@ res <- 200
 pointsize <- 11
 
 if (!interactive())
-    png("canada_linear.png",
+    png("canada_cases_per_100K_by_province.png",
         width=width,
         height=height,
         unit="in",
@@ -117,29 +117,27 @@ tlim <- range(d$time, na.rm=TRUE)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
-message("canada_linear.png")
+message("canada_cases_per_100K_by_province.png")
 for (region in regions) {
     message("Handling ", region)
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- subset(sub, is.finite(sub$numconf))
     sub <- fixLastDuplicated(sub)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
-    oce.plot.ts(sub$time, sub$numconf/1e3,
+    ycases <- sub$numconf / population(region) * 100e3
+    ydeaths <- sub$numdeaths / population(region) * 100e3
+    oce.plot.ts(sub$time, ycases,
                 mar=mar, mgp=mgp,
-                ylab="Cases & Deaths", xlim=tlim,
+                ylab="Cases&Deaths/100K", xlim=tlim,
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
-    points(sub$time, sub$numdeaths/1e3, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
-    mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
-    mtext(sprintf(" Cases: %s (%.3f%%)",
-                  numberSimplify(tail(sub$numconf,1)),
-                  100*tail(sub$numconf,1)/population(region)),
-          cex=par("cex"), adj=0, line=-2)
-    print(tail(sub$numdeaths,1))
-    mtext(sprintf(" Deaths: %s (%.3f%%)",
-                  numberSimplify(tail(sub$numdeaths,1)),
-                  100*tail(sub$numdeaths,1)/population(region)),
-          cex=par("cex"), adj=0, line=-3)
+    points(sub$time, ydeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
+    mtext(sprintf(" %s @ %s:\n   Cases: %.0f/100K\n   Deaths: %.1f/100K\n   CFR: %.1f%%",
+            region, format(tail(sub$time,1), "%b %d"),
+            round(tail(ycases, 1), 0),
+            round(tail(ydeaths,1), 1),
+            round(100*tail(ydeaths,1)/tail(ycases,1), 1)),
+        cex=par("cex"), adj=0, line=-4)
 }
 if (!interactive())
     dev.off()
@@ -355,17 +353,17 @@ for (region in regions) {
                 col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     nbad <- sum(bad)
-    label <- if (nbad == 1) sprintf(" %s (skipping %d outlier)", region, sum(bad))
-        else if (nbad > 1) sprintf(" %s (skipping %d outliers)", region, sum(bad))
-        else paste0(" ", region)
+    #> label <- if (nbad == 1) sprintf(" %s (skipping %d outlier)", region, sum(bad))
+    #>    else if (nbad > 1) sprintf(" %s (skipping %d outliers)", region, sum(bad))
+    #>    else paste0(" ", region)
 
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- !bad & is.finite(y)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(label, cex=par("cex"), adj=0, line=-1)
-    mtext(paste0(format(tail(sub$time,1), " %d %b"), ": ", round(tail(y,1),1), "/100K"), adj=0, cex=par("cex"), line=-2)
+    #> mtext(label, cex=par("cex"), adj=0, line=-1)
+    mtext(paste0(" ", region, " @ ", format(tail(sub$time,1), " %d %b"), "\n ", round(tail(y,1),1), "/100K"), adj=0, cex=par("cex"), line=-2)
 }
 
 if (!interactive())

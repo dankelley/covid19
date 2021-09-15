@@ -345,11 +345,11 @@ for (region in regions) {
     sub <- subset(d, tolower(prname)==tolower(region))
     sub <- subset(sub, is.finite(sub$numconf))
     sub <- fixLastDuplicated(sub)
-    y <- diff(sub$numconf)
+    y <- diff(sub$numconf) / population(region) * 100e3
     ys <- smooth(y)
     bad <- if (removeOutliers) abs(y-ys) > 8 * sd(y-ys) else rep(FALSE, length(y))
-    ylim <- c(0, max(c(y, ys)))
-    oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases", type="p",
+    ylim <- c(0, 1.2*quantile(ys, 0.99, na.rm=TRUE))
+    oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases / 100K", type="p",
                 #mar=c(2, 3, 1, 1),
                 mar=mar2, mgp=mgp2, xlim=tlim, ylim=ylim,
                 col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
@@ -365,9 +365,8 @@ for (region in regions) {
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
     mtext(label, cex=par("cex"), adj=0, line=-1)
-    mtext(paste0(format(tail(sub$time,1), " %b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
+    mtext(paste0(format(tail(sub$time,1), " %d %b"), ": ", round(tail(y,1),1), "/100K"), adj=0, cex=par("cex"), line=-2)
 }
-
 
 if (!interactive())
     dev.off()

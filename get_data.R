@@ -1,23 +1,23 @@
-rm(list=ls())
+m(list=ls())
 showExample <- FALSE
 load("population.rda")
 
-## Get data straight from the Johns Hopkins github page, which
-## is faster than using COVID19, and less subject to UI change, although
-## it has the problem of not having population.
+# Get data straight from the Johns Hopkins github page, which
+# is faster than using COVID19, and less subject to UI change, although
+# it has the problem of not having population.
 baseUrl <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series"
 confirmedSources <- list(url=paste0(baseUrl, "/time_series_covid19_confirmed_global.csv"),
-                         file="time_series_covid19_confirmed_global.csv")
+    file="time_series_covid19_confirmed_global.csv")
 # https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv
 confirmedSourcesUS <- list(url=paste0(baseUrl, "/time_series_covid19_confirmed_US.csv"),
-                           file="time_series_covid19_confirmed_US.csv")
+    file="time_series_covid19_confirmed_US.csv")
 deathsSources <- list(url=paste0(baseUrl, "/time_series_covid19_deaths_global.csv"),
-                      file="time_series_covid19_deaths_global.csv")
+    file="time_series_covid19_deaths_global.csv")
 deathsSourcesUS <- list(url=paste0(baseUrl, "/time_series_covid19_deaths_US.csv"),
-                        file="time_series_covid19_deaths_US.csv")
+    file="time_series_covid19_deaths_US.csv")
 
 
-## confirmed
+# confirmed
 if (!file.exists(confirmedSources$file)) {
     cat("Download", confirmedSources$file, "for the first time\n")
     download.file(confirmedSources$url, confirmedSources$file)
@@ -33,7 +33,7 @@ if (!file.exists(confirmedSourcesUS$file)) {
     download.file(confirmedSourcesUS$url, confirmedSourcesUS$file)
 }
 
-## deaths
+# deaths
 if (!file.exists(deathsSources$file)) {
     cat("Download", deathsSources$file, "for the first time\n")
     download.file(deathsSources$url, deathsSources$file)
@@ -77,7 +77,7 @@ deathsNum <- deaths[, seq(5L, dim(deaths)[2])]
 tmp <- gsub("X", "", names(confirmed)[grep("^X[1-9][0-2]{0,1}\\.", names(confirmed))])
 confirmedTimes <- lubridate::with_tz(as.POSIXct(tmp, format="%m.%d.%y", tz="UTC"), "UTC")
 
-## ensure times not misordered (as e.g. if mon/day mixed up)
+# ensure times not misordered (as e.g. if mon/day mixed up)
 stopifnot(all(1==diff(order(confirmedTimes))))
 tmp <- gsub("X", "", names(deaths)[grep("^X[1-9][0-2]{0,1}\\.", names(deaths))])
 deathsTimes <- lubridate::with_tz(as.POSIXct(tmp, format="%m.%d.%y", tz="UTC"), "UTC")
@@ -88,9 +88,9 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
 {
     if (Country.Region=="World") {
         res <- list(time=time,
-                    cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
-                    deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),
-                    population=subset(population, place=="World")$number)
+            cases=unname(apply(confirmed[seq(5L, dim(confirmed)[2])], 2, sum)),
+            deaths=unname(apply(deaths[seq(5L, dim(deaths)[2])], 2, sum)),
+            population=subset(population, place=="World")$number)
     } else {
         if (is.null(Province.State)) {
             sub <- confirmed[confirmed$Country.Region == Country.Region, ]
@@ -98,9 +98,9 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
             sub <- deaths[deaths$Country.Region == Country.Region, ]
             deaths <- unname(apply(sub[seq(5L, dim(sub)[2])], 2, sum))
             res <- list(time=time,
-                        cases=cases,
-                        deaths=deaths,
-                        population=subset(population, place==Country.Region)$number)
+                cases=cases,
+                deaths=deaths,
+                population=subset(population, place==Country.Region)$number)
         } else {
             if (Country.Region == "United States" || Country.Region == "US" || Country.Region == "USA") {
                 tmp <- confirmedUS[confirmedUS$Province_State == Province.State, ]
@@ -113,18 +113,18 @@ getData <- function(Country.Region="Canada", Province.State=NULL)
                 tmpData <- as.matrix(tmp[, 13:dim(tmp)[2]])
                 deaths <- apply(tmpData, 2, sum)
                 res <- list(time=time,
-                            cases=unname(cases),
-                            deaths=unname(deaths),
-                            population=population)
+                    cases=unname(cases),
+                    deaths=unname(deaths),
+                    population=population)
             } else {
                 sub <- confirmed[confirmed$Country.Region == Country.Region & confirmed$Province.State == Province.State, ]
                 cases <- as.numeric(sub[1, seq(5L, length(sub))])
                 sub <- deaths[deaths$Country.Region == Country.Region & deaths$Province.State == Province.State, ]
                 deaths <- as.numeric(sub[1, seq(5L, length(sub))])
                 res <- list(time=time,
-                            cases=cases,
-                            deaths=deaths,
-                            population=population[[Province.State]])
+                    cases=cases,
+                    deaths=deaths,
+                    population=population[[Province.State]])
             }
         }
     }

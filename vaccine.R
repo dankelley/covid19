@@ -79,7 +79,7 @@ for (ilocation in seq_along(locations)) {
                     mar=c(2,3,1.5,1),
                     drawTimeRange=FALSE,
                     xlab="", ylab="Vaccinations / 100 Persons",
-                    xlim=xlim, ylim=c(0, 0.8*200), yaxs="i",
+                    xlim=xlim, ylim=c(0, 180), yaxs="i",
                     type="p", pch=20,
                     cex=ifelse(focus, 0.7, 0.3),
                     col=ifelse(focus, "black", "gray"))

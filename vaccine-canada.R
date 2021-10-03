@@ -94,7 +94,7 @@ regions <- c("Alberta", "British Columbia" , "Manitoba", "New Brunswick",
     "Prince Edward Island", "Quebec", "Saskatchewan")
 first <- TRUE
 day <- 86400
-tlook <- as.POSIXct(c("2021-05-01", format(Sys.Date()+48)), tz="UTC")
+tlook <- as.POSIXct(c("2021-05-01", format(Sys.Date()+14)), tz="UTC")
 
 width <- 7
 height <- 5
@@ -118,13 +118,14 @@ abline(h=target, lty=c(2,1), col="red")
 mtext(target, side=4, at=target, col="red")
 
 i <-1 + ((1:10)-1)%%5
-legend("topleft",
+legend("bottomright",
     col=col[i],
     lwd=2,
     lty=ifelse((1:10)<=5, 1, 2),
     bg="white",
     title="Province",
-    seg.len=3,
+    seg.len=4,
+    cex=1.0,
     legend=toupper(sapply(regions, abbreviation)))
 
 if (!interactive())

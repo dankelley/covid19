@@ -1,4 +1,3 @@
-m(list=ls())
 showExample <- FALSE
 load("population.rda")
 

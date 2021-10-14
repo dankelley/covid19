@@ -81,6 +81,7 @@ numberSimplify <- function(x)
 recentNumberOfDays <- 14
 now <- Sys.time()
 ## Cache for speed during code development
+#load("d.rda")
 if (!exists("d")) {
     message("downloading from ", url)
     d <- read.csv(url, stringsAsFactors=FALSE)
@@ -132,8 +133,9 @@ for (region in regions) {
                 type="p", pch=20, col=ifelse(recent, "black", "gray"),
                 drawTimeRange=FALSE)
     points(sub$time, ydeaths, pch=20, col=ifelse(recent, "red", "pink"), cex=ifelse(recent, 1, 0.7))
-    mtext(sprintf(" %s @ %s:\n   Cases: %.0f/100K\n   Deaths: %.1f/100K\n   CFR: %.1f%%",
-            region, format(tail(sub$time,1), "%b %d"),
+    mtext(region, adj=0, cex=par("cex"))
+    mtext(sprintf(" As of %s:\n   Total cases: %.0f/100K\n   Total deaths: %.1f/100K\n   CFR: %.1f%%",
+            format(tail(sub$time,1), "%b %d"),
             round(tail(ycases, 1), 0),
             round(tail(ydeaths,1), 1),
             round(100*tail(ydeaths,1)/tail(ycases,1), 1)),
@@ -142,7 +144,7 @@ for (region in regions) {
 if (!interactive())
     dev.off()
 
-message("linear plots of positivity percent")
+message("canada_positivity.png")
 if (!interactive())
     png("canada_positivity.png",
         width=width,
@@ -171,13 +173,14 @@ for (region in regions) {
     lines(smooth.spline(t, y, df=length(y)/7), col="magenta", lwd=1)
     nt <- length(t)
     if (tolower(region) == "canada") {
-        mtext(region, side=3, adj=1, line=-1, cex=par("cex"))
+        mtext(region, side=3, adj=0, cex=par("cex"))
     } else {
-        mtext(paste0(region, " \n",
-                     format(t[nt-10L], "%b %d"),
-                     " to ",
-                     format(t[nt], "%b %d \n"),
-                     round(mean(tail(y, recentNumberOfDays)), 2), "% "), adj=1, cex=par("cex"), line=-3)
+        mtext(region, side=3, adj=0, cex=par("cex"))
+        mtext(sprintf(" %.2g%% (%s to %s)",
+                mean(tail(y, recentNumberOfDays)),
+                format(t[nt-10L], "%b %d"),
+                format(t[nt], "%b %d")),
+            adj=0, cex=par("cex"), line=-1)
     }
 }
 if (!interactive())
@@ -207,8 +210,16 @@ for (region in regions) {
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     ok <- is.finite(y)
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
-    mtext(paste0(format(tail(sub$time,1), " %b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
+    #> mtext(paste0(" ", region), cex=par("cex"), adj=0, line=-1)
+    #> mtext(paste0(format(tail(sub$time,1), " %b %d"), ": ", tail(y,1)), adj=0, cex=par("cex"), line=-2)
+
+    mtext(sprintf(" %s\n %s on %s",
+            region,
+            numberSimplify(tail(y,1)),
+            format(tail(sub$time,1), "%b %d")),
+        adj=0, cex=par("cex"), line=-1)
+
+
 }
 if (!interactive())
     dev.off()
@@ -238,8 +249,14 @@ for (region in regions) {
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     ok <- is.finite(y)
     lines(smooth.spline(sub$time[ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    #mtext(paste0(" ", region), cex=par("cex"), adj=0, line=0)
-    mtext(paste0(abbreviateRegion(region, FALSE), " ", format(tail(sub$time,1), " %b %d"), ": ", round(tail(y,1)), "/100K"), adj=0, cex=par("cex"), line=0)
+    #> mtext(paste0(abbreviateRegion(region, FALSE), " ", format(tail(sub$time,1), " %b %d"), ": ", round(tail(y,1)), "/100K"), adj=0, cex=par("cex"), line=0)
+    ylast <- tail(y, 1)
+    mtext(sprintf(" %s\n %g/100K on %s",
+            region,
+            if (ylast < 10) round(ylast,1) else round(ylast),
+            format(tail(sub$time,1), "%b %d")),
+        adj=0, cex=par("cex"), line=-1)
+
 }
 if (!interactive())
     dev.off()
@@ -348,22 +365,20 @@ for (region in regions) {
     bad <- if (removeOutliers) abs(y-ys) > 8 * sd(y-ys) else rep(FALSE, length(y))
     ylim <- c(0, 1.2*quantile(ys, 0.99, na.rm=TRUE))
     oce.plot.ts(sub$time[-1][!bad], y[!bad], drawTimeRange=FALSE, ylab="New Daily Cases / 100K", type="p",
-                #mar=c(2, 3, 1, 1),
                 mar=mar2, mgp=mgp2, xlim=tlim, ylim=ylim,
                 col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     nbad <- sum(bad)
-    #> label <- if (nbad == 1) sprintf(" %s (skipping %d outlier)", region, sum(bad))
-    #>    else if (nbad > 1) sprintf(" %s (skipping %d outliers)", region, sum(bad))
-    #>    else paste0(" ", region)
-
     ## spline with df proportional to data length (the 7 is arbitrary)
     ok <- !bad & is.finite(y)
     recent <- abs(as.numeric(now) - as.numeric(sub$time)) <= recentNumberOfDays * 86400
     points(sub$time[-1][recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(sub$time[-1][ok], y[ok], df=length(y)/7), col="magenta", lwd=1)
-    #> mtext(label, cex=par("cex"), adj=0, line=-1)
-    mtext(paste0(" ", region, " @ ", format(tail(sub$time,1), " %d %b"), "\n ", round(tail(y,1),1), "/100K"), adj=0, cex=par("cex"), line=-2)
+    mtext(sprintf(" %s\n %.1f per 100K on %s",
+            region,
+            round(tail(y,1),1),
+            format(tail(sub$time,1), "%b %d")),
+        adj=0, cex=par("cex"), line=-1)
 }
 
 if (!interactive())

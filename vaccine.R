@@ -50,7 +50,7 @@ xlim <- range(d$time)
 if (debug)
     cat("xlim: ", format(xlim[1]), " to ", format(xlim[2]), " (time when vaccinations were done)\n")
 
-locations <- c("Canada", "Germany", "Israel", "Italy", "United Kingdom", "United States")
+locations <- c("Canada", "Germany", "Italy", "South Africa", "United Kingdom", "United States")
 width <- 7
 height <- 5
 res <- 200

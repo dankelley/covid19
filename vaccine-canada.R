@@ -8,16 +8,6 @@ library(jsonlite)
 # Set up R4 colours (not avail on this webserver)
 col <- c("black", "#E69F00", "#56B4E9", "#009E73", "#F0E442")
 
-repair <- function(y, criterion=10)
-{
-    bad <- which(diff(y) > criterion)[1]
-    if (length(bad)) {
-        i <- seq_along(y)
-        y <- ifelse(i > bad, 0.5*y, y)
-    }
-    y
-}
-
 population <- function(region)
 {
     switch(region,
@@ -59,19 +49,23 @@ pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=2.5,
     url <- paste0(base, pr)
     message(url)
     d <- fromJSON(paste(readLines(url)))$data
+    dan<<-list(d=d)
     t <- as.POSIXct(d$date)
     n <- length(t)
     # NOTE: there is also 'atleast1', a sibling to 'full'
     full <- sapply(
         seq_len(n),
         function(i) {
-            res <- fromJSON(d$data[i])[["all_ages"]]$full
+            j <<- fromJSON(d$data[i])
+            if ("all_ages" %in% names(j)) {
+                res <- j[["all_ages"]]$full
+            } else {
+                res <- sum(sapply(j, function(x) x$full))
+            }
             if (is.null(res)) NA else res
         }
         )
     y <- 100 * full / population(province)
-    if (province == "Ontario")
-        y <- repair(y)
     if (first) {
         oce.plot.ts(t, y, drawTimeRange=FALSE,
             yaxs="i",
@@ -106,6 +100,7 @@ pointsize <- 10
 if (!interactive())
     png("vaccine-canada.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 for (i in seq_along(regions)) {
+    message("i=",i, " region=", regions[i])
     test <- pl(regions[i], first, xlim=tlook,
         col=col[1+(i-1)%%5],
         lwd=2.5,

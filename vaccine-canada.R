@@ -49,14 +49,13 @@ pl <- function(province, first, col=1, xlim=NULL, lty=1, lwd=2.5,
     url <- paste0(base, pr)
     message(url)
     d <- fromJSON(paste(readLines(url)))$data
-    dan<<-list(d=d)
     t <- as.POSIXct(d$date)
     n <- length(t)
     # NOTE: there is also 'atleast1', a sibling to 'full'
     full <- sapply(
         seq_len(n),
         function(i) {
-            j <<- fromJSON(d$data[i])
+            j <- fromJSON(d$data[i])
             if ("all_ages" %in% names(j)) {
                 res <- j[["all_ages"]]$full
             } else {

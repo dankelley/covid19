@@ -25,6 +25,7 @@ all: force
 	Rscript vaccine.R > vaccine.out
 	Rscript vaccine-canada.R > vaccine-canada.out
 	#chmod a+r last_updated.html
+	Rscript wastewater.R > wastewater.out
 force:
 
 clean:

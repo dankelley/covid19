@@ -30,7 +30,7 @@ for (r in regions) {
     png(paste0("wastewater_", r, ".png"),
         unit="in", width=7, height=2.5, res=100)
     oce.plot.ts(t, y, type="p", pch=20, col="gray",
-        xlim=tlim, grid=TRUE, ylab="Viral Load")
+        drawTimeRange=FALSE, xlim=tlim, grid=TRUE, ylab="Viral Load")
     sp <- smooth.spline(t, y, df=df)
     smoothed <- predict(sp)
     lines(smoothed$x, smoothed$y, col=2, lwd=2)

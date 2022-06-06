@@ -104,7 +104,9 @@ width <- 8
 height <- 5.5
 res <- 200
 pointsize <- 11
-
+tlim <- range(d$time, na.rm=TRUE)
+pre2022 <- FALSE
+if (pre2022) { # data stream stopped early 2022
 if (!interactive())
     png("canada_cases_per_100K_by_province.png",
         width=width,
@@ -114,7 +116,6 @@ if (!interactive())
         pointsize=pointsize)
 par(mfrow=c(4, 3))
 ## Problem: "Repatriated travellers" and "Repatriated Travellers" both exist.
-tlim <- range(d$time, na.rm=TRUE)
 ## Ignore the territories (few data) and also repatriated travellers (oddly broken
 ## up into two groups, presumably because of poor data handling).
 
@@ -143,7 +144,9 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+} # pre2022
 
+if (pre2022) { # data stream stopped early 2022
 message("canada_positivity.png")
 if (!interactive())
     png("canada_positivity.png",
@@ -185,7 +188,9 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+} # pre2022
 
+if (pre2022) { # data stream stopped early 2022
 if (do_num_active) {
     if (!interactive())
         png("canada_linear_active.png",
@@ -223,8 +228,10 @@ if (do_num_active) {
     if (!interactive())
         dev.off()
 }
+} # pre2022
 
 
+if (pre2022) { # data stream stopped early 2022
 if (!interactive())
     png("canada_linear_active_per_100K.png",
         width=width,
@@ -260,8 +267,10 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+} # pre2022
 
 
+if (pre2022) { # data stream stopped early 2022
 if (!interactive())
     png("canada_log.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
@@ -350,33 +359,83 @@ for (region in regions) {
 }
 if (!interactive())
     dev.off()
+} # pre2022
 
 
 if (!interactive())
     png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
 par(mfrow=c(4, 3))
 for (region in regions) {
-    message("Handling ", region)
+    if (region == "Canada")
+        next
     sub <- subset(d, tolower(prname)==tolower(region))
-    sub <- subset(sub, is.finite(sub$numconf))
+    # get rid of things we don't use, to make it easier to look at the data whilst debugging
+    sub$pruid <- NULL
+    sub$prnameFR <- NULL
+    sub$date <- NULL
+    sub$numprob <- NULL
+    sub$numtested <- NULL
+    sub$ratetested <- NULL
+    sub$numrecover <- NULL
+    sub$numtests <- NULL
+    sub$percentrecover <- NULL
+    sub$percentoday <- NULL
+    sub$numtestedtoday <- NULL
+    sub$numrecoveredtoday <- NULL
+    sub$percentage <- NULL
+    sub$percentactive  <- NULL
+    sub$percentdeath <- NULL
+    sub$numactive  <- NULL
+    sub$numatests <- NULL
+    sub$rateactive <- NULL
+    sub$ratedeaths <- NULL
+    sub$raterecovered <- NULL
+    sub$ratetotal <- NULL
+    sub$numteststoday <- NULL
+    sub$avgdeaths_last7 <- NULL
+    sub$avgratedeaths_last7 <- NULL
+    sub$num <- NULL
+    sub$numdeaths <- NULL
+    sub$numdeathstoday <- NULL
+    sub$numtotal <- NULL
+    sub$numtoday <- NULL
+    sub$ratetests <- NULL
+    sub$numtotal_last7 <- NULL
+    sub$numtotal_last14 <- NULL
+    sub$ratetotal_last7 <- NULL
+    sub$ratetotal_last14 <- NULL
+    sub$avgtotal_last7 <- NULL
+    sub$avgincidence_last7 <- NULL
+    sub$numdeaths_last7 <- NULL
+    sub$numdeaths_last14 <- NULL
+    sub$avgdeaths_last7 <- NULL
+    sub$ratedeaths_last7 <- NULL
+    sub$ratedeaths_last14 <- NULL
     t <- sub$time
-    #sub <- fixLastDuplicated(sub)
-    y <- 86400*diff(sub$numconf) / population(region) * 100e3 / diff(as.numeric(t))
-    t <- t[-1] # to make length match y
-    #bad <- if (removeOutliers) abs(y-ys) > 8 * sd(y-ys) else rep(FALSE, length(y))
+    y <- sub$numconf
+    n <- length(y)
+    message("Handling ", region, ", population ", round(population(region)/1e6,1), "M, last 3 numconf=", paste(tail(sub$numconf,3), collapse=" "))
+    look <- is.na(sub$update) | sub$update == 1L
+    sub <- subset(sub, look)
+    newDailyPer100K <- with(sub, diff(numconf) / (diff(as.numeric(time)) / 86400) * (100e3 / population(region)))
+    newDailyPer100K <- c(newDailyPer100K[1], newDailyPer100K)
+    sub$newDailyPer100K <- newDailyPer100K
+
+    print(tail(sub, 4))
+    #with(sub, oce.plot.ts(time, newDailyPer100K, type="s", drawTimeRange=FALSE))
+    #abline(v=Sys.time(), col="magenta")
+    #grid()
+    t <- sub$time
+    y <- sub$newDailyPer100K
     ok <- y > 0
     t <- t[ok]
     y <- y[ok]
-    ys <- smooth(y)
-    #ylim <- c(0, 1.2*quantile(ys, 0.99, na.rm=TRUE))
     oce.plot.ts(t, y, drawTimeRange=FALSE, ylab="New Daily Cases / 100K", type="p",
         mar=mar2, mgp=mgp2, xlim=tlim,
         col="darkgray", pch=20, cex=0.8*par("cex"))# * ifelse(y==0, 0.25, 1))
     abline(h=0, col=4, lwd=0.5*par("lwd"))
     abline(v=now, col=4, lwd=0.5*par("lwd"))
     # spline with df proportional to data length (the 7 is arbitrary)
-    recent <- abs(as.numeric(now) - as.numeric(t)) <= recentNumberOfDays * 86400
-    points(t[recent], y[recent], pch=20, cex=0.8*par("cex"))
     lines(smooth.spline(t, y, df=length(y)/7), col="magenta", lwd=1)
     mtext(sprintf(" %s\n %.1f/day/100K on %s",
             region,

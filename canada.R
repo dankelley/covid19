@@ -18,33 +18,6 @@ mgp <- c(1.8, 0.7, 0)
 mar2 <- c(1.75, 2.5, 1.25, 1)
 mgp2 <- c(1.4, 0.5, 0)
 
-fixLastDuplicated <- function(x)
-{
-    lastTwo <- tail(x$num, 2)
-    if (all(is.finite(lastTwo)) && 0 == diff(tail(x$num, 2))) {
-        x <- head(x, -1)
-        message("NB. removed final point, because it duplicated its predecessor")
-    }
-    x
-}
-
-abbreviateRegion <- function(r, wide=TRUE)
-{
-    if (wide)
-        return(r)
-    if (r == "Newfoundland and Labrador")
-        return("NFLD & LAB")
-    else if (r == "Prince Edward Island")
-        return("PEI")
-    else if (r == "British Columbia")
-        return("BC")
-    else if (r == "New Brunswick")
-        return("NB")
-    else if (r == "Saskatchewan")
-        return("Sask.")
-    r
-}
-
 # https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901
 # Q1, 2020
 population <- function(region)

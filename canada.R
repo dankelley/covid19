@@ -2,6 +2,9 @@
 # version of this.  At some point, I will give up trying to track the different
 # filenames, variablenames, etc.
 
+# 2022 aug 10:
+# * numcases_weekly renamed numtotal_last7
+
 test <- !TRUE # helps me to test for changes in format
 
 library(oce)
@@ -84,11 +87,11 @@ message("Time range: ", paste(tlim, collapse=" to "))
 
 if (test) {
     dlook <- d[d$prname == "Alberta",]
-    with(dlook, plot(time, numcases_weekly, type="s"))
+    with(dlook, plot(time, numtotal_last7, type="s"))
 }
 
 dorig <- d # we are going to focus on only 3 columns
-d <- dorig[, c("prname", "time", "numcases_weekly")]
+d <- dorig[, c("prname", "time", "numtotal_last7")]
 
 if (!interactive())
     png("canada_change.png", width=width, height=height, unit="in", res=res, pointsize=pointsize)
@@ -100,8 +103,8 @@ for (region in regions) {
         next
     sub <- subset(d, tolower(prname)==tolower(region))
     # get rid of things we don't use, to make it easier to look at the data whilst debugging
-    message("Handling ", region, ", population ", round(population(region)/1e6,1), "M, last 3 numconf=", paste(tail(sub$numcases_weekly,3), collapse=" "))
-    sub$newDailyPer100K <- 1e5 * sub$numcases_weekly / population(region) / 7
+    message("Handling ", region, ", population ", round(population(region)/1e6,1), "M, last 3 numconf=", paste(tail(sub$numtotal_last7,3), collapse=" "))
+    sub$newDailyPer100K <- 1e5 * sub$numtotal_last7 / population(region) / 7
     print(tail(sub, 4))
     t <- sub$time
     y <- sub$newDailyPer100K
